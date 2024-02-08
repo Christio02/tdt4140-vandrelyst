@@ -5,6 +5,15 @@
 }
 
 .App {
-    display: flex;
-    justify-content: center;
+  display: flex;
+  justify-content: center;
+}
+
+.searchbar-container {
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
+}
+.search-bar {
+  width: 100%;
 }
