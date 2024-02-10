@@ -10,10 +10,13 @@
 }
 
 .searchbar-container {
-  display: flex;
-  flex-direction: row;
-  gap: 0.5rem;
+  margin-top: 10rem;
+  justify-content: center;
+  width: 50dvh;
 }
-.search-bar {
-  width: 100%;
+
+.search {
+  /* width: 50dvh; */
+  display: flex;
+  gap: 0.5rem;
 }

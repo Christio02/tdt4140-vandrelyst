@@ -6,22 +6,27 @@ import Form from "react-bootstrap/Form";
 const Searchbar = () => {
   const [searchText, setSearchText] = useState(""); // save input text in hook
 
-  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
-    // function that handles search from user
+  const trackSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+    // function that tracks every letter user types in
     setSearchText(event.target.value);
+    // console.log(searchText)
   };
+  
+  const sendSearch = () => {
+    console.log(searchText)
+  }
 
   return (
-    <div className="    ">
-      <Form>
+    <div className="searchbar-container">
+      <Form className="search">
         <Form.Control
           type="text"
           placeholder="Søk på et reisemål!"
           className="search-bar"
           value={searchText}
-          onChange={handleSearch}
+          onChange={trackSearch}
         ></Form.Control>
-        <Button variant="outline-success">Search</Button>
+        <Button variant="outline-success" onClick={sendSearch}>Search</Button>
       </Form>
     </div>
   );
