@@ -25,6 +25,7 @@ const TestPage = () => {
         <input type = "text" onChange={(e) => setText(e.target.value)}></input>
         <button onClick={sendData}>Click here!</button>
       </form>
+      {/* New Button */}
     </>
   );
 };
