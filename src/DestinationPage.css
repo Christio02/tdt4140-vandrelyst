@@ -1,0 +1,10 @@
+
+.TitleDiv {
+    flex-direction: row;
+    align-content: center;
+    color:blue;
+}
+
+.ActivityBox {
+    background-color: blue;
+}
