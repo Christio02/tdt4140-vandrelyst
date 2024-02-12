@@ -2,6 +2,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { useState } from "react";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
+import "../style/searchbar.css";
 
 const Searchbar = () => {
   const [searchText, setSearchText] = useState(""); // save input text in hook
