@@ -5,6 +5,18 @@
 }
 
 .App {
-    display: flex;
-    justify-content: center;
+  display: flex;
+  justify-content: center;
+}
+
+.searchbar-container {
+  margin-top: 10rem;
+  justify-content: center;
+  width: 50dvh;
+}
+
+.search {
+  /* width: 50dvh; */
+  display: flex;
+  gap: 0.5rem;
 }
