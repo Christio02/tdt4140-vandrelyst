@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 
-import TestPage from "../pages/TestPage";
+import TestPage from "../pages/Frontpage";
 
 test("Heading renders sucessfully", () => {
   render(<TestPage />);

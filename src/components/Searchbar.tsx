@@ -12,10 +12,10 @@ const Searchbar = () => {
     setSearchText(event.target.value);
     // console.log(searchText)
   };
-  
+
   const sendSearch = () => {
-    console.log(searchText)
-  }
+    console.log(searchText);
+  };
 
   return (
     <div className="searchbar-container">
@@ -27,7 +27,9 @@ const Searchbar = () => {
           value={searchText}
           onChange={trackSearch}
         ></Form.Control>
-        <Button variant="outline-success" onClick={sendSearch}>Søk</Button>
+        <Button variant="outline-success" onClick={sendSearch}>
+          Søk
+        </Button>
       </Form>
     </div>
   );

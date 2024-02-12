@@ -1,13 +1,12 @@
 import React from "react";
 import "./App.css";
 import Searchbar from "./components/Searchbar";
-import TestPage from "./pages/TestPage";
+import Frontpage from "./pages/Frontpage";
 
 function App() {
   return (
     <div className="App">
-      {<TestPage />}
-      <Searchbar />
+      <Frontpage />
     </div>
   );
 }
