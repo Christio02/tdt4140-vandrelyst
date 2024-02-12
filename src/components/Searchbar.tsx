@@ -26,7 +26,7 @@ const Searchbar = () => {
           value={searchText}
           onChange={trackSearch}
         ></Form.Control>
-        <Button variant="outline-success" onClick={sendSearch}>Search</Button>
+        <Button variant="outline-success" onClick={sendSearch}>Søk</Button>
       </Form>
     </div>
   );
