@@ -1,11 +1,13 @@
 .createButton {
-    /*
+  /*
     We make the button be at a fixed position in the top right corner of the page.
     10 pixels from the top and 10 pixels from the right.
     */
-   
-  }
-  
-.modal-popup {
-    width: 80%;
 }
+
+.modal-design.modal-design {
+  width: 80vw;
+  max-width: none !important;
+}
+
+
