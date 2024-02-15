@@ -1,5 +1,0 @@
-body {
-    /* background-image: url('../public/background.jpg'); */
-    background-size: 100% 100%; /* Scales the image to cover the entire page, leads to some strange stretching if your page isn't the same aspect ratio as the image */
-    background-attachment: fixed; /* Background stays in the same place, even if you scroll */
-  }
