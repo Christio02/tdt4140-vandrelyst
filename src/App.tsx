@@ -7,9 +7,7 @@ import DestinationPage from "./pages/DestinationPage"
 function App() {
   return (
     <div className="App">
-      {/* <TestPage />  */}
-      {/* <Searchbar /> */}
-      <DestinationPage/>
+      <Frontpage />
     </div>
   );
 }
