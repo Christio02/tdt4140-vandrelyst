@@ -1,14 +1,15 @@
 import React from "react";
+import { Route, Routes } from "react-router-dom";
 import "./App.css";
-import Frontpage from "./pages/Frontpage";
 import DestinationPage from "./pages/DestinationPage";
+import Frontpage from "./pages/Frontpage";
 
 function App() {
   return (
-    <div className="App">
-      <Frontpage />
-      {/* <DestinationPage /> */}
-    </div>
+    <Routes>
+      <Route path="/" element={<Frontpage />} />
+      <Route path="/destinationpage" element={<DestinationPage />} />
+    </Routes>
   );
 }
 
