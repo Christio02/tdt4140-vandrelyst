@@ -1,5 +1,5 @@
 import { addDoc, collection } from "firebase/firestore";
-import { ref, uploadBytes } from "firebase/storage";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import React, { useState } from "react";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
@@ -7,6 +7,7 @@ import InputGroup from "react-bootstrap/InputGroup";
 import Modal from "react-bootstrap/Modal";
 import { db, storage } from "../firebase_setup/firebase";
 import "../style/addDestinationPopUp.css";
+
 
 /**
  * Renders a pop-up component for creating a destination.
@@ -74,21 +75,33 @@ function DestinationPopUp() {
     }
   };
 
-  const uploadImage = () => {
-    if (image == null) return; // validation
-    const imageRef = ref(storage, `images/${image.name}`); // get reference to storages, and specofy where it should be saved
-    uploadBytes(imageRef, image).then(() => {
-      // function that actually uploads the image
-      alert("File uploaded!");
+  const uploadImageAndGetURL = (): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      
+      if (image == null) { // Return if no image
+        reject("No image to upload.");
+        return;
+      }
+
+      const imageRef = ref(storage, `images/${image.name}`);
+      uploadBytes(imageRef, image).then((snapshot) => {
+        getDownloadURL(snapshot.ref).then((downloadURL) => {
+          resolve(downloadURL);
+        }).catch(reject);
+      }).catch(reject);
     });
   };
 
+ 
   const sendData = async () => {
     console.log(temperature);
     console.log(things);
     console.log(image);
     try {
-      const docRef = await addDoc(collection(db, "destinations"), {
+      
+      const imageUrl = await uploadImageAndGetURL(); // Wait for the image to be uploaded and get its URL
+
+      const docRef = await addDoc(collection(db, "destinations"), { // Create a new document in the "destinations" collection
         temperature: temperature ? parseInt(temperature) : 0,
         city,
         country,
@@ -98,12 +111,14 @@ function DestinationPopUp() {
         season,
         things,
         id: `${city}, ${country}`,
+        imageUrl,
       });
       console.log("Document written with id: " + docRef.id);
+      alert("Destination added successfully!");
     } catch (error) {
-      console.log("Error adding to database" + error);
+      console.error("Error: " + error);
+      alert("An error occurred while adding the destination.");
     }
-    uploadImage();
   };
 
   return (
