@@ -4,11 +4,13 @@ Christian is horrible at remembering commands, so here is a list of commands tha
 
 ## Create a new local branch which tracks a remote branch
 
-- `git checkout -b my-feature-branch origin/remote-branch-name`
-This command creates a new branch from a remote branch. It is useful when you want to work on a feature that is not yet in your local repository. Insert the name of the remote branch in place of `remote-branch-name` and the name of your new local branch in place of `my-feature-branch`.
+First, make sure that you are on the main branch.
 
 - `git pull origin main`
 To pull the latest changes from the main branch.
+
+- `git checkout -b my-feature-branch origin/remote-branch-name`
+This command creates a new branch from a remote branch. It is useful when you want to work on a feature that is not yet in your local repository. Insert the name of the remote branch in place of `remote-branch-name` and the name of your new local branch in place of `my-feature-branch`.
 
 - `git branch --set-upstream-to=origin/remote-branch-name my-feature-branch`
 To set the upstream branch for your local branch.
