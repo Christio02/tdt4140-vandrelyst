@@ -1,9 +1,10 @@
 import "bootstrap/dist/css/bootstrap.css";
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { BrowserRouter } from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import App from "./App";
 import "./index.css";
+import DestinationPage from "./pages/DestinationPage";
 import reportWebVitals from "./reportWebVitals";
 
 const root = ReactDOM.createRoot(
@@ -12,7 +13,10 @@ const root = ReactDOM.createRoot(
 root.render(
   <React.StrictMode>
     <BrowserRouter>
-      <App />
+      <Routes>
+        <Route path="/" element={<App />} />
+        <Route path="/destinationpage" element={<DestinationPage />} />
+      </Routes>
     </BrowserRouter>
   </React.StrictMode>
 );

@@ -108,8 +108,14 @@ function DestinationPopUp() {
 
   return (
     <>
-      {/* <AddDestinationButton className="createButton"></AddDestinationButton> */}
-      <Button className="createButton" variant="primary" onClick={handleShow}>
+      <Button
+        className="createButton"
+        variant="outline-light"
+        style={{
+          backgroundColor: "#C8D8E4",
+        }}
+        onClick={handleShow}
+      >
         Legg til en destinasjon!
       </Button>
 

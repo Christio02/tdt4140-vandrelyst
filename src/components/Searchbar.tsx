@@ -1,7 +1,10 @@
 import "bootstrap/dist/css/bootstrap.min.css";
+import { collection } from "firebase/firestore";
+import { Search } from "lucide-react";
 import { useState } from "react";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
+import { db } from "../firebase_setup/firebase";
 import "../style/searchbar.css";
 
 const Searchbar = () => {
@@ -14,11 +17,12 @@ const Searchbar = () => {
   };
 
   const sendSearch = () => {
-    console.log(searchText);
+    // const destinationRef = db.collection("destinations");
   };
 
   return (
     <div className="searchbar-container">
+      <h3>Finn ditt reisemål</h3>
       <Form className="search">
         <Form.Control
           type="text"
@@ -27,8 +31,8 @@ const Searchbar = () => {
           value={searchText}
           onChange={trackSearch}
         ></Form.Control>
-        <Button variant="success" onClick={sendSearch}>
-          Søk
+        <Button variant="light" onClick={sendSearch}>
+          <Search />
         </Button>
       </Form>
     </div>
