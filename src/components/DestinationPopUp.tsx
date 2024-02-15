@@ -104,7 +104,6 @@ function DestinationPopUp() {
       console.log("Error adding to database" + error);
     }
     uploadImage();
-    
   };
 
   return (
@@ -116,6 +115,8 @@ function DestinationPopUp() {
 
       <div className="modal-container">
         <Modal show={show} onHide={handleClose} size="lg">
+          {" "}
+          {/* from https://react-bootstrap.netlify.app/docs/components/modal */}
           <Modal.Header closeButton>
             {" "}
             {/* Top bar, where the X is.*/}
@@ -123,7 +124,6 @@ function DestinationPopUp() {
               Skjema for oppretting av destinasjon
             </Modal.Title>
           </Modal.Header>
-
           <Modal.Body
             as={"div"}
             style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
@@ -208,7 +208,6 @@ function DestinationPopUp() {
             </InputGroup>
             {/*ALL INPUT FIELDS HAVE BEEN DEFINED. [END OF BOILERPLATE CODE]*/}
           </Modal.Body>
-
           <Modal.Footer
             style={{ display: "flex", justifyContent: "center", gap: "5rem" }}
           >
