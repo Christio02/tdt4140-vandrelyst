@@ -104,6 +104,7 @@ function DestinationPopUp() {
       console.log("Error adding to database" + error);
     }
     uploadImage();
+    
   };
 
   return (
