@@ -1,0 +1,52 @@
+
+
+/* Add a black background color to the top navigation */
+#topnav {
+    background-color:#2B6777;
+    overflow: hidden;
+    height: 50px;
+    width: 100%;
+    position: sticky; 
+    top: 0; 
+    z-index: 1000;
+  }
+  
+  /* Style the links inside the navigation bar */
+#topnav a {
+    color: white;
+    padding: 15px 15px;
+    text-decoration: none;
+    font-size: 17px;
+    font-family: "Poppins", Calibri, sans-serif;
+    height: 50px; 
+  }
+
+  #topnav a:not(:first-child) {
+    float:right;
+  }
+  
+  
+  #logo {
+    float: left; 
+    display: flex; /* Use flexbox to center the image */
+    align-items: center; /* Center items vertically */
+  }
+
+ #topnav a:nth-child(n+3):hover {
+        background-color: #C8D8E4;
+        color: black;
+      }
+
+#logo img {
+   height: 35px;
+    width: auto; 
+    margin: 0 auto;  
+}
+
+#logo {
+  margin-left: 5%;
+}
+
+#dropdown {
+  background-color: #C8D8E4;
+}

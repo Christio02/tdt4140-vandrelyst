@@ -24,7 +24,7 @@ const Searchbar = () => {
 
   return (
     <div className="searchbar-container">
-      <h3>Finn ditt reisemål</h3>
+      <h2>Finn ditt reisemål</h2>
       <Form className="search">
         <Form.Control
           type="text"
