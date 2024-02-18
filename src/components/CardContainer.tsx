@@ -74,7 +74,6 @@ function CardContainer() {
               src={destination.imageURL}
               className="card-img"
             />
-            <Link to="/destinationpage"></Link>
             <Card.Body>
               <Card.Title>{destination.country}</Card.Title>
               <Card.Text>{destination.city}</Card.Text>
