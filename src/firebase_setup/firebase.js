@@ -1,8 +1,6 @@
 import { initializeApp } from "firebase/app";
-import { getFirestore } from "firebase/firestore";
-import { getStorage} from "firebase/storage";
-import { ref } from 'firebase/storage';
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs, getFirestore } from "firebase/firestore";
+import { getStorage, ref } from "firebase/storage";
 
 /*
 TODO: Add SDKs for Firebase products that you want to use
@@ -24,8 +22,11 @@ export const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-export const storage = getStorage(app); 
-export const storageRef = ref(storage, 'gs://reiseinspirasjon-b2579.appspot.com');
-export const db = getFirestore(app); 
-const colRef = collection(db, 'destinations');
-const querySnapshot = await getDocs(colRef);
+export const storage = getStorage(app);
+export const storageRef = ref(
+  storage,
+  "gs://reiseinspirasjon-b2579.appspot.com"
+);
+export const db = getFirestore(app);
+export const destinationRef = collection(db, "destinations");
+const querySnapshot = await getDocs(destinationRef);
