@@ -28,7 +28,7 @@ async function getMainImageUrl(storage: FirebaseStorage, doc: DocumentData) {
 function CardContainer() {
   const [destinations, setDestinations] = useState<Destination[]>([]);
 
-  const fetchData = async () => {
+  const fetchData = async () => { // Updates the array of destinations, by fetching data from the database.
     try {
       
       const db = getFirestore(); // Get the database
@@ -36,30 +36,26 @@ function CardContainer() {
       const collectionRef = collection(db, "destinations");
       const querySnapshot = await getDocs(collectionRef); // Get all of the documents in the collection.
 
-      const destinationsArray: Promise<Destination | null>[] =
-        querySnapshot.docs.map(async (doc) => { // Go over all documents in the collection, and transform entry into a promise.
-          const destinationData = doc.data();
-          const url = await getMainImageUrl(storage, doc);
-          if (url === null) {
-            return null;
-          }
+      const destinationsArray: Promise<Destination | null>[] = querySnapshot.docs.map(async (doc) => { // Go over all documents in the collection, and transform entry into a promise.
+        const destinationData = doc.data();
+        const url = await getMainImageUrl(storage, doc);
+        if (url === null) { // Return a null value if the image URL is null.
+          return null;
+        }
 
-          return { // Return all of the information needed for the card.
-            id: doc.id,
-            imageURL: url,
-            country: destinationData.country,
-            city: destinationData.city,
-          };
-        });
+        return { // Return a Destination object if the image URL is not null.
+          id: doc.id,
+          imageURL: url,
+          country: destinationData.country,
+          city: destinationData.city,
+        };
+      });
 
       const resolvedDestinationsArray = await Promise.all(destinationsArray); // Waits for all of the promises to resolve
-      const validDestinationsArray = resolvedDestinationsArray.filter(
-        (destination): destination is Destination => destination !== null
-      ); // Filters out the null values
-
+      const validDestinationsArray = resolvedDestinationsArray.filter(destination => destination !== null) as Destination[]; // Filters out the null values, and specify that the array is of type Destination instead of <Destination | null>[]
       setDestinations(validDestinationsArray);
     } catch (error) {
-      console.error("Error fetching data from Firebase:", error);
+      console.error("Error fetching data from Firebase: ", error);
     }
   };
 
