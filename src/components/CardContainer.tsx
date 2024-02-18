@@ -61,7 +61,7 @@ function CardContainer() {
 
   useEffect(() => {
     fetchData();
-  });
+  }, []); // The empty array means that the effect will only run once, after the initial render.
 
   console.log(destinations); // Log the state
 
@@ -70,17 +70,19 @@ function CardContainer() {
       <h3 className="title">Alle Reisemål</h3>
       <div className="cards">
         {destinations.map((destination) => (
-          <Card className="card" key={destination.id}>
-            <Card.Img
-              variant="top"
-              src={destination.imageURL}
-              className="card-img"
-            />
-            <Card.Body>
-              <Card.Title>{destination.country}</Card.Title>
-              <Card.Text>{destination.city}</Card.Text>
-            </Card.Body>
-          </Card>
+          <Link to="/destinationpage" className="link" style={{ textDecoration: 'none' }}> {/* textDecoration none means that we don't get blue lines under the text.*/}
+            <Card className="card" key={destination.id}>
+              <Card.Img
+                variant="top"
+                src={destination.imageURL}
+                className="card-img"
+              />
+              <Card.Body>
+                <Card.Title>{destination.country}</Card.Title>
+                <Card.Text>{destination.city}</Card.Text>
+              </Card.Body>
+            </Card>
+          </Link>
         ))}
       </div>
     </div>
