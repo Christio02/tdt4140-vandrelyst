@@ -99,33 +99,11 @@ const DestinationPopUp = () => {
     }
   };
 
-  const uploadImageAndGetURL = (): Promise<string> => {
-    return new Promise((resolve, reject) => {
-      if (image == null) {
-        // Return if no image
-        reject("No image to upload.");
-        return;
-      }
-
-      const imageRef = ref(storage, `images/${image.name}`);
-      uploadBytes(imageRef, image)
-        .then((snapshot) => {
-          getDownloadURL(snapshot.ref)
-            .then((downloadURL) => {
-              resolve(downloadURL);
-            })
-            .catch(reject);
-        })
-        .catch(reject);
-    });
-  };
-
   const sendData = async () => {
     console.log(temperature);
     console.log(things);
     console.log(image);
     try {
-      const imageUrl = await uploadImageAndGetURL(); // Wait for the image to be uploaded and get its URL
 
       const docRef = await addDoc(collection(db, "destinations"), {
         // Create a new document in the "destinations" collection
@@ -138,11 +116,10 @@ const DestinationPopUp = () => {
         season,
         things,
         id: `${city}, ${country}`,
-        imageUrl,
       });
       console.log("Document written with id: " + docRef.id);
-      // Now that we have the document ID, we can use it in the image name
-      if (image != null) {
+      
+      if (image != null) {// Now that we have the document ID, we can use it in the image name
         const imageRef = ref(storage, `images/${docRef.id}.jpg`);
         await uploadBytes(imageRef, image);
         alert("Destination added successfully!");
