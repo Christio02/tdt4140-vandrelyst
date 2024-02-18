@@ -6,6 +6,8 @@ import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import { db } from "../firebase_setup/firebase";
 import "../style/searchbar.css";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSearch } from '@fortawesome/free-solid-svg-icons';
 
 const Searchbar = () => {
   const [searchText, setSearchText] = useState(""); // save input text in hook
@@ -31,9 +33,9 @@ const Searchbar = () => {
           value={searchText}
           onChange={trackSearch}
         ></Form.Control>
-        <Button variant="light" onClick={sendSearch}>
-          <Search />
-        </Button>
+        <div className="search-icon" onClick={sendSearch}>
+          <FontAwesomeIcon icon={faSearch} />
+        </div>
       </Form>
     </div>
   );

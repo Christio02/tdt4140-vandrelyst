@@ -1,9 +1,8 @@
-// Import the functions you need from the SDKs you need
-
-// import { getAnalytics } from "firebase/analytics"; TODO: Uncomment this line if you want to use analytics, right now it is just giving a warning in the console
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
-import { getStorage } from "firebase/storage";
+import { getStorage} from "firebase/storage";
+import { ref } from 'firebase/storage';
+import { collection, getDocs } from "firebase/firestore";
 
 /*
 TODO: Add SDKs for Firebase products that you want to use
@@ -13,7 +12,7 @@ Your web app's Firebase configuration
 For Firebase JS SDK v7.20.0 and later, measurementId is optional
 */
 
-const firebaseConfig = {
+export const firebaseConfig = {
   apiKey: "AIzaSyBXE-Phv00ZXP07Stl2sanuiPNjO0dDDxc",
   authDomain: "reiseinspirasjon-b2579.firebaseapp.com",
   projectId: "reiseinspirasjon-b2579",
@@ -25,7 +24,8 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-// const analytics = getAnalytics(app); TODO: Uncomment this line if you want to use analytics, right now it is just giving a warning in the console
-export const storage = getStorage(app); // export to be used in all parts of code
-
-export const db = getFirestore(app); // same here
+export const storage = getStorage(app); 
+export const storageRef = ref(storage, 'gs://reiseinspirasjon-b2579.appspot.com');
+export const db = getFirestore(app); 
+const colRef = collection(db, 'destinations');
+const querySnapshot = await getDocs(colRef);
