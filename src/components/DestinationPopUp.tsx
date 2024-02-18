@@ -33,10 +33,11 @@ interface Destination {
   city: string;
 }
 const DestinationPopUp = () => {
-  const [showAdd, setShowAdd] = useState(false);
+  const [showAddDestination, setShowAddDestination] = useState(false);
+  const [isDeleteForm, setIsDeleteForm] = useState(false);
 
-  const handleAddClose = () => setShowAdd(false);
-  const handleAddShow = () => setShowAdd(true);
+  const handleAddClose = () => setShowAddDestination(false);
+  const handleAddShow = () => setShowAddDestination(true);
 
   const [image, setImage] = useState<File | null>(null);
 
@@ -48,14 +49,13 @@ const DestinationPopUp = () => {
   const [season, setSeason] = useState("");
   const [description, setDescription] = useState("");
   const [things, setThings] = useState<string[]>([]); // things to do should be an array with three strings.
-  const [isDelete, setIsDelete] = useState(false);
 
   const [selectedDest, setSelectedDest] = useState("");
 
   const [data, setData] = useState<Destination[]>([]);
 
-  const handleShowDelete = () => setIsDelete(true);
-  const handleCloseDelete = () => setIsDelete(false);
+  const handleShowDelete = () => setIsDeleteForm(true);
+  const handleCloseDelete = () => setIsDeleteForm(false);
 
   const handleTemperatureChange = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -99,7 +99,28 @@ const DestinationPopUp = () => {
     }
   };
 
-  const sendData = async () => {
+  const uploadImageAndGetURL = (): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      if (image == null) {
+        // Return if no image
+        reject("No image to upload.");
+        return;
+      }
+
+      const imageRef = ref(storage, `images/${image.name}`);
+      uploadBytes(imageRef, image)
+        .then((snapshot) => {
+          getDownloadURL(snapshot.ref)
+            .then((downloadURL) => {
+              resolve(downloadURL);
+            })
+            .catch(reject);
+        })
+        .catch(reject);
+    });
+  };
+
+  const sendDataToFirestore = async () => {
     console.log(temperature);
     console.log(things);
     console.log(image);
@@ -142,14 +163,14 @@ const DestinationPopUp = () => {
   };
 
   useEffect(() => {
-    if (isDelete) {
+    if (isDeleteForm) {
       const fetchData = async () => {
         const fetchedData = await fetchFromFirestore();
         setData(fetchedData);
       };
       fetchData();
     }
-  }, [isDelete]);
+  }, [isDeleteForm]);
 
   const handleSelectedDestination = (selectedCity: string) => {
     setSelectedDest(selectedCity);
@@ -189,9 +210,9 @@ const DestinationPopUp = () => {
       <Button variant="danger" onClick={handleShowDelete}>
         Slett en destinasjon
       </Button>
-      {showAdd && (
+      {showAddDestination && (
         <div className="modal-container">
-          <Modal show={showAdd} onHide={handleAddClose} size="lg">
+          <Modal show={showAddDestination} onHide={handleAddClose} size="lg">
             {" "}
             {/* from https://react-bootstrap.netlify.app/docs/components/modal */}
             <Modal.Header closeButton>
@@ -291,7 +312,7 @@ const DestinationPopUp = () => {
               <Button variant="danger" onClick={handleAddClose}>
                 Close
               </Button>
-              <Button variant="success" onClick={sendData}>
+              <Button variant="success" onClick={sendDataToFirestore}>
                 Save Changes
               </Button>
             </Modal.Footer>
@@ -299,9 +320,9 @@ const DestinationPopUp = () => {
         </div>
       )}
 
-      {isDelete && (
+      {isDeleteForm && (
         <div className="delete-modal">
-          <Modal show={isDelete} onHide={handleCloseDelete} size="lg">
+          <Modal show={isDeleteForm} onHide={handleCloseDelete} size="lg">
             <Modal.Header closeButton>
               <Modal.Title className="ms-auto">
                 Skjema for sletting av destinasjon
