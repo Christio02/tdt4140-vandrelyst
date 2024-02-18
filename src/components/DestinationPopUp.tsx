@@ -3,7 +3,12 @@ import {
   Query,
   addDoc,
   collection,
+  deleteDoc,
+  doc,
+  getDoc,
   getDocs,
+  query,
+  where,
 } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import React, { useEffect, useState } from "react";
@@ -12,6 +17,7 @@ import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import InputGroup from "react-bootstrap/InputGroup";
 import Modal from "react-bootstrap/Modal";
+import { ObjectFlags } from "typescript";
 import { db, storage } from "../firebase_setup/firebase";
 import "../style/addDestinationPopUp.css";
 
@@ -21,6 +27,11 @@ import "../style/addDestinationPopUp.css";
  * Provides an option to upload an image for the destination.
  * Saves the destination data to a database upon user submission.
  */
+
+interface Destination {
+  id: string;
+  city: string;
+}
 const DestinationPopUp = () => {
   const [showAdd, setShowAdd] = useState(false);
 
@@ -40,6 +51,8 @@ const DestinationPopUp = () => {
   const [isDelete, setIsDelete] = useState(false);
 
   const [selectedDest, setSelectedDest] = useState("");
+
+  const [data, setData] = useState<Destination[]>([]);
 
   const handleShowDelete = () => setIsDelete(true);
   const handleCloseDelete = () => setIsDelete(false);
@@ -140,22 +153,50 @@ const DestinationPopUp = () => {
     }
   };
 
-  const getData = async () => {
+  const fetchFromFirestore = async () => {
     const destinationRef = collection(db, "destinations");
-    const snapshot = await getDocs(destinationRef);
-
-    snapshot.forEach((a) => {
-      console.log(`${a.id} with data ${a.data} and ${a.get.toString}`);
+    const querySnapshot = await getDocs(destinationRef);
+    const data: any[] = [];
+    querySnapshot.forEach((doc) => {
+      data.push({ id: doc.id, ...doc.data() }); // spread operator -> add all fields/values to array
     });
+
+    return data;
   };
 
   useEffect(() => {
     if (isDelete) {
-      getData();
+      const fetchData = async () => {
+        const fetchedData = await fetchFromFirestore();
+        setData(fetchedData);
+      };
+      fetchData();
     }
   }, [isDelete]);
 
-  const handleDelete = () => {};
+  const handleSelectedDestination = (selectedCity: string) => {
+    setSelectedDest(selectedCity);
+  };
+  const handleDelete = async () => {
+    try {
+      console.log(selectedDest);
+      const q = query(
+        collection(db, "destinations"),
+        where("city", "==", selectedDest)
+      );
+      const querySnapshot = await getDocs(q);
+
+      if (!querySnapshot.empty) {
+        const docToDelete = querySnapshot.docs[0];
+        await deleteDoc(doc(db, "destinations", docToDelete.id));
+        alert("Destination deleted successfully!");
+      } else {
+        alert("Ingen destinasjon med navnet funnet");
+      }
+    } catch (error) {
+      console.log("Error occured", error);
+    }
+  };
 
   return (
     <>
@@ -283,7 +324,7 @@ const DestinationPopUp = () => {
 
       {isDelete && (
         <div className="delete-modal">
-          <Modal show={isDelete} onHide={handleCloseDelete} size="sm">
+          <Modal show={isDelete} onHide={handleCloseDelete} size="lg">
             <Modal.Header closeButton>
               <Modal.Title className="ms-auto">
                 Skjema for sletting av destinasjon
@@ -291,7 +332,11 @@ const DestinationPopUp = () => {
             </Modal.Header>
             <Modal.Body
               as={"div"}
-              style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: "0.5rem",
+              }}
             >
               <Dropdown>
                 <Dropdown.Toggle variant="success" id="dropdown-basic">
@@ -299,8 +344,16 @@ const DestinationPopUp = () => {
                 </Dropdown.Toggle>
                 <Dropdown.Menu>
                   {/* Need to map over destinations, and then display dropdowns*/}
-                  <Dropdown.Item>Paris</Dropdown.Item>
-                  <Dropdown.Item>Oslo</Dropdown.Item>
+                  {data.map((destination: Destination) => (
+                    <Dropdown.Item
+                      key={destination.id}
+                      onClick={() =>
+                        handleSelectedDestination(destination.city)
+                      }
+                    >
+                      {destination.city}
+                    </Dropdown.Item>
+                  ))}
                 </Dropdown.Menu>
               </Dropdown>
             </Modal.Body>

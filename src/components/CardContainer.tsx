@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import Card from 'react-bootstrap/Card';
-import { collection, getDocs, getFirestore } from 'firebase/firestore';
-import { getStorage, ref, getDownloadURL } from "firebase/storage";
-import '../style/CardContainer.css'
-import { Link } from 'react-router-dom';
+import { collection, getDocs, getFirestore } from "firebase/firestore";
+import { getDownloadURL, getStorage, ref } from "firebase/storage";
+import React, { useEffect, useState } from "react";
+import Card from "react-bootstrap/Card";
+import { Link } from "react-router-dom";
+import "../style/CardContainer.css";
 
 interface Destination {
   id: string;
@@ -16,53 +16,52 @@ function CardContainer() {
   const [destinations, setDestinations] = useState<Destination[]>([]);
 
   useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const db = getFirestore();
+        const storage = getStorage();
 
-  const fetchData = async () => {
-    try {
-      const db = getFirestore();
-      const storage = getStorage();
+        // Fetch data from Firestore
+        const collectionRef = collection(db, "destinations");
+        const querySnapshot = await getDocs(collectionRef);
 
-      // Fetch data from Firestore
-      const collectionRef = collection(db, "destinations");
-      const querySnapshot = await getDocs(collectionRef);
+        const destinationsArray: Promise<Destination | null>[] =
+          querySnapshot.docs.map(async (doc) => {
+            const destinationData = doc.data();
+            // Construct the image path using the document ID
+            const imagePath = `images/${doc.id}.jpg`;
+            const imageRef = ref(storage, imagePath);
+            const url = await getDownloadURL(imageRef).catch((error) => {
+              console.error("Error getting download URL:", error);
+              return null;
+            });
 
-      const destinationsArray: (Promise<Destination | null>)[] = querySnapshot.docs.map(async doc => {
-        const destinationData = doc.data();
-        // Construct the image path using the document ID
-        const imagePath = `images/${doc.id}.jpg`; 
-        const imageRef = ref(storage, imagePath);
-        const url = await getDownloadURL(imageRef).catch(error => {
-          console.error('Error getting download URL:', error);
-          return null;  
-        });
-      
-        if (url === null) {
-          return null;
-        }
-      
-        return {
-          id: doc.id,
-          imageURL: url,
-          country: destinationData.country,
-          city: destinationData.city,
-        };
-      });
-      
-      const resolvedDestinationsArray = await Promise.all(destinationsArray);
-      const validDestinationsArray = resolvedDestinationsArray.filter((destination): destination is Destination => destination !== null);
-      console.log(validDestinationsArray);
-      setDestinations(validDestinationsArray);
-      
-  } catch (error) {
-    console.error('Error fetching data from Firebase:', error);
-  }
-};
+            if (url === null) {
+              return null;
+            }
 
-    
+            return {
+              id: doc.id,
+              imageURL: url,
+              country: destinationData.country,
+              city: destinationData.city,
+            };
+          });
+
+        const resolvedDestinationsArray = await Promise.all(destinationsArray);
+        const validDestinationsArray = resolvedDestinationsArray.filter(
+          (destination): destination is Destination => destination !== null
+        );
+        console.log(validDestinationsArray);
+        setDestinations(validDestinationsArray);
+      } catch (error) {
+        console.error("Error fetching data from Firebase:", error);
+      }
+    };
+
     fetchData();
   }, []);
   console.log(destinations); // Log the state
-
 
   return (
     <div className="container">
