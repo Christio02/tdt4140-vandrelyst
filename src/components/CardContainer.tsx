@@ -1,5 +1,5 @@
-import { collection, getDocs, getFirestore } from "firebase/firestore";
-import { getDownloadURL, getStorage, ref } from "firebase/storage";
+import { DocumentData, collection, getDocs, getFirestore } from "firebase/firestore";
+import { FirebaseStorage, getDownloadURL, getStorage, ref } from "firebase/storage";
 import { useEffect, useState } from "react";
 import Card from "react-bootstrap/Card";
 import { Link } from "react-router-dom";
@@ -12,7 +12,7 @@ interface Destination {
   city: string;
 }
 
-async function getMainImageUrl(storage: any, doc: any) {
+async function getMainImageUrl(storage: FirebaseStorage, doc: DocumentData) {
   const imagePath = `images/${doc.id}.jpg`; // The card image for the destination has the same name as the document ID.
   const imageRef = ref(storage, imagePath); // Get a reference to the image
   
@@ -24,8 +24,6 @@ async function getMainImageUrl(storage: any, doc: any) {
     return null;
   }
 }
-
-
 
 function CardContainer() {
   const [destinations, setDestinations] = useState<Destination[]>([]);
@@ -65,10 +63,9 @@ function CardContainer() {
     }
   };
 
-
   useEffect(() => {
     fetchData();
-  }, []);
+  });
 
   console.log(destinations); // Log the state
 
