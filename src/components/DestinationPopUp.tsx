@@ -114,7 +114,12 @@ function DestinationPopUp() {
         imageUrl,
       });
       console.log("Document written with id: " + docRef.id);
+      // Now that we have the document ID, we can use it in the image name
+    if (image != null) {
+      const imageRef = ref(storage, `images/${docRef.id}.jpg`);
+      await uploadBytes(imageRef, image);
       alert("Destination added successfully!");
+    }
     } catch (error) {
       console.error("Error: " + error);
       alert("An error occurred while adding the destination.");
@@ -123,15 +128,9 @@ function DestinationPopUp() {
 
   return (
     <>
-      <Button
-        className="createButton"
-        variant="outline-light"
-        style={{
-          backgroundColor: "#C8D8E4",
-        }}
-        onClick={handleShow}
-      >
-        Legg til en destinasjon!
+      {/* <AddDestinationButton className="createButton"></AddDestinationButton> */}
+      <Button className="createButton" variant="primary" onClick={handleShow}>
+        Legg til destinasjon
       </Button>
 
       <div className="modal-container">
