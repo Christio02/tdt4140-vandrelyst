@@ -1,6 +1,17 @@
-body {
+/* body {
     background-color: #fff5f5;
 }
+ */
+
+.AllContentDivs {
+    display:flex;
+    flex-direction: column;
+    margin-left: 50px;
+    margin-right: 50px;
+    margin-top: 3%;
+}
+
+
 
 .TitleDiv {
     display: flex;
@@ -19,6 +30,7 @@ body {
     margin-right: 30px;
 }
 
+
 .AllRatings{
     display: flex;
     flex-direction: row;
@@ -35,15 +47,57 @@ h2 {
     color: grey;
 }
 
+#ImageDescription {
+    color: grey;
+}
+
+.DescriptionText {
+    font-size: 18px;
+}
 
 
 h3 {
-    font-size: 20px;
+    font-size: 25px;
     font-weight: bold;
 }
 
+h4 {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+
+.ActivitiesDiv{
+    margin-top: 3%;
+}
+
+.AllActivities {
+    margin-top: 1%;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    /* margin: 20px; */
+}
 .ActivityBox {
-    background-color: blue;
+    width: 25%;
+    height: auto;
+    margin-left: 6%;
+}
+
+/* .Carousel {
+    width: 1000px;
+    height: auto;
+} */
+
+.ActivityBox {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+}
+
+#imgAttraction {
+    width: 100%;
+    height: 100%;
 }
 
 .StarRating{
