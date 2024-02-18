@@ -1,3 +1,5 @@
+import { faSearch } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { collection } from "firebase/firestore";
 import { Search } from "lucide-react";
@@ -6,8 +8,6 @@ import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import { db } from "../firebase_setup/firebase";
 import "../style/searchbar.css";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSearch } from '@fortawesome/free-solid-svg-icons';
 
 const Searchbar = () => {
   const [searchText, setSearchText] = useState(""); // save input text in hook
