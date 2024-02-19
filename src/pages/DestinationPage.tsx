@@ -217,7 +217,7 @@ type BoxProps = {
   imgLink: string;
 };
 
-const ActivityBox = (props:Object) => {
+const ActivityBox = (props:BoxProps) => {
     return (
         <div className="ActivityBox">
               <img src={props.imgLink} alt={props.caption} id="imgAttraction" />
