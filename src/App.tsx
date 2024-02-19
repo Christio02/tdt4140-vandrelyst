@@ -16,7 +16,6 @@ function App() {
       <Searchbar />
       <DestinationPopUp />
       <Filtercomponent />
-      <Link to="/destinationpage">Destination</Link>
       <CardContainer />
       <Footer />
     </div>

@@ -15,7 +15,6 @@ root.render(
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<App />} />
-        <Route path="/destinationpage" element={<DestinationPage />} />
         <Route path="/destination/:id" element={<DestinationPage />} />
       </Routes>
     </BrowserRouter>
