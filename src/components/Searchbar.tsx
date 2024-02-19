@@ -18,7 +18,9 @@ const Searchbar = () => {
   };
 
   const sendSearch = () => {
-    // const destinationRef = db.collection("destinations");
+    const getDestinationsDatabase = collection(db, "destinations");
+    const getDestinationFromSearch = await getDestinationsDatabase.where()
+    
   };
 
   return (
