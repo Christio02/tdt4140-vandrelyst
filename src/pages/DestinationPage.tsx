@@ -1,4 +1,3 @@
-// import { useState } from "react";
 import React from "react";
 import Navbar from "../components/Navbar";
 import "../style/DestinationPage.css";
@@ -8,25 +7,96 @@ import attraction1 from "./eiffelAttraction.jpg";
 import attraction3 from "./louvre.jpg";
 import photo3 from "./montmartre.jpg";
 import photo2 from "./notreDame.jpg";
-import MainPhotoImg from "./paris.jpg"; // Tell webpack this JS file uses this image
 import photo4 from "./seineRiver.jpg";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faStar } from "@fortawesome/free-solid-svg-icons";
 
+import { doc, getDoc, getFirestore } from "firebase/firestore";
+import { FirebaseStorage, getDownloadURL, getStorage, ref } from "firebase/storage";
+import { useEffect, useState } from "react";
+import { useParams} from "react-router-dom";
+import "../style/CardContainer.css";
 
-import Slider from "../components/Slider";
+
+interface Destination {
+  id: string;
+  country: string;
+  city: string;
+  description: string;
+  price: number;
+  rating: number;
+  season: string;
+  temperature: number;
+  things: Array<string>;
+}
+
+async function getMainImageUrl(storage: FirebaseStorage, id: string) {
+  const imagePath = `images/${id}.jpg`; // The card image for the destination has the same name as the document ID.
+  const imageRef = ref(storage, imagePath); // Get a reference to the image
+  
+  try {
+    const url = await getDownloadURL(imageRef);
+    return url;
+  } catch (error) {
+    console.error("Error getting download URL:", error);
+    return null;
+  }
+}
 
 const DestinationPage = () => {
+  
+  const {id} = useParams(); // route parameter has the same name as the parameter in the route path in App.tsx
+  const [mainPhotoUrl, setMainPhotoUrl] = useState('');
+  const [destination, setDestination] = useState<Destination | null>(null);
+  console.log(id); // This will log the id of the destination to the console.
+
+
+  useEffect(() => {
+    const fetchDestinationData = async () => {
+      if (!id) { // If the id is null, then return early. Tsx complains if you don't have this check.
+        console.log(id);
+        return;
+      }
+      const db = getFirestore();
+      const docRef = doc(db, "destinations", id); // Assuming 'id' is the correct document ID
+      const docSnap = await getDoc(docRef);
+
+      if (docSnap.exists()) {
+        console.log("Document data:", docSnap.data());
+        setDestination(docSnap.data() as Destination);
+      } else {
+        console.log("No such document!");
+      }
+    };
+    
+    const fetchMainPhotoUrl = async () => {
+      if (!id) return;
+      
+      const url = await getMainImageUrl(getStorage(), id);
+      setMainPhotoUrl(url!);
+    };
+
+    if (id) {
+      fetchDestinationData();
+      fetchMainPhotoUrl();
+    }
+  }, [id]); // Re-run when `id` changes
+
+  
+  if (!destination) { // If destination data hasn't been fetched yet, you return a loading state
+    return <div>Loading...</div>;
+  }
+
   return (
     // <div><Navbar></Navbar></div>
     <div>
       <Navbar/>
-      <MainPhoto />
-      <TitleDiv />
-      <AllRatings />
+      <MainPhoto url={mainPhotoUrl}/>
+      <TitleDiv destination={destination}/>
+      <AllRatings destination={destination}/>
       <div className="AllContentDivs">
-        <DescriptionDiv />
+        <DescriptionDiv destination={destination}/>
         <ActivitesDiv title="Ting å gjøre" activities={actualActivities} />
         <ActivitesDiv title="Bilder" activities={otherPhotosOfCity} />
       </div>
@@ -43,13 +113,13 @@ const DestinationPage = () => {
   );
 };
 
-const AllRatings = () => {
+const AllRatings = ({destination}: {destination: any}) => {
   return (
     <div className="AllRatings">
       <StarRating/>
       <PriceRating />
-      {/* <SeasonRating /> */}
-      <TempRating />
+      <SeasonRating season={destination.season}/>
+      <TempRating temp={destination.temperature}/>
     </div>
   );
 };
@@ -103,62 +173,48 @@ const PriceRating = () => {
   );
 };
 
-const SeasonRating = () => {
-  // hente fra DB
-  let seasonRating = "Sommer";
-
+const SeasonRating = ({season}: {season: any}) => {
   return (
-    // Database hente data
     <div className="SeasonRating" id="Rating">
-      <span>{seasonRating}</span>
+      <span>{season}</span>
     </div>
   );
 };
 
-const TempRating = () => {
-  // hente fra DB
-  let tempRating = "21,0°C";
-
+const TempRating = ({temp}: {temp: any}) => {
   return (
-    // Database hente data
     <div className="SeasonRating" id="Rating">
-      <span>{tempRating}</span>
+      <span>{temp}</span>
     </div>
   );
 };
 
-const MainPhoto = () => {
+const MainPhoto = ({url}: {url: any}) => {
+  console.log(url);
   return (
     <div className="PhotoOfCity">
-      <img src={MainPhotoImg} alt="Photo of city" />;
+      <img src={url} alt="Photo of city" />;
     </div>
   );
 };
 
-const TitleDiv = (props: Object) => {
+const TitleDiv = ({destination}: {destination: Destination}) => {
   return (
     <div className="TitleDiv">
-      <h1> Paris </h1>
-      <h2> Frankrike </h2>
-      {/* <h1> Paris {props.city}</h1> */}
-      {/* <h3>{props.country}</h3> */}
+      <h1> {destination.city} </h1>
+      <h2> {destination.country} </h2>
     </div>
   );
 };
 
-const DescriptionDiv = () => {
+const DescriptionDiv = ({destination}: {destination: Destination}) => {
   return (
     <div className="DescriptionDiv">
       <h3>Beskrivelse</h3>
       <p className="DescriptionText">
-        Paris, kjent som "Lysets by" (La Ville Lumière), er en av verdens mest
-        ikoniske og romantiske destinasjoner. Med sin blendende arkitektur,
-        kulturrike historie, førsteklasses shopping, utsøkt mat og pulserende
-        kunstmiljø tiltrekker Paris millioner av besøkende hvert år. Utforsk
-        ikoniske landemerker som Eiffeltårnet, Louvre-museet og Triumfbuen, nyt
-        en avslappende spasertur langs Seinen eller utforsk sjarmerende nabolag
-        som Montmartre og Le Marais. Paris tilbyr noe for enhver smak og er en
-        by som garanterer uforglemmelige opplevelser for alle som besøker.
+        {destination.description}
+        <br />
+        {destination.things}
       </p>
     </div>
   );
