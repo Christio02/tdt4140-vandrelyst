@@ -12,6 +12,7 @@ interface Destination {
   city: string;
 }
 
+
 async function getMainImageUrl(storage: FirebaseStorage, doc: DocumentData) {
   const imagePath = `images/${doc.id}.jpg`; // The card image for the destination has the same name as the document ID.
   const imageRef = ref(storage, imagePath); // Get a reference to the image
@@ -42,7 +43,20 @@ function CardContainer() {
         if (url === null) { // Return a null value if the image URL is null.
           return null;
         }
+      const destinationsArray: Promise<Destination | null>[] = querySnapshot.docs.map(async (doc) => { // Go over all documents in the collection, and transform entry into a promise.
+        const destinationData = doc.data();
+        const url = await getMainImageUrl(storage, doc);
+        if (url === null) { // Return a null value if the image URL is null.
+          return null;
+        }
 
+        return { // Return a Destination object if the image URL is not null.
+          id: doc.id,
+          imageURL: url,
+          country: destinationData.country,
+          city: destinationData.city,
+        };
+      });
         return { // Return a Destination object if the image URL is not null.
           id: doc.id,
           imageURL: url,
@@ -53,6 +67,7 @@ function CardContainer() {
 
       const resolvedDestinationsArray = await Promise.all(destinationsArray); // Waits for all of the promises to resolve
       const validDestinationsArray = resolvedDestinationsArray.filter(destination => destination !== null) as Destination[]; // Filters out the null values, and specify that the array is of type Destination instead of <Destination | null>[]
+     
       setDestinations(validDestinationsArray);
     } catch (error) {
       console.error("Error fetching data from Firebase: ", error);
@@ -62,7 +77,7 @@ function CardContainer() {
   useEffect(() => {
     fetchData();
   }, []); // The empty array means that the effect will only run once, after the initial render.
-
+  
   console.log(destinations); // Log the state
 
   return (

@@ -88,6 +88,7 @@ const DestinationPage = () => {
     return <div>Loading...</div>;
   }
 
+
   return (
     // <div><Navbar></Navbar></div>
     <div>
@@ -96,6 +97,7 @@ const DestinationPage = () => {
       <TitleDiv destination={destination}/>
       <AllRatings destination={destination}/>
       <div className="AllContentDivs">
+        <DescriptionDiv destination={destination}/>
         <DescriptionDiv destination={destination}/>
         <ActivitesDiv title="Ting å gjøre" activities={actualActivities} />
         <ActivitesDiv title="Bilder" activities={otherPhotosOfCity} />
@@ -118,6 +120,8 @@ const AllRatings = ({destination}: {destination: any}) => {
     <div className="AllRatings">
       <StarRating/>
       <PriceRating />
+      <SeasonRating season={destination.season}/>
+      <TempRating temp={destination.temperature}/>
       <SeasonRating season={destination.season}/>
       <TempRating temp={destination.temperature}/>
     </div>
@@ -177,6 +181,7 @@ const SeasonRating = ({season}: {season: any}) => {
   return (
     <div className="SeasonRating" id="Rating">
       <span>{season}</span>
+      <span>{season}</span>
     </div>
   );
 };
@@ -185,14 +190,17 @@ const TempRating = ({temp}: {temp: any}) => {
   return (
     <div className="SeasonRating" id="Rating">
       <span>{temp}</span>
+      <span>{temp}</span>
     </div>
   );
 };
+
 
 const MainPhoto = ({url}: {url: any}) => {
   console.log(url);
   return (
     <div className="PhotoOfCity">
+      <img src={url} alt="Photo of city" />;
       <img src={url} alt="Photo of city" />;
     </div>
   );
@@ -201,6 +209,8 @@ const MainPhoto = ({url}: {url: any}) => {
 const TitleDiv = ({destination}: {destination: Destination}) => {
   return (
     <div className="TitleDiv">
+      <h1> {destination.city} </h1>
+      <h2> {destination.country} </h2>
       <h1> {destination.city} </h1>
       <h2> {destination.country} </h2>
     </div>
@@ -212,6 +222,9 @@ const DescriptionDiv = ({destination}: {destination: Destination}) => {
     <div className="DescriptionDiv">
       <h3>Beskrivelse</h3>
       <p className="DescriptionText">
+        {destination.description}
+        <br />
+        {destination.things}
         {destination.description}
         <br />
         {destination.things}
@@ -406,44 +419,5 @@ interface Review {
   };
 
 
+export default DestinationPage;
 
-
-
-
-export default DestinationPage
-
-// type ActivitiesDivProps = {
-//     title: string;
-//     captions: object;
-//     descriptions: object;
-//     imgLinks: object;
-
-// }
-
-// const ActivitesDiv = () => {
-//     return (
-//         <div className="ActivitiesDiv">
-//             <h3>Ting å gjøre</h3>
-//             <div className="AllActivities">
-//             <ActivityBox text="Photo of the Eiffel tower" imgLink={attraction1}/>
-//             <ActivityBox text="Photo of Champs-Elysees" imgLink={attraction2}/>
-//             <ActivityBox text="Photo of the Louvre" imgLink={attraction3}/>
-//             {/* <Slider></Slider> */}
-//             </div>
-//         </div>
-//     );
-// }
-
-// type ActivityBoxProps = {
-//     text: string;
-//     imgLink: string;
-//   };
-
-// const ActivityBox = (props: ActivityBoxProps) => {
-//     return (
-//         <div className="ActivityBox">
-//             <img src={props.imgLink} alt={props.text} id="imgAttraction"/>
-//             <p>{props.text}</p>
-//         </div>
-//     );
-// }
