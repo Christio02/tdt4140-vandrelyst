@@ -88,7 +88,6 @@ const DestinationPage = () => {
     return <div>Loading...</div>;
   }
 
-
   return (
     // <div><Navbar></Navbar></div>
     <div>
@@ -97,7 +96,6 @@ const DestinationPage = () => {
       <TitleDiv destination={destination}/>
       <AllRatings destination={destination}/>
       <div className="AllContentDivs">
-        <DescriptionDiv destination={destination}/>
         <DescriptionDiv destination={destination}/>
         <ActivitesDiv title="Ting å gjøre" activities={actualActivities} />
         <ActivitesDiv title="Bilder" activities={otherPhotosOfCity} />
@@ -120,8 +118,6 @@ const AllRatings = ({destination}: {destination: any}) => {
     <div className="AllRatings">
       <StarRating/>
       <PriceRating />
-      <SeasonRating season={destination.season}/>
-      <TempRating temp={destination.temperature}/>
       <SeasonRating season={destination.season}/>
       <TempRating temp={destination.temperature}/>
     </div>
@@ -181,7 +177,6 @@ const SeasonRating = ({season}: {season: any}) => {
   return (
     <div className="SeasonRating" id="Rating">
       <span>{season}</span>
-      <span>{season}</span>
     </div>
   );
 };
@@ -189,18 +184,15 @@ const SeasonRating = ({season}: {season: any}) => {
 const TempRating = ({temp}: {temp: any}) => {
   return (
     <div className="SeasonRating" id="Rating">
-      <span>{temp}</span>
-      <span>{temp}</span>
+      <span>{temp}°C</span>
     </div>
   );
 };
-
 
 const MainPhoto = ({url}: {url: any}) => {
   console.log(url);
   return (
     <div className="PhotoOfCity">
-      <img src={url} alt="Photo of city" />;
       <img src={url} alt="Photo of city" />;
     </div>
   );
@@ -209,8 +201,6 @@ const MainPhoto = ({url}: {url: any}) => {
 const TitleDiv = ({destination}: {destination: Destination}) => {
   return (
     <div className="TitleDiv">
-      <h1> {destination.city} </h1>
-      <h2> {destination.country} </h2>
       <h1> {destination.city} </h1>
       <h2> {destination.country} </h2>
     </div>
@@ -223,12 +213,16 @@ const DescriptionDiv = ({destination}: {destination: Destination}) => {
       <h3>Beskrivelse</h3>
       <p className="DescriptionText">
         {destination.description}
+        </p>
         <br />
-        {destination.things}
-        {destination.description}
-        <br />
-        {destination.things}
-      </p>
+        <h3>Ting å gjøre</h3>
+        <ul>
+          {destination.things.map((thing: string, index: number) => (
+            <li key={index}>{thing}</li>
+          ))}
+        </ul>
+        
+      
     </div>
   );
 };
