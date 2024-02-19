@@ -2,7 +2,7 @@
 import React from 'react';
 import "../style/Navbar.css"
 import { assert } from 'console';
-import {logo_navn} from "../images/logo_navn.png";
+import logo_navn from "../assets/logo_navn.png";
 import { CircleUserRound } from 'lucide-react';
 import Dropdown from 'react-bootstrap/Dropdown';
 import DropdownButton from 'react-bootstrap/DropdownButton';
