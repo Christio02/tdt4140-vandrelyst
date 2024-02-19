@@ -1,8 +1,8 @@
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { collection } from "firebase/firestore";
-import React, { useState } from "react";
+import { collection, getDocs, query, where } from "firebase/firestore";
+import React, { useEffect, useState } from "react";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import { db } from "../firebase_setup/firebase";
@@ -16,11 +16,23 @@ const Searchbar = () => {
     setSearchText(event.target.value);
     // console.log(searchText)
   };
+  const sendSearch = async (searchtext: string) => {
+    if (searchtext == null) {
+      return;
+    }
 
-  const sendSearch = () => {
     const getDestinationsDatabase = collection(db, "destinations");
-    const getDestinationFromSearch = await getDestinationsDatabase.where()
-    
+    const searchQuery = query(
+      getDestinationsDatabase,
+      where("city", "==", searchtext),
+      where("country", "==", searchtext)
+    );
+    const snapshot = await getDocs(searchQuery);
+
+    if (snapshot.empty) {
+      alert("Ingen destinasjoner funnet basert på søket ditt!");
+    }
+    console.log(snapshot);
   };
 
   return (
@@ -34,7 +46,7 @@ const Searchbar = () => {
           value={searchText}
           onChange={trackSearch}
         ></Form.Control>
-        <div className="search-icon" onClick={sendSearch}>
+        <div className="search-icon" onClick={() => sendSearch(searchText)}>
           <FontAwesomeIcon icon={faSearch} />
         </div>
       </Form>
