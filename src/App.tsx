@@ -1,6 +1,6 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link } from 'react-router-dom';
 import "./App.css";
 import CardContainer from "./components/CardContainer";
 import DestinationPopUp from "./components/DestinationPopUp";
@@ -14,10 +14,8 @@ function App() {
     <div className="main-container">
       <Navbar />
       <Searchbar />
-
       <DestinationPopUp />
       <Filtercomponent />
-      <Link to="/destinationpage">Destination</Link>
       <CardContainer />
       <Footer />
     </div>

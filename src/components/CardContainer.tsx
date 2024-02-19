@@ -1,5 +1,5 @@
-import { collection, getDocs, getFirestore } from "firebase/firestore";
-import { getDownloadURL, getStorage, ref } from "firebase/storage";
+import { DocumentData, collection, getDocs, getFirestore } from "firebase/firestore";
+import { FirebaseStorage, getDownloadURL, getStorage, ref } from "firebase/storage";
 import { useEffect, useState } from "react";
 import Card from "react-bootstrap/Card";
 import { Link } from "react-router-dom";
@@ -12,7 +12,8 @@ interface Destination {
   city: string;
 }
 
-async function getMainImageUrl(storage: any, doc: any) {
+
+async function getMainImageUrl(storage: FirebaseStorage, doc: DocumentData) {
   const imagePath = `images/${doc.id}.jpg`; // The card image for the destination has the same name as the document ID.
   const imageRef = ref(storage, imagePath); // Get a reference to the image
   
@@ -25,12 +26,10 @@ async function getMainImageUrl(storage: any, doc: any) {
   }
 }
 
-
-
 function CardContainer() {
   const [destinations, setDestinations] = useState<Destination[]>([]);
 
-  const fetchData = async () => {
+  const fetchData = async () => { // Updates the array of destinations, by fetching data from the database.
     try {
       
       const db = getFirestore(); // Get the database
@@ -38,38 +37,47 @@ function CardContainer() {
       const collectionRef = collection(db, "destinations");
       const querySnapshot = await getDocs(collectionRef); // Get all of the documents in the collection.
 
-      const destinationsArray: Promise<Destination | null>[] =
-        querySnapshot.docs.map(async (doc) => { // Go over all documents in the collection, and transform entry into a promise.
-          const destinationData = doc.data();
-          const url = await getMainImageUrl(storage, doc);
-          if (url === null) {
-            return null;
-          }
+      const destinationsArray: Promise<Destination | null>[] = querySnapshot.docs.map(async (doc) => { // Go over all documents in the collection, and transform entry into a promise.
+        const destinationData = doc.data();
+        const url = await getMainImageUrl(storage, doc);
+        if (url === null) { // Return a null value if the image URL is null.
+          return null;
+        }
+      const destinationsArray: Promise<Destination | null>[] = querySnapshot.docs.map(async (doc) => { // Go over all documents in the collection, and transform entry into a promise.
+        const destinationData = doc.data();
+        const url = await getMainImageUrl(storage, doc);
+        if (url === null) { // Return a null value if the image URL is null.
+          return null;
+        }
 
-          return { // Return all of the information needed for the card.
-            id: doc.id,
-            imageURL: url,
-            country: destinationData.country,
-            city: destinationData.city,
-          };
-        });
+        return { // Return a Destination object if the image URL is not null.
+          id: doc.id,
+          imageURL: url,
+          country: destinationData.country,
+          city: destinationData.city,
+        };
+      });
+        return { // Return a Destination object if the image URL is not null.
+          id: doc.id,
+          imageURL: url,
+          country: destinationData.country,
+          city: destinationData.city,
+        };
+      });
 
       const resolvedDestinationsArray = await Promise.all(destinationsArray); // Waits for all of the promises to resolve
-      const validDestinationsArray = resolvedDestinationsArray.filter(
-        (destination): destination is Destination => destination !== null
-      ); // Filters out the null values
-
+      const validDestinationsArray = resolvedDestinationsArray.filter(destination => destination !== null) as Destination[]; // Filters out the null values, and specify that the array is of type Destination instead of <Destination | null>[]
+     
       setDestinations(validDestinationsArray);
     } catch (error) {
-      console.error("Error fetching data from Firebase:", error);
+      console.error("Error fetching data from Firebase: ", error);
     }
   };
 
-
   useEffect(() => {
     fetchData();
-  }, []);
-
+  }, []); // The empty array means that the effect will only run once, after the initial render.
+  
   console.log(destinations); // Log the state
 
   return (
@@ -77,17 +85,19 @@ function CardContainer() {
       <h3 className="title">Alle Reisemål</h3>
       <div className="cards">
         {destinations.map((destination) => (
-          <Card className="card" key={destination.id}>
-            <Card.Img
-              variant="top"
-              src={destination.imageURL}
-              className="card-img"
-            />
-            <Card.Body>
-              <Card.Title>{destination.city}</Card.Title>
-              <Card.Text>{destination.country}</Card.Text>
-            </Card.Body>
-          </Card>
+          <Link to={`/destination/${destination.id}`} key={destination.id} className="link" style={{ textDecoration: 'none' }}> {/* textDecoration none means that we don't get blue lines under the text.*/}
+            <Card className="card" key={destination.id}>
+              <Card.Img
+                variant="top"
+                src={destination.imageURL}
+                className="card-img"
+              />
+              <Card.Body>
+                <Card.Title>{destination.city}</Card.Title>
+                <Card.Text>{destination.country}</Card.Text>
+              </Card.Body>
+            </Card>
+          </Link>
         ))}
       </div>
     </div>
