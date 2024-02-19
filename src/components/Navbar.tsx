@@ -17,13 +17,12 @@ const Navbar = () => {
         <a> <DropdownButton
                 title={<CircleUserRound size={24} />}
                 id="dropdown-menu"
-                variant="string"
+                variant="string" >
 
-                >
-                <Dropdown.Item eventKey="1">Profil</Dropdown.Item>
-                <Dropdown.Item eventKey="2">Logg inn</Dropdown.Item>
-                <Dropdown.Divider />
-                <Dropdown.Item eventKey="3">Logg ut</Dropdown.Item>
+                <Dropdown.Item href="#">Logg inn</Dropdown.Item>
+                <Dropdown.Item href="#">Logg ut</Dropdown.Item>
+
+                
             </DropdownButton> </a>
     
         <a href="#contact">Om oss</a>

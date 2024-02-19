@@ -6,6 +6,7 @@
     overflow: hidden;
     height: 70px;
     width: 100%;
+    overflow: visible;
   }
   
   /* Style the links inside the navigation bar */
@@ -41,7 +42,8 @@
 
 #dropdown-menu {
   color: white;
-  margin: 14px
+  margin: 14px;
+  z-index: 1000;
 }
 
 #dropdown-menu:hover {
