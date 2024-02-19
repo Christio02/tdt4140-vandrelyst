@@ -70,7 +70,7 @@ function CardContainer() {
       <h3 className="title">Alle Reisemål</h3>
       <div className="cards">
         {destinations.map((destination) => (
-          <Link to="/destinationpage" className="link" style={{ textDecoration: 'none' }}> {/* textDecoration none means that we don't get blue lines under the text.*/}
+          <Link to={`/destination/${destination.id}`} key={destination.id} className="link" style={{ textDecoration: 'none' }}> {/* textDecoration none means that we don't get blue lines under the text.*/}
             <Card className="card" key={destination.id}>
               <Card.Img
                 variant="top"
