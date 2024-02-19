@@ -25,8 +25,7 @@ const Navbar = () => {
                 
             </DropdownButton> </a>
     
-        <a href="#contact">Om oss</a>
-        <a href="#about">Reisemål</a>
+        <a href="#about">Om oss</a>
         
         </div>
     
