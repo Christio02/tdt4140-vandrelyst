@@ -1,5 +1,6 @@
 // import { useState } from "react";
 import React from "react";
+import Navbar from "../components/Navbar";
 import "../style/DestinationPage.css";
 import attraction2 from "./arcDeTriumph.jpg";
 import photo1 from "./champsElysees.jpg";
@@ -10,12 +11,17 @@ import photo2 from "./notreDame.jpg";
 import MainPhotoImg from "./paris.jpg"; // Tell webpack this JS file uses this image
 import photo4 from "./seineRiver.jpg";
 
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faStar } from "@fortawesome/free-solid-svg-icons";
+
+
 import Slider from "../components/Slider";
 
 const DestinationPage = () => {
   return (
     // <div><Navbar></Navbar></div>
     <div>
+      <Navbar/>
       <MainPhoto />
       <TitleDiv />
       <AllRatings />
@@ -40,9 +46,9 @@ const DestinationPage = () => {
 const AllRatings = () => {
   return (
     <div className="AllRatings">
-      <StarRating />
+      <StarRating/>
       <PriceRating />
-      <SeasonRating />
+      {/* <SeasonRating /> */}
       <TempRating />
     </div>
   );
@@ -51,13 +57,24 @@ const AllRatings = () => {
 const StarRating = () => {
   let numberOfStars = 5;
   // Henter antall stjerner fra DB
-  let actualRating = 3;
-  let numberOfEmptyStars = numberOfStars - actualRating;
+  let numOfFullStars = numberOfStars - Math.round(averageRating);
   let emptyStar = <span>☆</span>;
   let fullStar = <span>★</span>;
+  // let rating = [];
+  // for (let i=1; i<6; i++) {
+  //   if (i <= numOfFullStars) {
+  //     rating.push(fullStar);
+  //   }
+  //   else {
+  //     rating.push(emptyStar);
+  //   }
+  // }
 
   return (
     <div className="StarRating" id="Rating">
+  {/* //     {rating.map((star, index) => { */}
+  {/* //       <span key={index}>{star}</span>; */}
+  {/* //     })} */}
       <span>★</span>
       <span>☆</span>
       <span>☆</span>
@@ -66,6 +83,8 @@ const StarRating = () => {
     </div>
   );
 };
+
+
 const PriceRating = () => {
   let numberOfDollarSigns = 3;
   // Henter antall stjerner fra DB
@@ -98,7 +117,7 @@ const SeasonRating = () => {
 
 const TempRating = () => {
   // hente fra DB
-  let tempRating = "21,0";
+  let tempRating = "21,0°C";
 
   return (
     // Database hente data
@@ -120,7 +139,7 @@ const TitleDiv = (props: Object) => {
   return (
     <div className="TitleDiv">
       <h1> Paris </h1>
-      <h2> France </h2>
+      <h2> Frankrike </h2>
       {/* <h1> Paris {props.city}</h1> */}
       {/* <h3>{props.country}</h3> */}
     </div>
@@ -265,10 +284,10 @@ interface Review {
       
   ];
   
+  const averageRating = reviews.reduce((acc, review) => acc + review.rating, 0) / reviews.length;
   
   const ReviewSummary = () => {
     // regne ut average rating her
-    const averageRating = reviews.reduce((acc, review) => acc + review.rating, 0) / reviews.length;
     
     // Antall reviews for hver stjernerating
     const starsCount = new Array(5).fill(0);

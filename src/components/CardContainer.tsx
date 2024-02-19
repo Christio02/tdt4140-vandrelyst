@@ -84,8 +84,8 @@ function CardContainer() {
               className="card-img"
             />
             <Card.Body>
-              <Card.Title>{destination.country}</Card.Title>
-              <Card.Text>{destination.city}</Card.Text>
+              <Card.Title>{destination.city}</Card.Title>
+              <Card.Text>{destination.country}</Card.Text>
             </Card.Body>
           </Card>
         ))}
