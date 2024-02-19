@@ -1,6 +1,6 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link } from 'react-router-dom';
 import "./App.css";
 import CardContainer from "./components/CardContainer";
 import DestinationPopUp from "./components/DestinationPopUp";
@@ -13,9 +13,7 @@ function App() {
   return (
     <div className="main-container">
       <Navbar />
-      {/* AddDestinationButton is a component that we created in the components folder */}
       <Searchbar />
-
       <DestinationPopUp />
       <Filtercomponent />
       <Link to="/destinationpage">Destination</Link>
