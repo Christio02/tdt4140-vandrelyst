@@ -40,7 +40,6 @@ function Filtercomponent () {
         </div>
     )
 
-
 }
 
 export default Filtercomponent;

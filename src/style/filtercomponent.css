@@ -19,6 +19,8 @@
     margin: 50px ;
     margin-bottom: 10px;
     border-radius: 100%;
+    margin: 0 30px;
+    margin-top: 30px;
   }
 
   .buttons button:hover{
