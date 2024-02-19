@@ -24,6 +24,15 @@ const DestinationPage = () => {
         <ActivitesDiv title="Ting å gjøre" activities={actualActivities} />
         <ActivitesDiv title="Bilder" activities={otherPhotosOfCity} />
       </div>
+        
+        <div className="review-container">
+        <h2 className="reviews-title">REVIEWS</h2>
+        <div className="review-section">
+        <ReviewSummary />
+        <ReviewList />
+        </div>    
+        </div>
+
     </div>
   );
 };
@@ -208,15 +217,125 @@ type BoxProps = {
   imgLink: string;
 };
 
-const ActivityBox = (props: BoxProps) => {
-  return (
-    <div className="ActivityBox">
-      <img src={props.imgLink} alt={props.caption} id="imgAttraction" />
+const ActivityBox = (props:Object) => {
+    return (
+        <div className="ActivityBox">
+              <img src={props.imgLink} alt={props.caption} id="imgAttraction" />
       <h4>{props.caption}</h4>
       <p id="ImageDescription">{props.description}</p>
-    </div>
-  );
-};
+        </div>
+    );
+}
+
+
+
+interface Review {
+    username: string;
+    date: string;
+    rating: number;
+    comment: string;
+  }
+  
+
+  const reviews: Review[] = [
+    {
+      username: '@Olebole',
+      date: '15.02.24',
+      rating: 5,
+      comment: 'Lorem ipsum dolor sit amet. Sed fugit exercitationem non optio duimus quia corporis diucimus sed perferendis omnis vel laudantium molestiae. At quibusdam accusantium id reprehenderit rerum aut corporis suscipit.',
+    },
+    {
+        username: '@tore tang',
+        date: '02.02.24',
+        rating: 3,
+        comment: 'beste nettside noensinne',
+      },
+      {
+        username: '@testtest',
+        date: '30.01.24',
+        rating: 5,
+        comment: 'test',
+      },
+      {
+        username: '@bruker',
+        date: '27.01.24',
+        rating: 4,
+        comment: '!!',
+      },
+      
+  ];
+  
+  
+  const ReviewSummary = () => {
+    // regne ut average rating her
+    const averageRating = reviews.reduce((acc, review) => acc + review.rating, 0) / reviews.length;
+    
+    // Antall reviews for hver stjernerating
+    const starsCount = new Array(5).fill(0);
+    reviews.forEach(review => {
+      starsCount[review.rating - 1]++;
+    });
+
+    const handleAddReviewClick = () => {
+        console.log('klikkklikk');
+        // Implementere funksjonalitet når man trykker på knappen!!
+      };
+  
+    return (
+        <div className="review-summary">
+          <h2>SUMMARY</h2>
+          <div className="average-rating">
+            {averageRating.toFixed(1)}
+            <span className="total-reviews">({reviews.length} reviews)</span>
+          </div>
+          <div className="star-rating-summary">
+            {[5, 4, 3, 2, 1].map(star => (
+              <div key={star} className="star-row">
+                <div className="star-label">{star} star{star > 1 ? 's' : ''}</div>
+                <div className="star-bar">
+                  <div className="star-fill" style={{ width: `${(starsCount[star - 1] / reviews.length) * 100}%` }}></div>
+                </div>
+                <div className="star-count">{starsCount[star - 1]}</div>
+              </div>
+            ))}
+          </div>
+          <button className="add-review-button" onClick={handleAddReviewClick}>
+            Legg til omtale
+        </button>
+        </div>
+      );
+    };
+  
+  const ReviewItem: React.FC<{ review: Review, index: number }> = ({ review, index }) => {
+    return (
+        <div className={`review-item ${reviews.length - 1 === index ? 'no-border' : ''}`}> 
+          <div className="review-user">{review.username} <span className="review-date">{review.date}</span></div>
+          <div className="star-rating">
+            {'★'.repeat(review.rating)}
+            <span className="star-count">({review.rating})</span>
+          </div>
+          <p>{review.comment}</p>
+        </div>
+    );
+  };
+  
+  const ReviewList = () => {
+    return (
+        <div className="review-list">
+          {reviews.map((review, index) => (
+            <ReviewItem key={index} review={review} index={index} />
+          ))}
+          <button>See more reviews</button>
+        </div>
+    );
+  };
+
+
+
+
+
+
+export default DestinationPage
 
 // type ActivitiesDivProps = {
 //     title: string;
@@ -253,5 +372,3 @@ const ActivityBox = (props: BoxProps) => {
 //         </div>
 //     );
 // }
-
-export default DestinationPage;
