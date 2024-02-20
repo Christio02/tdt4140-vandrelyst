@@ -26,7 +26,6 @@ interface Destination {
   description: string;
   price: number;
   rating: number;
-  season: string;
   temperature: number;
   things: Array<string>;
 }
@@ -118,7 +117,6 @@ const AllRatings = ({destination}: {destination: any}) => {
     <div className="AllRatings">
       <StarRating/>
       <PriceRating />
-      <SeasonRating season={destination.season}/>
       <TempRating temp={destination.temperature}/>
     </div>
   );
@@ -169,14 +167,6 @@ const PriceRating = () => {
       <span>$</span>
       <span>$</span>
       <span>$</span>
-    </div>
-  );
-};
-
-const SeasonRating = ({season}: {season: any}) => {
-  return (
-    <div className="SeasonRating" id="Rating">
-      <span>{season}</span>
     </div>
   );
 };
