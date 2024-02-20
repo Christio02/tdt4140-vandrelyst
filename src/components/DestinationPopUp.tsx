@@ -23,7 +23,7 @@ import "../style/addDestinationPopUp.css";
 
 /**
  * Renders a pop-up component for creating a destination.
- * Allows the user to input various details such as temperature, city, country, rating, price, season, description, and things to do.
+ * Allows the user to input various details such as temperature, city, country, rating, price, description, and things to do.
  * Provides an option to upload an image for the destination.
  * Saves the destination data to a database upon user submission.
  */
@@ -46,7 +46,6 @@ const DestinationPopUp = () => {
   const [country, setCountry] = useState("");
   const [rating, setRating] = useState("");
   const [price, setPrice] = useState("");
-  const [season, setSeason] = useState("");
   const [description, setDescription] = useState("");
   const [things, setThings] = useState<string[]>([]); // things to do should be an array with three strings.
 
@@ -79,9 +78,7 @@ const DestinationPopUp = () => {
   const handleRatingChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setRating(event.target.value);
   };
-  const handleSeasonChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSeason(event.target.value);
-  };
+ 
 
   const handleThingsToDoChange = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -134,7 +131,6 @@ const DestinationPopUp = () => {
         description,
         price: price ? parseInt(price) : 0,
         rating: rating ? parseInt(rating) : 0,
-        season,
         things,
         id: `${city}, ${country}`,
       });
@@ -278,14 +274,6 @@ const DestinationPopUp = () => {
                   size="sm"
                   placeholder="Rating"
                   onChange={handleRatingChange}
-                />
-              </InputGroup>
-              <InputGroup className="mb-3">
-                <Form.Control
-                  type="text"
-                  size="sm"
-                  placeholder="Sesong"
-                  onChange={handleSeasonChange}
                 />
               </InputGroup>
               <InputGroup className="mb-3">
