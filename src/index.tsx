@@ -6,6 +6,8 @@ import App from "./App";
 import "./index.css";
 import DestinationPage from "./pages/DestinationPage";
 import reportWebVitals from "./reportWebVitals";
+import OmOss from "./pages/OmOss";
+
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
@@ -16,6 +18,7 @@ root.render(
       <Routes>
         <Route path="/" element={<App />} />
         <Route path="/destination/:id" element={<DestinationPage />} />
+        <Route path="/omoss" element={<OmOss/>} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>

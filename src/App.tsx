@@ -8,6 +8,7 @@ import Filtercomponent from "./components/Filtercomponent";
 import Footer from "./components/Footer";
 import Navbar from "./components/Navbar";
 import Searchbar from "./components/Searchbar";
+import OmOss from "./pages/OmOss";
 
 function App() {
   return (
@@ -16,6 +17,8 @@ function App() {
       <Searchbar />
       <DestinationPopUp />
       <Filtercomponent />
+      <Link to="/omoss">Om oss</Link>
+      {/* Define routes */}
       <CardContainer />
       <Footer />
     </div>
