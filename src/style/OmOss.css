@@ -3,6 +3,16 @@
     margin-left: 96px;
 }
 
+.fly{
+    margin-left: 465px;
+    margin-top: 3%;
+    filter: grayscale(100%);
+}
+
+.fly img{
+    width: 55%;
+}
+
 .logoBilde{
     background-color: #2B6777;
 }
@@ -28,7 +38,27 @@
     font-weight: bolder;
     justify-content: center;
     justify-content: space-around;
-    margin-top: 12%;
+    margin-top: 2%;
+}
+
+.hev2 {
+    display: flex;
+    position: relative;
+    font-size: 45px;
+    font-weight: bolder;
+    justify-content: center;
+    justify-content: space-around;
+    margin-top: 2%;
+}
+
+.hev1 {
+    display: flex;
+    position: relative;
+    font-size: 45px;
+    font-weight: bolder;
+    justify-content: center;
+    justify-content: space-around;
+    margin-top: 5%;
 }
 
 .om {
@@ -66,8 +96,17 @@
     display: flex;
     flex-direction: row;
     justify-content: center;
-    justify-content: space-evenly;
+    justify-content: space-around;
 }
 
+.globe{
+    display: flex;
+    justify-content: center;
+    margin-top: 3%;
+}
+
+.globe img{
+    max-width: 150px;
+}
 
 

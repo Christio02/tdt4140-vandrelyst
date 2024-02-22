@@ -1,9 +1,11 @@
 import React from 'react';
 import Logo from '../assets/logo_hele.png';
-import "../style/OmOss.css";
+import Plane from '../assets/fly.png';
+import Jorda from '../assets/globe.png';
 import { Link } from 'react-router-dom';
+import "../style/OmOss.css";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEarthAmericas, faPhone, faMailBulk, faGlobe, faGlobeAmericas} from '@fortawesome/free-solid-svg-icons';
+import { faEarthAmericas, faPhone, faMailBulk, faGlobe, faGlobeAmericas, faPlaneDeparture, faPlaneCircleCheck, faPaperPlane, faPlane, faGlobeAfrica, faGlobeAsia, faGlobeEurope, faPeopleArrowsLeftRight} from '@fortawesome/free-solid-svg-icons';
 
 const OmOss: React.FC = () => {
     return (
@@ -11,7 +13,9 @@ const OmOss: React.FC = () => {
             <LogoBilde />
             <LinkToText />
             <Linje />
+            <Fly />
             <HEV />
+            <Om />
             <Om />
             <Globe />
             <VA />
@@ -42,22 +46,30 @@ const LogoBilde = () => {
 const LinkToText = () => {
     return(
         <div className = "linkToText">
-            <Link style={{textDecoration: 'none', color: 'black'}} to={''}>
+            <a href = "#h" style={{textDecoration: 'none', color: 'black'}}>
                 Hvem er vi?
-                </Link>
-            <Link style={{textDecoration: 'none', color: 'black'}} to={''}>
+                </a> 
+            <a href = "#va" style={{textDecoration: 'none', color: 'black'}}>
                 Vårt arbeid
-                </Link>
-            <Link style={{textDecoration: 'none', color: 'black'}} to={''}>
+                </a>
+            <a href = "#ko" style={{textDecoration: 'none', color: 'black'}}>
                 Kontakt oss
-                </Link>
+                </a>
         </div>
+    );
+};
+
+const Fly = () => {
+    return (
+      <div className="fly">
+        <img src={Plane} alt="plane" />
+      </div>
     );
 };
 
 const HEV = () => {
     return(
-        <div className='hev'>
+        <div id = "h" className='hev'>
             Hvem er vi?
         </div>
     );
@@ -69,6 +81,9 @@ const Om = () => {
             Lorem ipsum dolor sit amet. Sed fugit exercitationem non optio ducimus qui corporis ducimus sed perferendis omnis vel laudantium molestiae. Aut quibusdam 
             accusantium id reprehenderit rerum aut corporis suscipit. Id dolore accusamus ut magni omnis ut rerum sint sit temporibus ipsam. Qui galisum quia et nihil consectetur est officiis
             omnis ut dolorum dolores At nihil magni est dolor explicabo. Qui enim mollitia et dolore dolor hic numquam dolores. Id saepe Quis in molestias officiis et odit Quis? Aut optio nihil
+            non debitis aspernatur eum omnis nostrum rem natus assumenda.Lorem ipsum dolor sit amet. Sed fugit exercitationem non optio ducimus qui corporis ducimus sed perferendis omnis vel laudantium molestiae. Aut quibusdam 
+            accusantium id reprehenderit rerum aut corporis suscipit. Id dolore accusamus ut magni omnis ut rerum sint sit temporibus ipsam. Qui galisum quia et nihil consectetur est officiis
+            omnis ut dolorum dolores At nihil magni est dolor explicabo. Qui enim mollitia et dolore dolor hic numquam dolores. Id saepe Quis in molestias officiis et odit Quis? Aut optio nihil
             non debitis aspernatur eum omnis nostrum rem natus assumenda.
         </div>
     );
@@ -76,15 +91,15 @@ const Om = () => {
 
 const Globe = () => {
     return(
-        <div className='globe'>
-            <FontAwesomeIcon icon={faGlobeAmericas}></FontAwesomeIcon>
-        </div>
+        <div className="globe">
+        <img src={Jorda} alt="jorda" />
+      </div>
     );
 };
 
 const VA = () => {
     return(
-        <div className='hev'>
+        <div id = "va" className='hev2'>
             Vårt arbeid
         </div>
     );
@@ -105,7 +120,7 @@ const ARBEID = () => {
 
 const KO = () => {
     return(
-        <div className='hev'>
+        <div id="ko" className ='hev1'>
             Kontakt oss
         </div>
     );
