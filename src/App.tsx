@@ -10,12 +10,8 @@ import Navbar from "./components/Navbar";
 import Searchbar from "./components/Searchbar";
 import OmOss from "./pages/OmOss";
 
-interface SearchbarProps {
-  setSearchResults: (results: any[]) => void;
-}
-
 function App() {
-  const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [searchResults, setSearchResults] = useState<any[]>([]); // parent stores search from searchbar
 
   return (
     <div className="main-container">
@@ -23,7 +19,8 @@ function App() {
       <Searchbar setSearchResults={setSearchResults} />
       <DestinationPopUp />
       <Filtercomponent />
-      <CardContainer destinationsFromSearch={searchResults} />
+      <CardContainer destinationsFromSearch={searchResults} />{" "}
+      {/* Then passes the stored searchresult down to cardcontainer*/}
       <Footer />
     </div>
   );

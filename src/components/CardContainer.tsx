@@ -43,7 +43,7 @@ function CardContainer({ destinationsFromSearch }: CardContainerProps) {
   const [destinations, setDestinations] = useState<Destination[]>([]);
 
   const destinationsToDisplay =
-    destinationsFromSearch.length > 0 ? destinationsFromSearch : destinations;
+    destinationsFromSearch.length > 0 ? destinationsFromSearch : destinations; // if we are getting searchresult, then store this in an array otherwise store the normal o
   const fetchData = async () => {
     // Updates the array of destinations, by fetching data from the database.
     try {

@@ -49,13 +49,16 @@ const Searchbar = ({ setSearchResults }: SearchbarProps) => {
         const imageRef = ref(storage, `images/${doc.id}.jpg`); // create a reference to the image in Firebase Storage
         try {
           const imageURL = await getDownloadURL(imageRef); // get the download URL of the image
-          return { id: doc.id, ...data, imageURL }; // add the image URL to the destination data
+          console.log(
+            `Here is document id : ${doc.id} and the correct imageurl from storage: ${imageURL}`
+          );
+          return { ...data, id: doc.id, imageURL }; // add the image URL to the destination data
         } catch (error) {
           console.error(
             `Error getting download URL for image ${doc.id}.jpg:`,
             error
           );
-          return { id: doc.id, ...data }; // if there was an error getting the image URL, return the destination data without the image URL
+          return { ...data, id: doc.id }; // if there was an error getting the image URL, return the destination data without the image URL
         }
       })
     );
