@@ -22,6 +22,10 @@ interface Destination {
   city: string;
 }
 
+interface CardContainerProps {
+  destinationsFromSearch: Destination[];
+}
+
 async function getMainImageUrl(storage: FirebaseStorage, doc: DocumentData) {
   const imagePath = `images/${doc.id}.jpg`; // The card image for the destination has the same name as the document ID.
   const imageRef = ref(storage, imagePath); // Get a reference to the image
@@ -35,9 +39,11 @@ async function getMainImageUrl(storage: FirebaseStorage, doc: DocumentData) {
   }
 }
 
-function CardContainer() {
+function CardContainer({ destinationsFromSearch }: CardContainerProps) {
   const [destinations, setDestinations] = useState<Destination[]>([]);
 
+  const destinationsToDisplay =
+    destinationsFromSearch.length > 0 ? destinationsFromSearch : destinations;
   const fetchData = async () => {
     // Updates the array of destinations, by fetching data from the database.
     try {
@@ -85,7 +91,7 @@ function CardContainer() {
     <div className="container">
       <h3 className="title">Alle Reisemål</h3>
       <div className="cards">
-        {destinations.map((destination) => (
+        {destinationsToDisplay.map((destination) => (
           <Link
             to={`/destination/${destination.id}`}
             key={destination.id}

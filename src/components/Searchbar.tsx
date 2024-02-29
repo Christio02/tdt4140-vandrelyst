@@ -2,13 +2,18 @@ import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { collection, getDocs, query, where } from "firebase/firestore";
+import { getDownloadURL, ref } from "firebase/storage";
 import React, { useEffect, useState } from "react";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
-import { db } from "../firebase_setup/firebase";
+import { db, storage } from "../firebase_setup/firebase";
 import "../style/searchbar.css";
 
-const Searchbar = () => {
+interface SearchbarProps {
+  setSearchResults: (results: any[]) => void;
+}
+
+const Searchbar = ({ setSearchResults }: SearchbarProps) => {
   const [searchText, setSearchText] = useState(""); // save input text in hook
 
   const trackSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -22,17 +27,40 @@ const Searchbar = () => {
     }
 
     const getDestinationsDatabase = collection(db, "destinations");
-    const searchQuery = query(
+    const searchQueryCity = query(
       getDestinationsDatabase,
-      where("city", "==", searchtext),
-      where("country", "==", searchtext)
+      where("city", "==", searchtext)
     );
-    const snapshot = await getDocs(searchQuery);
+    const searchQueryCountry = query(
+      getDestinationsDatabase,
+      where("country", "==", searchText)
+    );
+    const snapshotCity = await getDocs(searchQueryCity);
+    const snapshotCountry = await getDocs(searchQueryCountry);
 
-    if (snapshot.empty) {
+    if (snapshotCity.empty && snapshotCountry.empty) {
       alert("Ingen destinasjoner funnet basert på søket ditt!");
     }
-    console.log(snapshot);
+
+    const mergedDocs = [...snapshotCity.docs, ...snapshotCountry.docs];
+    const destinationsWithImages = await Promise.all(
+      mergedDocs.map(async (doc) => {
+        const data = doc.data();
+        const imageRef = ref(storage, `images/${doc.id}.jpg`); // create a reference to the image in Firebase Storage
+        try {
+          const imageURL = await getDownloadURL(imageRef); // get the download URL of the image
+          return { id: doc.id, ...data, imageURL }; // add the image URL to the destination data
+        } catch (error) {
+          console.error(
+            `Error getting download URL for image ${doc.id}.jpg:`,
+            error
+          );
+          return { id: doc.id, ...data }; // if there was an error getting the image URL, return the destination data without the image URL
+        }
+      })
+    );
+
+    setSearchResults(destinationsWithImages);
   };
 
   return (
