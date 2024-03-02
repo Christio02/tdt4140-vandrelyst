@@ -78,7 +78,6 @@ const DestinationPopUp = () => {
   const handleRatingChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setRating(event.target.value);
   };
- 
 
   const handleThingsToDoChange = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -122,7 +121,6 @@ const DestinationPopUp = () => {
     console.log(things);
     console.log(image);
     try {
-
       const docRef = await addDoc(collection(db, "destinations"), {
         // Create a new document in the "destinations" collection
         temperature: temperature ? parseInt(temperature) : 0,
@@ -135,8 +133,9 @@ const DestinationPopUp = () => {
         id: `${city}, ${country}`,
       });
       console.log("Document written with id: " + docRef.id);
-      
-      if (image != null) {// Now that we have the document ID, we can use it in the image name
+
+      if (image != null) {
+        // Now that we have the document ID, we can use it in the image name
         const imageRef = ref(storage, `images/${docRef.id}.jpg`);
         await uploadBytes(imageRef, image);
         alert("Destination added successfully!");
