@@ -26,7 +26,7 @@ const Navbar = () => {
                 
             </DropdownButton> </a>
     
-        <Link to="#about">Om oss</Link>
+        <Link to="/omoss">Om oss</Link>
         
         </div>
     

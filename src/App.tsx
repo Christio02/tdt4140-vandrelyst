@@ -17,7 +17,6 @@ function App() {
       <Searchbar />
       <DestinationPopUp />
       <Filtercomponent />
-      <Link to="/omoss">Om oss</Link>
       {/* Define routes */}
       <CardContainer />
       <Footer />
