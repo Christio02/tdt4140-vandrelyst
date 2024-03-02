@@ -1,0 +1,52 @@
+
+
+/* Add a black background color to the top navigation */
+#topnav {
+    background-color:#2B6777;
+    overflow: hidden;
+    height: 70px;
+    width: 100%;
+    overflow: visible;
+  }
+  
+  /* Style the links inside the navigation bar */
+#topnav a:nth-child(n+3) {
+    color: white;
+    padding: 20px 30px;
+    text-decoration: none;
+    font-size: 17px;
+    font-family: "Poppins", Calibri, sans-serif;
+    height: 70px;
+  }
+
+  #topnav a:not(:first-child) {
+    float:right;
+  }
+  
+  
+  #logo {
+    float: left; 
+
+  }
+
+ #topnav a:nth-child(n+3):hover {
+        color: black;
+      }
+
+#logo img {
+   height: 45px;
+    width: auto; 
+    margin-left: 5%; 
+    margin: 13px 
+}
+
+#dropdown-menu {
+  color: white;
+  margin: 14px;
+  z-index: 1000;
+}
+
+#dropdown-menu:hover {
+  color: #000000;
+  margin: 14px
+}

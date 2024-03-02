@@ -1,7 +1,7 @@
 import { addDoc, collection } from "firebase/firestore";
 import { db } from "../firebase_setup/firebase";
 import { useState } from "react";
-
+import Navbar from "../components/Navbar";
 
 
 const TestPage = () => {
@@ -20,11 +20,8 @@ const TestPage = () => {
   }
   return (
     <>
-      <h1>Hello world!</h1>
-      <form>
-        <input type = "text" onChange={(e) => setText(e.target.value)}></input>
-        <button onClick={sendData}>Click here!</button>
-      </form>
+      <Navbar />  
+
     </>
   );
 };
