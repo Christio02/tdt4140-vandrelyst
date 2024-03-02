@@ -10,7 +10,7 @@ import photo2 from "./notreDame.jpg";
 import photo4 from "./seineRiver.jpg";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faStar as faSolidStar } from "@fortawesome/free-solid-svg-icons";
+import { faStar as faSolidStar, faDollarSign} from "@fortawesome/free-solid-svg-icons";
 import { faStar as faRegularStar } from "@fortawesome/free-regular-svg-icons";
 
 import { doc, getDoc, getFirestore } from "firebase/firestore";
@@ -116,7 +116,7 @@ const AllRatings = ({destination}: {destination: Destination}) => {
   return (
     <div className="AllRatings">
       <StarRating rating={destination.rating}/>
-      <PriceRating />
+      <PriceRating price={destination.price}/>
       <TempRating temp={destination.temperature}/>
     </div>
   );
@@ -140,28 +140,26 @@ const StarRating: React.FC<StarRatingProps> = ({rating}) => {
   );
 };
 
-const PriceRating = () => {
-  let numberOfDollarSigns = 3;
-  // Henter antall stjerner fra DB
-  let actualRating = 3;
-  let numberOfEmptyStars = numberOfDollarSigns - actualRating;
-  let dollarSign = <span>$</span>;
+interface PriceRatingProps{
+  price: number
+}
 
+const PriceRating: React.FC<PriceRatingProps> = ({price}) => {
+  
   return (
-    // Database hente data
     <div className="PriceRating" id="Rating">
-      <span>$</span>
-      <span>$</span>
-      <span>$</span>
-      <span>$</span>
+      {Array(price).fill(0).map((_, index) => <FontAwesomeIcon icon={faDollarSign} className='faDollarSign' key={`Dollar-${index}`} />)}
+      {/*It might seem overly complex to write all of this code to do something as simple as creating an array, but this seems to be standard.
+      You start out by filling the array with zeros, and then you map each element from a 0 to an icon of type 'faDollarSign'
+      We then give a className attribute to each of these icons, enabling us to style them with CSS.*/}
     </div>
   );
 };
 
 const TempRating = ({temp}: {temp: any}) => {
   return (
-    <div className="SeasonRating" id="Rating">
-      <span>{temp}°C</span>
+    <div className="TempRating" id="Rating">
+      <span>{temp}°C </span>
     </div>
   );
 };
