@@ -10,7 +10,8 @@ import photo2 from "./notreDame.jpg";
 import photo4 from "./seineRiver.jpg";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faStar } from "@fortawesome/free-solid-svg-icons";
+import { faStar as faSolidStar } from "@fortawesome/free-solid-svg-icons";
+import { faStar as faRegularStar } from "@fortawesome/free-regular-svg-icons";
 
 import { doc, getDoc, getFirestore } from "firebase/firestore";
 import { FirebaseStorage, getDownloadURL, getStorage, ref } from "firebase/storage";
@@ -88,7 +89,6 @@ const DestinationPage = () => {
   }
 
   return (
-    // <div><Navbar></Navbar></div>
     <div>
       <Navbar/>
       <MainPhoto url={mainPhotoUrl}/>
@@ -112,46 +112,33 @@ const DestinationPage = () => {
   );
 };
 
-const AllRatings = ({destination}: {destination: any}) => {
+const AllRatings = ({destination}: {destination: Destination}) => {
   return (
     <div className="AllRatings">
-      <StarRating/>
+      <StarRating rating={destination.rating}/>
       <PriceRating />
       <TempRating temp={destination.temperature}/>
     </div>
   );
 };
 
-const StarRating = () => {
-  let numberOfStars = 5;
-  // Henter antall stjerner fra DB
-  let numOfFullStars = numberOfStars - Math.round(averageRating);
-  let emptyStar = <span>☆</span>;
-  let fullStar = <span>★</span>;
-  // let rating = [];
-  // for (let i=1; i<6; i++) {
-  //   if (i <= numOfFullStars) {
-  //     rating.push(fullStar);
-  //   }
-  //   else {
-  //     rating.push(emptyStar);
-  //   }
-  // }
+
+interface StarRatingProps {
+  rating: number;
+}
+
+const StarRating: React.FC<StarRatingProps> = ({rating}) => {
+  const totalStars = 5;
+  const fullStars = Math.round(rating)
+  const emptyStars = totalStars - fullStars
 
   return (
     <div className="StarRating" id="Rating">
-  {/* //     {rating.map((star, index) => { */}
-  {/* //       <span key={index}>{star}</span>; */}
-  {/* //     })} */}
-      <span>★</span>
-      <span>☆</span>
-      <span>☆</span>
-      <span>☆</span>
-      <span>☆</span>
+      {Array(fullStars).fill(0).map((_, index) => <FontAwesomeIcon icon={faSolidStar} key={`Solid-${index}`} />)}
+      {Array(emptyStars).fill(0).map((_, index) => <FontAwesomeIcon icon={faRegularStar} key={`Regular-${index}`} />)}
     </div>
   );
 };
-
 
 const PriceRating = () => {
   let numberOfDollarSigns = 3;
