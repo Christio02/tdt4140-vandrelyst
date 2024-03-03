@@ -63,7 +63,7 @@ const Searchbar = ({ setSearchResults }: SearchbarProps) => {
       })
     );
 
-    setSearchResults(destinationsWithImages);    
+    setSearchResults(destinationsWithImages);
   };
 
   return (

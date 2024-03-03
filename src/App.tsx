@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import "./App.css";
 import CardContainer from "./components/CardContainer";
-import DestinationPopUp from "./components/DestinationPopUp";
+import DestinationPopUp from "./components/AddDestinationForm";
 import Filtercomponent from "./components/Filtercomponent";
 import Footer from "./components/Footer";
 import Navbar from "./components/Navbar";
