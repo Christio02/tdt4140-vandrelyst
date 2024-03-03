@@ -1,47 +1,28 @@
 import React from "react";
 import Navbar from "../components/Navbar";
 import "../style/DestinationPage.css";
-import attraction2 from "./arcDeTriumph.jpg";
-import photo1 from "./champsElysees.jpg";
-import attraction1 from "./eiffelAttraction.jpg";
-import attraction3 from "./louvre.jpg";
-import photo3 from "./montmartre.jpg";
-import photo2 from "./notreDame.jpg";
-import photo4 from "./seineRiver.jpg";
-
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faStar as faSolidStar, faDollarSign} from "@fortawesome/free-solid-svg-icons";
 import { faStar as faRegularStar } from "@fortawesome/free-regular-svg-icons";
 
 import { doc, getDoc, getFirestore } from "firebase/firestore";
-import { FirebaseStorage, getDownloadURL, getStorage, ref } from "firebase/storage";
+import { getDownloadURL, getStorage, ref } from "firebase/storage";
 import { useEffect, useState } from "react";
 import { useParams} from "react-router-dom";
 import "../style/CardContainer.css";
 
 
 interface Destination {
-  id: string;
-  country: string;
+  mainImage: string;
   city: string;
-  description: string;
-  price: number;
+  country: string;
   rating: number;
+  price: number;
   temperature: number;
-  things: Array<string>;
-}
-
-async function getMainImageUrl(storage: FirebaseStorage, id: string) {
-  const imagePath = `images/${id}.jpg`; // The card image for the destination has the same name as the document ID.
-  const imageRef = ref(storage, imagePath); // Get a reference to the image
+  description: string;
+  thingsToDo: Array<object>;
+  extraImages: Array<object>;
   
-  try {
-    const url = await getDownloadURL(imageRef);
-    return url;
-  } catch (error) {
-    console.error("Error getting download URL:", error);
-    return null;
-  }
 }
 
 const DestinationPage = () => {
@@ -54,35 +35,39 @@ const DestinationPage = () => {
 
   useEffect(() => {
     const fetchDestinationData = async () => {
-      if (!id) { // If the id is null, then return early. Tsx complains if you don't have this check.
+      if (!id) {
         console.log(id);
         return;
       }
       const db = getFirestore();
-      const docRef = doc(db, "destinations", id); // Assuming 'id' is the correct document ID
+      const docRef = doc(db, "destinations", id);
       const docSnap = await getDoc(docRef);
-
+  
       if (docSnap.exists()) {
         console.log("Document data:", docSnap.data());
-        setDestination(docSnap.data() as Destination);
+        const destinationData = docSnap.data() as Destination;
+        setDestination(destinationData);
+  
+        if (!destinationData.mainImage) {
+          console.error("No mainImage in the document:", id);
+          return;
+        }
+  
+        try {
+          const url = await getDownloadURL(ref(getStorage(), destinationData.mainImage));
+          setMainPhotoUrl(url);
+        } catch (error) {
+          console.error("Error fetching image from Firebase: ", error);
+        }
       } else {
         console.log("No such document!");
       }
     };
-    
-    const fetchMainPhotoUrl = async () => {
-      if (!id) return;
-      
-      const url = await getMainImageUrl(getStorage(), id);
-      setMainPhotoUrl(url!);
-    };
-
+  
     if (id) {
       fetchDestinationData();
-      fetchMainPhotoUrl();
     }
-  }, [id]); // Re-run when `id` changes
-
+  }, [id]);
   
   if (!destination) { // If destination data hasn't been fetched yet, you return a loading state
     return <div>Loading...</div>;
@@ -96,17 +81,17 @@ const DestinationPage = () => {
       <AllRatings destination={destination}/>
       <div className="AllContentDivs">
         <DescriptionDiv destination={destination}/>
-        <ActivitesDiv title="Ting å gjøre" activities={actualActivities} />
-        <ActivitesDiv title="Bilder" activities={otherPhotosOfCity} />
+        <ActivitesDiv title="Ting å gjøre" activities={destination.thingsToDo} />
+        <ActivitesDiv title="Bilder" activities={destination.extraImages} />
       </div>
         
-        <div className="review-container">
+      <div className="review-container">
         <h2 className="reviews-title">REVIEWS</h2>
-        <div className="review-section">
-        <ReviewSummary />
-        <ReviewList />
-        </div>    
-        </div>
+      <div className="review-section">
+      <ReviewSummary />
+      <ReviewList />
+      </div>    
+      </div>
 
     </div>
   );
@@ -173,6 +158,17 @@ const MainPhoto = ({url}: {url: any}) => {
   );
 };
 
+const DescriptionDiv = ({destination}: {destination: Destination}) => {
+  return (
+    <div className="DescriptionDiv">
+      <h3>Beskrivelse</h3>
+      <p className="DescriptionText">
+        {destination.description}
+      </p>
+    </div>
+  );
+};
+
 const TitleDiv = ({destination}: {destination: Destination}) => {
   return (
     <div className="TitleDiv">
@@ -182,90 +178,9 @@ const TitleDiv = ({destination}: {destination: Destination}) => {
   );
 };
 
-const DescriptionDiv = ({destination}: {destination: Destination}) => {
-  return (
-    <div className="DescriptionDiv">
-      <h3>Beskrivelse</h3>
-      <p className="DescriptionText">
-        {destination.description}
-        </p>
-        <br />
-        <h3>Ting å gjøre</h3>
-        <ul>
-          {destination.things.map((thing: string, index: number) => (
-            <li key={index}>{thing}</li>
-          ))}
-        </ul>
-        
-      
-    </div>
-  );
-};
-
 type ActivitiesDivProps = {
   title: string;
   activities: Array<object>;
-};
-
-// Things to do
-
-let actualActivities: Array<object> = [
-  {
-    caption: "Bilde av Eiffeltårnet",
-    description:
-      "Du kan kjøpe en billett, og gå trappene eller ta heisen opp til toppen.",
-    imgLink: attraction1,
-  },
-
-  {
-    caption: "Bilde av Triumfbuen",
-    description:
-      "Du kan gå under den eller kjøpe en billett for å komme deg opp til toppen.",
-    imgLink: attraction2,
-  },
-
-  {
-    caption: "Bilde av Louvre",
-    description:
-      "Du må kjøpe billett for å komme inn. Blant de mange kunstverkene som er å finne her er Mona Lisa av Leonardo Da Vinci.",
-    imgLink: attraction3,
-  },
-];
-
-// Other city photos
-
-let otherPhotosOfCity: Array<object> = [
-  { caption: "Bilde av Champs-Élysées", description: "", imgLink: photo1 },
-
-  {
-    caption: "Bilde av Notre Dame-katedralen",
-    description: "",
-    imgLink: photo2,
-  },
-
-  { caption: "Bilde av Montmartre", description: "", imgLink: photo3 },
-
-  { caption: "Bilde av Seinen", description: "", imgLink: photo4 },
-];
-
-const ActivitesDiv = (props: ActivitiesDivProps) => {
-  return (
-    <div className="ActivitiesDiv">
-      <h3>{props.title}</h3>
-      <div className="AllActivities">
-        {props.activities.map((activity: any, index: number) => (
-          <ActivityBox
-            key={index}
-            caption={activity.caption}
-            description={activity.description}
-            imgLink={activity.imgLink}
-          />
-        ))}
-        {/* <ActivityBox caption={props.activities[0].caption} description={props.activities[0].description} imgLink={props.activities[0].imgLink}/>
-         */}
-      </div>
-    </div>
-  );
 };
 
 type BoxProps = {
@@ -283,6 +198,25 @@ const ActivityBox = (props:BoxProps) => {
         </div>
     );
 }
+
+const ActivitesDiv = (props: ActivitiesDivProps) => {
+  return (
+    <div className="ActivitiesDiv">
+      <h3 style={{ textAlign: 'center'}}>{props.title}</h3>
+      <div className="AllActivities">
+        {props.activities.map((activity: any, index: number) => (
+          <ActivityBox
+            key={index}
+            caption={activity.caption}
+            description={activity.description}
+            imgLink={activity.imgLink}
+          />
+        ))}
+      </div>
+    </div>
+  );
+};
+
 
 
 

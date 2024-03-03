@@ -26,19 +26,6 @@ interface CardContainerProps {
   destinationsFromSearch: Destination[];
 }
 
-async function getMainImageUrl(storage: FirebaseStorage, doc: DocumentData) {
-  const imagePath = `images/${doc.id}.jpg`; // The card image for the destination has the same name as the document ID.
-  const imageRef = ref(storage, imagePath); // Get a reference to the image
-
-  try {
-    const url = await getDownloadURL(imageRef);
-    return url;
-  } catch (error) {
-    console.error("Error getting download URL:", error);
-    return null;
-  }
-}
-
 function CardContainer({ destinationsFromSearch }: CardContainerProps) {
   const [destinations, setDestinations] = useState<Destination[]>([]);
 
@@ -56,9 +43,15 @@ function CardContainer({ destinationsFromSearch }: CardContainerProps) {
         querySnapshot.docs.map(async (doc) => {
           // Go over all documents in the collection, and transform entry into a promise.
           const destinationData = doc.data();
-          const url = await getMainImageUrl(storage, doc);
+          let url = null;
+          try {
+            url = await getDownloadURL(ref(storage, destinationData.mainImage))
+          } catch (error) {
+            console.error("Error fetching image from Firebase: ", destinationData.city);
+          }
+          console.log(url);
           if (url === null) {
-            // Return a null value if the image URL is null.
+            console.log("No main image for this destination: ", destinationData.city)
             return null;
           }
           return {
