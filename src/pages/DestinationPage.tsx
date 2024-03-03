@@ -1,20 +1,12 @@
 import React from "react";
 import Navbar from "../components/Navbar";
 import "../style/DestinationPage.css";
-import attraction2 from "./arcDeTriumph.jpg";
-import photo1 from "./champsElysees.jpg";
-import attraction1 from "./eiffelAttraction.jpg";
-import attraction3 from "./louvre.jpg";
-import photo3 from "./montmartre.jpg";
-import photo2 from "./notreDame.jpg";
-import photo4 from "./seineRiver.jpg";
-
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faStar as faSolidStar, faDollarSign} from "@fortawesome/free-solid-svg-icons";
 import { faStar as faRegularStar } from "@fortawesome/free-regular-svg-icons";
 
 import { doc, getDoc, getFirestore } from "firebase/firestore";
-import { FirebaseStorage, getDownloadURL, getStorage, ref } from "firebase/storage";
+import { getDownloadURL, getStorage, ref } from "firebase/storage";
 import { useEffect, useState } from "react";
 import { useParams} from "react-router-dom";
 import "../style/CardContainer.css";
@@ -88,6 +80,7 @@ const DestinationPage = () => {
       <TitleDiv destination={destination}/>
       <AllRatings destination={destination}/>
       <div className="AllContentDivs">
+        <DescriptionDiv destination={destination}/>
         <ActivitesDiv title="Ting å gjøre" activities={destination.thingsToDo} />
         <ActivitesDiv title="Bilder" activities={destination.extraImages} />
       </div>
@@ -165,6 +158,17 @@ const MainPhoto = ({url}: {url: any}) => {
   );
 };
 
+const DescriptionDiv = ({destination}: {destination: Destination}) => {
+  return (
+    <div className="DescriptionDiv">
+      <h3>Beskrivelse</h3>
+      <p className="DescriptionText">
+        {destination.description}
+      </p>
+    </div>
+  );
+};
+
 const TitleDiv = ({destination}: {destination: Destination}) => {
   return (
     <div className="TitleDiv">
@@ -179,44 +183,21 @@ type ActivitiesDivProps = {
   activities: Array<object>;
 };
 
+type BoxProps = {
+  caption: string;
+  description: string;
+  imgLink: string;
+};
 
-let actualActivities: Array<object> = [
-  {
-    caption: "Bilde av Eiffeltårnet",
-    description:
-      "Du kan kjøpe en billett, og gå trappene eller ta heisen opp til toppen.",
-    imgLink: attraction1,
-  },
-
-  {
-    caption: "Bilde av Triumfbuen",
-    description:
-      "Du kan gå under den eller kjøpe en billett for å komme deg opp til toppen.",
-    imgLink: attraction2,
-  },
-
-  {
-    caption: "Bilde av Louvre",
-    description:
-      "Du må kjøpe billett for å komme inn. Blant de mange kunstverkene som er å finne her er Mona Lisa av Leonardo Da Vinci.",
-    imgLink: attraction3,
-  },
-];
-
-
-let otherPhotosOfCity: Array<object> = [
-  { caption: "Bilde av Champs-Élysées", description: "", imgLink: photo1 },
-
-  {
-    caption: "Bilde av Notre Dame-katedralen",
-    description: "",
-    imgLink: photo2,
-  },
-
-  { caption: "Bilde av Montmartre", description: "", imgLink: photo3 },
-
-  { caption: "Bilde av Seinen", description: "", imgLink: photo4 },
-];
+const ActivityBox = (props:BoxProps) => {
+    return (
+        <div className="ActivityBox">
+              <img src={props.imgLink} alt={props.caption} id="imgAttraction" />
+      <h4>{props.caption}</h4>
+      <p id="ImageDescription">{props.description}</p>
+        </div>
+    );
+}
 
 const ActivitesDiv = (props: ActivitiesDivProps) => {
   return (
@@ -236,21 +217,6 @@ const ActivitesDiv = (props: ActivitiesDivProps) => {
   );
 };
 
-type BoxProps = {
-  caption: string;
-  description: string;
-  imgLink: string;
-};
-
-const ActivityBox = (props:BoxProps) => {
-    return (
-        <div className="ActivityBox">
-              <img src={props.imgLink} alt={props.caption} id="imgAttraction" />
-      <h4>{props.caption}</h4>
-      <p id="ImageDescription">{props.description}</p>
-        </div>
-    );
-}
 
 
 
