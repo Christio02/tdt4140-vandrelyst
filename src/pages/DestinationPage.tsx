@@ -21,27 +21,16 @@ import "../style/CardContainer.css";
 
 
 interface Destination {
-  id: string;
-  country: string;
+  mainImage: string;
   city: string;
-  description: string;
-  price: number;
+  country: string;
   rating: number;
+  price: number;
   temperature: number;
-  things: Array<string>;
-}
-
-async function getMainImageUrl(storage: FirebaseStorage, id: string) {
-  const imagePath = `images/${id}.jpg`; // The card image for the destination has the same name as the document ID.
-  const imageRef = ref(storage, imagePath); // Get a reference to the image
+  description: string;
+  thingsToDo: Array<object>;
+  extraImages: Array<object>;
   
-  try {
-    const url = await getDownloadURL(imageRef);
-    return url;
-  } catch (error) {
-    console.error("Error getting download URL:", error);
-    return null;
-  }
 }
 
 const DestinationPage = () => {
@@ -54,35 +43,39 @@ const DestinationPage = () => {
 
   useEffect(() => {
     const fetchDestinationData = async () => {
-      if (!id) { // If the id is null, then return early. Tsx complains if you don't have this check.
+      if (!id) {
         console.log(id);
         return;
       }
       const db = getFirestore();
-      const docRef = doc(db, "destinations", id); // Assuming 'id' is the correct document ID
+      const docRef = doc(db, "destinations", id);
       const docSnap = await getDoc(docRef);
-
+  
       if (docSnap.exists()) {
         console.log("Document data:", docSnap.data());
-        setDestination(docSnap.data() as Destination);
+        const destinationData = docSnap.data() as Destination;
+        setDestination(destinationData);
+  
+        if (!destinationData.mainImage) {
+          console.error("No mainImage in the document:", id);
+          return;
+        }
+  
+        try {
+          const url = await getDownloadURL(ref(getStorage(), destinationData.mainImage));
+          setMainPhotoUrl(url);
+        } catch (error) {
+          console.error("Error fetching image from Firebase: ", error);
+        }
       } else {
         console.log("No such document!");
       }
     };
-    
-    const fetchMainPhotoUrl = async () => {
-      if (!id) return;
-      
-      const url = await getMainImageUrl(getStorage(), id);
-      setMainPhotoUrl(url!);
-    };
-
+  
     if (id) {
       fetchDestinationData();
-      fetchMainPhotoUrl();
     }
-  }, [id]); // Re-run when `id` changes
-
+  }, [id]);
   
   if (!destination) { // If destination data hasn't been fetched yet, you return a loading state
     return <div>Loading...</div>;
@@ -95,18 +88,17 @@ const DestinationPage = () => {
       <TitleDiv destination={destination}/>
       <AllRatings destination={destination}/>
       <div className="AllContentDivs">
-        <DescriptionDiv destination={destination}/>
-        <ActivitesDiv title="Ting å gjøre" activities={actualActivities} />
-        <ActivitesDiv title="Bilder" activities={otherPhotosOfCity} />
+        <ActivitesDiv title="Ting å gjøre" activities={destination.thingsToDo} />
+        <ActivitesDiv title="Bilder" activities={destination.extraImages} />
       </div>
         
-        <div className="review-container">
+      <div className="review-container">
         <h2 className="reviews-title">REVIEWS</h2>
-        <div className="review-section">
-        <ReviewSummary />
-        <ReviewList />
-        </div>    
-        </div>
+      <div className="review-section">
+      <ReviewSummary />
+      <ReviewList />
+      </div>    
+      </div>
 
     </div>
   );
@@ -182,32 +174,11 @@ const TitleDiv = ({destination}: {destination: Destination}) => {
   );
 };
 
-const DescriptionDiv = ({destination}: {destination: Destination}) => {
-  return (
-    <div className="DescriptionDiv">
-      <h3>Beskrivelse</h3>
-      <p className="DescriptionText">
-        {destination.description}
-        </p>
-        <br />
-        <h3>Ting å gjøre</h3>
-        <ul>
-          {destination.things.map((thing: string, index: number) => (
-            <li key={index}>{thing}</li>
-          ))}
-        </ul>
-        
-      
-    </div>
-  );
-};
-
 type ActivitiesDivProps = {
   title: string;
   activities: Array<object>;
 };
 
-// Things to do
 
 let actualActivities: Array<object> = [
   {
@@ -232,7 +203,6 @@ let actualActivities: Array<object> = [
   },
 ];
 
-// Other city photos
 
 let otherPhotosOfCity: Array<object> = [
   { caption: "Bilde av Champs-Élysées", description: "", imgLink: photo1 },
@@ -251,7 +221,7 @@ let otherPhotosOfCity: Array<object> = [
 const ActivitesDiv = (props: ActivitiesDivProps) => {
   return (
     <div className="ActivitiesDiv">
-      <h3>{props.title}</h3>
+      <h3 style={{ textAlign: 'center'}}>{props.title}</h3>
       <div className="AllActivities">
         {props.activities.map((activity: any, index: number) => (
           <ActivityBox
@@ -261,8 +231,6 @@ const ActivitesDiv = (props: ActivitiesDivProps) => {
             imgLink={activity.imgLink}
           />
         ))}
-        {/* <ActivityBox caption={props.activities[0].caption} description={props.activities[0].description} imgLink={props.activities[0].imgLink}/>
-         */}
       </div>
     </div>
   );

@@ -12,12 +12,11 @@ import {
 } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import React, { useEffect, useState } from "react";
-import { Dropdown } from "react-bootstrap";
+import { Col, Dropdown, Row } from "react-bootstrap";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import InputGroup from "react-bootstrap/InputGroup";
 import Modal from "react-bootstrap/Modal";
-import { ObjectFlags } from "typescript";
 import { db, storage } from "../firebase_setup/firebase";
 import "../style/addDestinationPopUp.css";
 
@@ -40,14 +39,21 @@ const DestinationPopUp = () => {
   const handleAddShow = () => setShowAddDestination(true);
 
   const [image, setImage] = useState<File | null>(null);
-
   const [temperature, setTemperature] = useState("");
   const [city, setCity] = useState("");
   const [country, setCountry] = useState("");
   const [rating, setRating] = useState("");
   const [price, setPrice] = useState("");
   const [description, setDescription] = useState("");
-  const [things, setThings] = useState<string[]>([]); // things to do should be an array with three strings.
+  
+  const [thingsImages, setThingsImages] = useState<(File | null)[]>([null, null, null]);
+  const [imageTitles, setImageTitles] = useState<string[]>(['', '', '']);
+  const [imageDescriptions, setImageDescriptions] = useState<string[]>(['', '', '']);
+
+  const [extraImages, setExtraImages] = useState<(File | null)[]>([null, null, null, null]);
+  const [extraImageTitles, setExtraImageTitles] = useState(['', '', '', '']);
+
+
 
   const [selectedDest, setSelectedDest] = useState("");
 
@@ -55,11 +61,12 @@ const DestinationPopUp = () => {
 
   const handleShowDelete = () => setIsDeleteForm(true);
   const handleCloseDelete = () => setIsDeleteForm(false);
-
-  const handleTemperatureChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setTemperature(event.target.value);
+  
+  const handleImageChange = (event: React.FormEvent) => {
+    const files = (event.target as HTMLInputElement).files;
+    if (files && files.length > 0) {
+      setImage(files[0]);
+    }
   };
   const handleCityChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setCity(event.target.value);
@@ -67,84 +74,128 @@ const DestinationPopUp = () => {
   const handleCountryChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setCountry(event.target.value);
   };
+  const handleRatingChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setRating(event.target.value);
+  };
+  const handlePriceChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setPrice(event.target.value);
+  };
+  const handleTemperatureChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setTemperature(event.target.value);
+  };
   const handleDescriptionChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     setDescription(event.target.value);
   };
-  const handlePriceChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setPrice(event.target.value);
-  };
-  const handleRatingChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setRating(event.target.value);
+
+  const handleThingsImagesChange = (index: number) => (event: React.ChangeEvent<HTMLInputElement>) => {
+    const newImages = [...thingsImages]; 
+    const files = event.target.files;
+    if (files && files.length > 0) {
+      newImages[index] = files[0];
+    } else {
+      newImages[index] = null;
+    }
+    setThingsImages(newImages); // Set the new images array
   };
 
-  const handleThingsToDoChange = (
+  const handlePictureTitleChange = (index: number ) => (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    const thingsArray = event.target.value
-      .split(",")
-      .map((element) => element.trim()); // Remove leading and trailing whitespaces
-    setThings(thingsArray);
+    const newTitles = [...imageTitles]; 
+    newTitles[index] = event.target.value; 
+    setImageTitles(newTitles);
   };
 
-  const handleImageChange = (event: React.FormEvent) => {
-    const files = (event.target as HTMLInputElement).files;
+  const handlePictureDescriptionChange = (index: number ) => (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const newDescriptions = [...imageDescriptions]; 
+    newDescriptions[index] = event.target.value; 
+    setImageDescriptions(newDescriptions);
+  };
+  const handleExtraImagesChange = (index: number) => (event: React.ChangeEvent<HTMLInputElement>) => {
+    const newImages = [...extraImages]; 
+    const files = event.target.files;
     if (files && files.length > 0) {
-      setImage(files[0]);
+      newImages[index] = files[0];
+    } else {
+      newImages[index] = null;
     }
+    setExtraImages(newImages); // Set the new images array
   };
-
-  const uploadImageAndGetURL = (): Promise<string> => {
-    return new Promise((resolve, reject) => {
-      if (image == null) {
-        // Return if no image
-        reject("No image to upload.");
-        return;
-      }
-
-      const imageRef = ref(storage, `images/${image.name}`);
-      uploadBytes(imageRef, image)
-        .then((snapshot) => {
-          getDownloadURL(snapshot.ref)
-            .then((downloadURL) => {
-              resolve(downloadURL);
-            })
-            .catch(reject);
-        })
-        .catch(reject);
-    });
+  
+  const handleExtraImageTitleChange = (index: number ) => (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const newTitles = [...extraImageTitles]; 
+    newTitles[index] = event.target.value; 
+    setExtraImageTitles(newTitles);
   };
 
   const sendDataToFirestore = async () => {
-    console.log(temperature);
-    console.log(things);
-    console.log(image);
-    try {
-      const docRef = await addDoc(collection(db, "destinations"), {
-        // Create a new document in the "destinations" collection
-        temperature: temperature ? parseInt(temperature) : 0,
-        city,
-        country,
-        description,
-        price: price ? parseInt(price) : 0,
-        rating: rating ? parseInt(rating) : 0,
-        things,
-        id: `${city}, ${country}`,
-      });
-      console.log("Document written with id: " + docRef.id);
 
-      if (image != null) {
-        // Now that we have the document ID, we can use it in the image name
-        const imageRef = ref(storage, `images/${docRef.id}.jpg`);
+    let mainImageUrl = null;
+    if (image != null) {
+        const imageRef = ref(storage, `images/${city}_${country}/main.jpg`);
         await uploadBytes(imageRef, image);
-        alert("Destination added successfully!");
-      }
-    } catch (error) {
-      console.error("Error: " + error);
-      alert("An error occurred while adding the destination.");
+        mainImageUrl = await getDownloadURL(imageRef);
     }
-  };
+
+    const uploadImageAndGetURL = async (imageFile: Blob | ArrayBuffer | null, path: string | undefined) => {
+        if (imageFile) {
+            const imageRef = ref(storage, path);
+            await uploadBytes(imageRef, imageFile);
+            return getDownloadURL(imageRef);
+        }
+        return null;
+    };
+
+    const thingsToDoPromises = thingsImages.map((file, index) =>
+        uploadImageAndGetURL(file, `images/${city}_${country}/thingsToDo_${index}.jpg`)
+    );
+    const extraImagesPromises = extraImages.map((file, index) =>
+        uploadImageAndGetURL(file, `images/${city}_${country}/extraImages_${index}.jpg`)
+    );
+
+    try {
+        const thingsToDoUrls = await Promise.all(thingsToDoPromises);
+        const extraImagesUrls = await Promise.all(extraImagesPromises);
+
+        const thingsToDoData = thingsToDoUrls.map((url, index) => ({
+            caption: imageTitles[index],
+            description: imageDescriptions[index],
+            imgLink: url,
+        }));
+        
+        const extraImagesData = extraImagesUrls.map((url, index) => ({
+            caption: extraImageTitles[index],
+            description: "",
+            imgLink: url,
+        }));
+
+        const docRef = await addDoc(collection(db, "destinations"), {
+            mainImage: mainImageUrl,
+            city,
+            country,
+            rating: rating ? parseInt(rating) : 0,
+            price: price ? parseInt(price) : 0,
+            temperature: temperature ? parseInt(temperature) : 0,
+            description,
+            thingsToDo: thingsToDoData,
+            extraImages: extraImagesData,
+        });
+
+        console.log("Document written with id: ", docRef.id);
+        alert("Destination added successfully!");
+    } catch (error) {
+        console.error("Error: ", error);
+        alert("An error occurred while adding the destination.");
+    }
+};
 
   const fetchFromFirestore = async () => {
     const destinationRef = collection(db, "destinations");
@@ -207,92 +258,258 @@ const DestinationPopUp = () => {
       </Button>
       {showAddDestination && (
         <div className="modal-container">
-          <Modal show={showAddDestination} onHide={handleAddClose} size="lg">
-            {" "}
+          <Modal show={showAddDestination} onHide={handleAddClose} size="xl">
             {/* from https://react-bootstrap.netlify.app/docs/components/modal */}
             <Modal.Header closeButton>
-              {" "}
               {/* Top bar, where the X is.*/}
               <Modal.Title className="ms-auto">
                 Skjema for oppretting av destinasjon
               </Modal.Title>
             </Modal.Header>
-            <Modal.Body
-              as={"div"}
-              style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
-            >
-              {" "}
-              {/* All of our inputs are stored in the main body of the popup. */}
-              <Form.Group controlId="formFile" className="destination-file">
-                {/* For image upload*/}
-                <Form.Label>Endre forsidebilde</Form.Label>
-                <Form.Control
-                  type="file"
-                  size="lg"
-                  onChange={handleImageChange}
-                />
-              </Form.Group>
-              {/* Here are all of the text fields, boilerplate code. [REPEATED] */}
-              <InputGroup className="mb-3">
-                <Form.Control
-                  type="text"
-                  size="sm"
-                  placeholder="By"
-                  onChange={handleCityChange}
-                  autoFocus
-                />
-              </InputGroup>
-              {/* The city column has focus when the popup is shwon*/}
-              <InputGroup className="mb-3">
-                <Form.Control
-                  type="text"
-                  size="sm"
-                  placeholder="Land"
-                  onChange={handleCountryChange}
-                />
-              </InputGroup>
-              <Form.Group
-                controlId="description"
-                className="description-input-box"
-                onChange={handleDescriptionChange}
-              >
-                <Form.Label>Beskrivelse</Form.Label>
-                <Form.Control as="textarea" rows={3}></Form.Control>
-              </Form.Group>
-              <InputGroup className="mb-3">
-                <Form.Control
-                  type="text"
-                  size="sm"
-                  placeholder="Pris"
-                  onChange={handlePriceChange}
-                />
-              </InputGroup>
-              <InputGroup className="mb-3">
-                <Form.Control
-                  type="text"
-                  size="sm"
-                  placeholder="Rating"
-                  onChange={handleRatingChange}
-                />
-              </InputGroup>
-              <InputGroup className="mb-3">
-                <Form.Control
-                  type="text"
-                  size="sm"
-                  placeholder="Gjennomsnittstemperatur"
-                  onChange={handleTemperatureChange}
-                />
-              </InputGroup>
-              <InputGroup className="mb-3">
-                <Form.Control
-                  type="text"
-                  size="sm"
-                  placeholder="Skriv inn 3 ting man kan gjøre i byen med komma mellom"
-                  onChange={handleThingsToDoChange}
-                />
-              </InputGroup>
-              {/*ALL INPUT FIELDS HAVE BEEN DEFINED. [END OF BOILERPLATE CODE]*/}
+            <Modal.Body as={"div"} style={{ padding: "1rem" }}>
+              <Row className="mb-1 justify-content-center">
+                <Col>
+                  <Modal.Title className="text-center">
+                    Generell informasjon
+                  </Modal.Title>
+                </Col>
+              </Row>
+              <Row className="mb-1">
+                <Form.Group controlId="formFile" className="destination-file">
+                  {/* For image upload*/}
+                  <Form.Label>Forsidebilde</Form.Label>
+                  <Form.Control
+                    type="file"
+                    size="lg"
+                    onChange={handleImageChange}
+                  />
+                </Form.Group>
+              </Row>
+              <Row className="mb-1">
+                <Col md={3}>
+                  <InputGroup>
+                    <Form.Control
+                      type="text"
+                      placeholder="By"
+                      onChange={handleCityChange}
+                      autoFocus
+                    />
+                  </InputGroup>
+                </Col>
+                <Col md={3}>
+                  <InputGroup>
+                    <Form.Control
+                      type="text"
+                      placeholder="Land"
+                      onChange={handleCountryChange}
+                    />
+                  </InputGroup>
+                </Col>
+                <Col md={2}>
+                  <InputGroup>
+                    <Form.Control
+                      type="text"
+                      placeholder="Rating"
+                      onChange={handleRatingChange}
+                    />
+                  </InputGroup>
+                </Col>
+                <Col md={2}>
+                  <InputGroup>
+                    <Form.Control
+                      type="text"
+                      placeholder="Pris"
+                      onChange={handlePriceChange}
+                    />
+                  </InputGroup>
+                </Col>
+                <Col md={2}>
+                  <InputGroup>
+                    <Form.Control
+                      type="text"
+                      placeholder="Temperatur"
+                      onChange={handleTemperatureChange}
+                    />
+                  </InputGroup>
+                </Col>
+              </Row>
+              {/* Description */}
+              <Row className="mb-5">
+                <Col>
+                  <Form.Group controlId="description">
+                    <Form.Label>Beskrivelse</Form.Label>
+                    <Form.Control as="textarea" rows={3} onChange={handleDescriptionChange}></Form.Control>
+                  </Form.Group>
+                </Col>
+              </Row>
+
+              <Row className="mb-1 justify-content-center">
+                <Col>
+                  <Modal.Title className="text-center">
+                    Ting å gjøre
+                  </Modal.Title>
+                </Col>
+              </Row>
+
+              <Row className="mb-1">
+                <Col md={4}>
+                  <Form.Group controlId="formFile" className="destination-file">
+                    <Form.Control
+                      type="file"
+                      onChange={handleThingsImagesChange(0)}
+                    />
+                  </Form.Group>
+                </Col>
+                <Col md={4}>
+                  <Form.Group controlId="formFile" className="destination-file">
+                    <Form.Control
+                      type="file"
+                      onChange={handleThingsImagesChange(1)}
+                    />
+                  </Form.Group>
+                </Col>
+                <Col md={4}>
+                  <Form.Group controlId="formFile" className="destination-file">
+                    <Form.Control
+                      type="file"
+                      onChange={handleThingsImagesChange(2)}
+                    />
+                  </Form.Group>
+                </Col>
+              </Row>
+              <Row className="mb-1">
+                <Col md={4}>
+                    <InputGroup>
+                      <Form.Control
+                        type="text"
+                        placeholder="Bildetittel 1"
+                        onChange={handlePictureTitleChange(0)}
+                      />
+                    </InputGroup>
+                  </Col>
+                  <Col md={4}>
+                    <InputGroup>
+                      <Form.Control
+                        type="text"
+                        placeholder="Bildetittel 2"
+                        onChange={handlePictureTitleChange(1)}
+                      />
+                    </InputGroup>
+                  </Col>
+                  <Col md={4}>
+                    <InputGroup>
+                      <Form.Control
+                        type="text"
+                        placeholder="Bildetittel 3"
+                        onChange={handlePictureTitleChange(2)}
+                      />
+                    </InputGroup>
+                  </Col>
+                </Row>
+                {/* Description of things to do*/}
+                <Row className="mb-5">
+                  <Col md={4}>
+                    <Form.Group controlId="description">
+                      <Form.Label>Beskrivelse 1</Form.Label>
+                      <Form.Control as="textarea" rows={3} onChange={handlePictureDescriptionChange(0)}></Form.Control>
+                    </Form.Group>
+                  </Col>
+                  <Col md={4}>
+                    <Form.Group controlId="description">
+                      <Form.Label>Beskrivelse 2</Form.Label>
+                      <Form.Control as="textarea" rows={3} onChange={handlePictureDescriptionChange(1)}></Form.Control>
+                    </Form.Group>
+                  </Col>
+                  <Col md={4}>
+                    <Form.Group controlId="description">
+                      <Form.Label>Beskrivelse 3</Form.Label>
+                      <Form.Control as="textarea" rows={3} onChange={handlePictureDescriptionChange(2)}></Form.Control>
+                    </Form.Group>
+                  </Col>
+              </Row>
+              <Row className="mb-1 justify-content-center">
+                <Col>
+                  <Modal.Title className="text-center">
+                    Ekstra bilder
+                  </Modal.Title>
+                </Col>
+              </Row>
+              <Row className="mb-1">
+                <Col md={3}>
+                  <Form.Group controlId="formFile" className="destination-file">
+                    <Form.Control
+                      type="file"
+                      onChange={handleExtraImagesChange(0)}
+                    />
+                  </Form.Group>
+                </Col>
+                <Col md={3}>
+                  <Form.Group controlId="formFile" className="destination-file">
+                    <Form.Control
+                      type="file"
+                      onChange={handleExtraImagesChange(1)}
+                    />
+                  </Form.Group>
+                </Col>
+                <Col md={3}>
+                  <Form.Group controlId="formFile" className="destination-file">
+                    <Form.Control
+                      type="file"
+                      onChange={handleExtraImagesChange(2)}
+                    />
+                  </Form.Group>
+                </Col>
+                <Col md={3}>
+                  <Form.Group controlId="formFile" className="destination-file">
+                    <Form.Control
+                      type="file"
+                      onChange={handleExtraImagesChange(3)}
+                    />
+                  </Form.Group>
+                </Col>
+              </Row>
+              <Row className="mb-1">
+                <Col md={3}>
+                    <InputGroup>
+                      <Form.Control
+                        type="text"
+                        placeholder="Bildetittel 1"
+                        onChange={handleExtraImageTitleChange(0)}
+                      />
+                    </InputGroup>
+                  </Col>
+                  <Col md={3}>
+                    <InputGroup>
+                      <Form.Control
+                        type="text"
+                        placeholder="Bildetittel 2"
+                        onChange={handleExtraImageTitleChange(1)}
+                      />
+                    </InputGroup>
+                  </Col>
+                  <Col md={3}>
+                    <InputGroup>
+                      <Form.Control
+                        type="text"
+                        placeholder="Bildetittel 3"
+                        onChange={handleExtraImageTitleChange(2)}
+                      />
+                    </InputGroup>
+                  </Col>
+                  <Col md={3}>
+                    <InputGroup>
+                      <Form.Control
+                        type="text"
+                        placeholder="Bildetittel 4"
+                        onChange={handleExtraImageTitleChange(3)}
+                      />
+                    </InputGroup>
+                  </Col>
+                </Row>
             </Modal.Body>
+          
+
+          
             <Modal.Footer
               style={{ display: "flex", justifyContent: "center", gap: "5rem" }}
             >
