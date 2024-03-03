@@ -88,8 +88,8 @@ const DestinationPage = () => {
       <Navbar />
       <MainPhoto url={mainPhotoUrl} />
       <TitleDiv destination={destination} />
-      <DeleteDestinationForm id={id} city={destination.city} />
       <AllRatings destination={destination} />
+      <DeleteDestinationForm id={id} city={destination.city} />
       <div className="AllContentDivs">
         <DescriptionDiv destination={destination} />
         <ActivitesDiv
