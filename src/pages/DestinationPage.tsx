@@ -10,7 +10,8 @@ import photo2 from "./notreDame.jpg";
 import photo4 from "./seineRiver.jpg";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faStar } from "@fortawesome/free-solid-svg-icons";
+import { faStar as faSolidStar, faDollarSign} from "@fortawesome/free-solid-svg-icons";
+import { faStar as faRegularStar } from "@fortawesome/free-regular-svg-icons";
 
 import { doc, getDoc, getFirestore } from "firebase/firestore";
 import { FirebaseStorage, getDownloadURL, getStorage, ref } from "firebase/storage";
@@ -88,7 +89,6 @@ const DestinationPage = () => {
   }
 
   return (
-    // <div><Navbar></Navbar></div>
     <div>
       <Navbar/>
       <MainPhoto url={mainPhotoUrl}/>
@@ -112,69 +112,54 @@ const DestinationPage = () => {
   );
 };
 
-const AllRatings = ({destination}: {destination: any}) => {
+const AllRatings = ({destination}: {destination: Destination}) => {
   return (
     <div className="AllRatings">
-      <StarRating/>
-      <PriceRating />
+      <StarRating rating={destination.rating}/>
+      <PriceRating price={destination.price}/>
       <TempRating temp={destination.temperature}/>
     </div>
   );
 };
 
-const StarRating = () => {
-  let numberOfStars = 5;
-  // Henter antall stjerner fra DB
-  let numOfFullStars = numberOfStars - Math.round(averageRating);
-  let emptyStar = <span>☆</span>;
-  let fullStar = <span>★</span>;
-  // let rating = [];
-  // for (let i=1; i<6; i++) {
-  //   if (i <= numOfFullStars) {
-  //     rating.push(fullStar);
-  //   }
-  //   else {
-  //     rating.push(emptyStar);
-  //   }
-  // }
+
+interface StarRatingProps {
+  rating: number;
+}
+
+const StarRating: React.FC<StarRatingProps> = ({rating}) => {
+  const totalStars = 5;
+  const fullStars = Math.round(rating)
+  const emptyStars = totalStars - fullStars
 
   return (
     <div className="StarRating" id="Rating">
-  {/* //     {rating.map((star, index) => { */}
-  {/* //       <span key={index}>{star}</span>; */}
-  {/* //     })} */}
-      <span>★</span>
-      <span>☆</span>
-      <span>☆</span>
-      <span>☆</span>
-      <span>☆</span>
+      {Array(fullStars).fill(0).map((_, index) => <FontAwesomeIcon icon={faSolidStar} key={`Solid-${index}`} />)}
+      {Array(emptyStars).fill(0).map((_, index) => <FontAwesomeIcon icon={faRegularStar} key={`Regular-${index}`} />)}
     </div>
   );
 };
 
+interface PriceRatingProps{
+  price: number
+}
 
-const PriceRating = () => {
-  let numberOfDollarSigns = 3;
-  // Henter antall stjerner fra DB
-  let actualRating = 3;
-  let numberOfEmptyStars = numberOfDollarSigns - actualRating;
-  let dollarSign = <span>$</span>;
-
+const PriceRating: React.FC<PriceRatingProps> = ({price}) => {
+  
   return (
-    // Database hente data
     <div className="PriceRating" id="Rating">
-      <span>$</span>
-      <span>$</span>
-      <span>$</span>
-      <span>$</span>
+      {Array(price).fill(0).map((_, index) => <FontAwesomeIcon icon={faDollarSign} className='faDollarSign' key={`Dollar-${index}`} />)}
+      {/*It might seem overly complex to write all of this code to do something as simple as creating an array, but this seems to be standard.
+      You start out by filling the array with zeros, and then you map each element from a 0 to an icon of type 'faDollarSign'
+      We then give a className attribute to each of these icons, enabling us to style them with CSS.*/}
     </div>
   );
 };
 
 const TempRating = ({temp}: {temp: any}) => {
   return (
-    <div className="SeasonRating" id="Rating">
-      <span>{temp}°C</span>
+    <div className="TempRating" id="Rating">
+      <span>{temp}°C </span>
     </div>
   );
 };
