@@ -12,10 +12,14 @@ import "../style/searchbar.css";
 interface SearchbarProps {
   setSearchResults: (results: any[]) => void;
   placeholder: string;
-  title: string;
+  title?: string;
 }
 
-const Searchbar = ({ setSearchResults, placeholder, title }: SearchbarProps) => {
+const Searchbar = ({
+  setSearchResults,
+  placeholder,
+  title,
+}: SearchbarProps) => {
   const [searchText, setSearchText] = useState(""); // save input text in hook
 
   const trackSearch = (event: React.ChangeEvent<HTMLInputElement>) => {

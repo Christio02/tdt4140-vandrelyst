@@ -1,122 +1,174 @@
+import {
+  faCrown,
+  faEarthAmericas,
+  faGlobe,
+  faGlobeAfrica,
+  faGlobeAmericas,
+  faGlobeAsia,
+  faGlobeEurope,
+  faMailBulk,
+  faPaperPlane,
+  faPeopleArrowsLeftRight,
+  faPhone,
+  faPlane,
+  faPlaneCircleCheck,
+  faPlaneDeparture,
+} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useEffect, useState } from "react";
+import { Card } from "react-bootstrap";
+import {
+  Link,
+  Route,
+  BrowserRouter as Router,
+  Routes,
+  useNavigate,
+} from "react-router-dom";
+import paris from "../assets/Paris.jpeg";
+import CardImage from "../assets/globe.png";
+import Ola from "../assets/profilbilde.jpeg";
+import AddDestinationForm from "../components/AddDestinationForm";
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
-import paris from "../assets/Paris.jpeg"
-import Ola from "../assets/profilbilde.jpeg";
 import Searchbar from "../components/Searchbar";
-import { useState } from "react";
-import { Card } from "react-bootstrap";
-import CardImage from "../assets/globe.png"
-import "../style/UserPage.css"
-import { BrowserRouter as Router, Link,  Route, Routes } from "react-router-dom";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEarthAmericas, faPhone, faMailBulk, faGlobe, faGlobeAmericas, faPlaneDeparture, faPlaneCircleCheck, faPaperPlane, faPlane, faGlobeAfrica, faGlobeAsia, faGlobeEurope, faPeopleArrowsLeftRight, faCrown} from '@fortawesome/free-solid-svg-icons';
-import AddDestinationForm from "../components/AddDestinationForm";
+import "../style/UserPage.css";
+import { StarRating } from "./DestinationPage";
 
 interface UserProps {
-    name: string;
-    userName: string;
+  name: string;
+  userName: string;
 }
 
 const UserPage = () => {
-    return (
-        <>
-        <Router>
-        <Navbar/>
-        <div>
-          <Link to="/myDestinations">Mine destinasjoner</Link>
-          <Link to="/myReviews">Mine anmelderlser</Link>
-          <Link to="/visitedDestinations">Besøkte destinasjoner</Link>
+  const navigate = useNavigate(); // used to navigate to default page
+
+  useEffect(() => {
+    navigate("myDestinations");
+  }, []); // empty dependency array, only navigate to myDestinations first time
+
+  return (
+    <>
+      <Navbar />
+
+      <div>
+        {/* Profile Information */}
+        <div className="image-container">
+          <img src={paris} alt="destination"></img>
         </div>
-        <Routes>
-          <Route path="/myDestinations" element={<MyDestinations />} />
-          <Route path="/myReviews" element={<MyReviews />} />
-          <Route path="/visitedDestinations" element={<VisitedDestinations />} />
-        </Routes>
-        <Footer/>
-      </Router>
-      </>
-    )
-    
-}
+        <h4 className="name">Ola Nordmann</h4>
+        <div className="admin">Admin</div>
+        <div className="crown">
+          <FontAwesomeIcon icon={faCrown}></FontAwesomeIcon>
+        </div>
+        <div className="profilepicture">
+          <img src={Ola} alt="profile"></img>
+        </div>
+      </div>
+      {/* Navigations */}
+      <div
+        style={{
+          display: "flex",
+          gap: "2rem",
+          marginTop: "6rem",
+          marginLeft: "1rem",
+        }}
+      >
+        <Link to="myDestinations" style={{ textDecoration: "none" }}>
+          Mine destinasjoner
+        </Link>
+        <Link to="myReviews" style={{ textDecoration: "none" }}>
+          Mine anmelderlser
+        </Link>
+        <Link to="visitedDestinations" style={{ textDecoration: "none" }}>
+          Besøkte destinasjoner
+        </Link>
+      </div>
+      <Routes>
+        <Route path="myDestinations" element={<MyDestinations />} />
+        <Route path="myReviews" element={<MyReviews />} />
+        <Route path="visitedDestinations" element={<VisitedDestinations />} />
+      </Routes>
+      <Footer />
+    </>
+  );
+};
 
-// export UserPage;
-
-
-
+export default UserPage;
 
 const MyDestinations = () => {
-    // the destinations added 
-    
-    const [myDestinations, setMydestinations] = useState<any[]>([]);
+  // the destinations added
 
-    const getMydestinations = (name: UserProps) => {
-        // communicate with database
-    }
+  const [myDestinations, setMydestinations] = useState<any[]>([]);
 
-    return (
-        <>
-        <Navbar/>
-        <div className="user-container">
-            <div className="image-container">
-                <img src={paris}></img>
-            </div>
-            <h4 className="name">
-                Ola Nordmann
-            </h4>
-            <div className="admin">
-                Admin
-            </div>
-            <div className="crown">
-                <FontAwesomeIcon icon = {faCrown}></FontAwesomeIcon>
-            </div>
-            <div className="profilepicture">
-                <img src={Ola}></img>
-            </div>
+  const getMydestinations = (name: UserProps) => {
+    // communicate with database
+  };
 
-        <div style={{marginBottom: "5rem"}}></div>
-        <Searchbar setSearchResults={setMydestinations} placeholder="Søk i mine destinasjoner" title=""/>
-
+  return (
+    <>
+      <div className="user-container">
+        <div style={{ marginBottom: "5rem" }}></div>
+        <Searchbar
+          setSearchResults={setMydestinations}
+          placeholder="Søk i mine destinasjoner"
+        />
         <div className="your-destinations">
-        <Link to="/" style = {{textDecoration: "none"}}>
-        <Card>
-            <Card.Img variant="top" src={CardImage}/>
-            <Card.Body>
+          <Link to="/" style={{ textDecoration: "none" }}>
+            <Card>
+              <Card.Img variant="top" src={CardImage} />
+              <Card.Body>
                 <Card.Title>Paris</Card.Title>
                 <Card.Text>Lorem ipsum</Card.Text>
                 <Card.Footer>
-                    <p>Opprettet 04.03.24</p>
+                  <p>Opprettet 04.03.24</p>
                 </Card.Footer>
-            </Card.Body>
-        </Card>
-        </Link>
+              </Card.Body>
+            </Card>
+          </Link>
         </div>
-        <div style={{marginBottom: "2rem"}}>
-        <AddDestinationForm/>
+        <div style={{ marginBottom: "2rem" }}>
+          <AddDestinationForm />
         </div>
+      </div>
+    </>
+  );
+};
 
-        </div>
-        <Footer/>
-        </>
-    )
-
+interface MyReviewsProps {
+  rating?: number;
 }
 
-export default MyDestinations;
+const MyReviews = ({ rating }: MyReviewsProps) => {
+  // the reviews that user has made
+  const [myReviews, setMyReviews] = useState<any[]>([]);
+  // pass rating down from user entry in database, and calculate average rating based on total number of reviews
+  return (
+    <>
+      <div className="user-container">
+        {/* Add content for MyReviews subpage */}
 
-const MyReviews = () => {
-    // the reviews that user has made
-    return (
-        <>
-       
-       
-        </>
-
-    )
-}
+        <Searchbar
+          setSearchResults={setMyReviews}
+          placeholder="Søk i mine anmeldelser"
+        />
+        <div className="my-reviews-container">
+          <div className="my-reviews-header">
+            <h3>Dine anmeldelser</h3>
+            <StarRating rating={rating || 0} />
+          </div>
+        </div>
+      </div>
+    </>
+  );
+};
 
 const VisitedDestinations = () => {
-    // all the visisted destinations
-    return (
-        <></>
-    )
-}
+  // all the visisted destinations
+  return (
+    <>
+      <div className="user-container">
+        {/* Add content for VisitedDestinations subpage */}
+      </div>
+    </>
+  );
+};
