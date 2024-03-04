@@ -2,6 +2,9 @@ import { initializeApp } from "firebase/app";
 import { collection, getDocs, getFirestore } from "firebase/firestore";
 import { getStorage, ref } from "firebase/storage";
 
+import { getAuth } from "firebase/auth"; // Import Firebase Authentication module
+
+
 /*
 TODO: Add SDKs for Firebase products that you want to use
 https://firebase.google.com/docs/web/setup#available-libraries
@@ -29,4 +32,9 @@ export const storageRef = ref(
 );
 export const db = getFirestore(app);
 export const destinationRef = collection(db, "destinations");
-const querySnapshot = await getDocs(destinationRef);
+// const querySnapshot = await getDocs(destinationRef);
+
+export const auth = getAuth(app);
+
+
+

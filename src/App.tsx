@@ -10,12 +10,14 @@ import Navbar from "./components/Navbar";
 import Searchbar from "./components/Searchbar";
 import OmOss from "./pages/OmOss";
 
+
 function App() {
   const [searchResults, setSearchResults] = useState<any[]>([]); // parent stores search from searchbar
 
   return (
     <div className="main-container">
       <Navbar />
+
       <Searchbar setSearchResults={setSearchResults} />
       <DestinationPopUp />
       <Filtercomponent />

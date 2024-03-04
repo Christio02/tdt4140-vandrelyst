@@ -15,17 +15,20 @@ const Navbar = () => {
     <div id="topnav">
         <Link id = "logo" to="/"> <img src = {logo_navn} alt="Logo i navbar" ></img> </Link>
         
-        <a> <DropdownButton
+        <a href='/logginn'> <button type="button" className="btn btn-outline-primary">Primary</button> 
+            </a>
+
+        {/* <a> <DropdownButton
                 title={<CircleUserRound size={24} />}
                 id="dropdown-menu"
                 variant="string" >
 
                 <Dropdown.Item href="#">Logg inn</Dropdown.Item>
-                <Dropdown.Item href="#">Logg ut</Dropdown.Item>
+                <Dropdown.Item href="#">Innstillinger</Dropdown.Item>
 
                 
             </DropdownButton> </a>
-    
+     */}
         <Link to="/omoss">Om oss</Link>
         
         </div>
