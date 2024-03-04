@@ -17,7 +17,7 @@ function App() {
   return (
     <div className="main-container">
       <Navbar />
-      <Searchbar setSearchResults={setSearchResults} />
+      <Searchbar setSearchResults={setSearchResults} placeholder="Søk på reisemål" title="Finn ditt reisemål"/>
       <DestinationPopUp />
       <Filtercomponent />
       <CardContainer destinationsFromSearch={searchResults} />{" "}

@@ -27,6 +27,7 @@ const Navbar = () => {
             </DropdownButton> </a>
     
         <Link to="/omoss">Om oss</Link>
+        <Link to= "/mypage">Din side</Link>
         
         </div>
     
