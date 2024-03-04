@@ -16,7 +16,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useState } from "react";
-import { Card } from "react-bootstrap";
+import { Card, Carousel } from "react-bootstrap";
 import {
   Link,
   Route,
@@ -126,9 +126,7 @@ const MyDestinations = () => {
             </Card>
           </Link>
         </div>
-        <div style={{ marginBottom: "2rem" }}>
-          <AddDestinationForm />
-        </div>
+        <AddDestinationForm />
       </div>
     </>
   );
@@ -136,12 +134,17 @@ const MyDestinations = () => {
 
 interface MyReviewsProps {
   rating?: number;
+  reviewTitle: string;
+  comment: string;
+  date: string;
 }
 
-const MyReviews = ({ rating }: MyReviewsProps) => {
+const MyReviews = ({ rating, reviewTitle, comment, date }: MyReviewsProps) => {
   // the reviews that user has made
   const [myReviews, setMyReviews] = useState<any[]>([]);
   // pass rating down from user entry in database, and calculate average rating based on total number of reviews
+
+  // render all reviews (map over)
   return (
     <>
       <div className="user-container">
@@ -155,6 +158,38 @@ const MyReviews = ({ rating }: MyReviewsProps) => {
           <div className="my-reviews-header">
             <h3>Dine anmeldelser</h3>
             <StarRating rating={rating || 0} />
+            <div className="my-review">
+              <div className="my-review-header">
+                <h3>Land, by</h3>
+                <StarRating rating={4} />
+              </div>
+              <div className="image-carousel">
+                <Carousel>
+                  <Carousel.Item>
+                    <img src={CardImage} alt="paris"></img>
+                  </Carousel.Item>
+                  <Carousel.Item>
+                    <img src={CardImage} alt="paris"></img>
+                  </Carousel.Item>
+                  <Carousel.Item>
+                    <img src={CardImage} alt="paris"></img>
+                  </Carousel.Item>
+                </Carousel>
+              </div>
+              <div className="my-review-body">
+                <h6>Kommentar</h6>
+                <p>
+                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec
+                  gravida lorem at dui tincidunt, vitae laoreet risus porta.
+                  Nunc euismod ipsum eu libero rutrum, at placerat diam
+                  sollicitudin. Pellentesque auctor tellus eget mi placerat
+                  fermentum. Maecenas eu augue eget magna gravida semper.
+                </p>
+                <div className="my-review-footer">
+                  <span>dd.mm.åå</span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
