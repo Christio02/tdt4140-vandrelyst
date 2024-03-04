@@ -9,6 +9,7 @@ import Footer from "./components/Footer";
 import Navbar from "./components/Navbar";
 import Searchbar from "./components/Searchbar";
 import OmOss from "./pages/OmOss";
+import Annonse from "./assets/annonse.png";
 
 function App() {
   const [searchResults, setSearchResults] = useState<any[]>([]); // parent stores search from searchbar
@@ -21,6 +22,9 @@ function App() {
       <Filtercomponent />
       <CardContainer destinationsFromSearch={searchResults} />{" "}
       {/* Then passes the stored searchresult down to cardcontainer*/}
+      <div className="annonse">
+        <img src={Annonse}></img>
+      </div>
       <Footer />
     </div>
   );

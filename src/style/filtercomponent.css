@@ -1,5 +1,5 @@
-.filterContaier {
-  margin-top: 70px;
+.filterContainer {
+  margin-top: 0.5rem;
 }
 
 .buttons {
@@ -12,15 +12,15 @@
     background-color: #52AB98;
     border: none;
     color: white;
-    height: 70px;
-    width: 70px;
+    height: 35px;
+    width: 35px;
     text-align: center;
     font-size: 30px;
-    margin: 50px ;
+    margin: 20px ;
     margin-bottom: 10px;
     border-radius: 100%;
     margin: 0 30px;
-    margin-top: 30px;
+    margin-top: 1rem;
   }
 
   .buttons button:hover{
@@ -38,7 +38,11 @@
   .buttons p:hover {
     cursor: pointer; 
 }
+.icon {
+  width: 80%;
+  margin-bottom: 0.3rem;
+}
 
-  h2 {
+  h4 {
     color: black !important;
   }
