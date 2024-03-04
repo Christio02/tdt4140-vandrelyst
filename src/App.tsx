@@ -13,15 +13,19 @@ import Annonse from "./assets/annonse.png";
 
 function App() {
   const [searchResults, setSearchResults] = useState<any[]>([]); // parent stores search from searchbar
+  const [currentFilter, setCurrentFilter] = useState<string>('Alle'); // oppdatere foreløpige filter fra Alle som start
+
+  const handleFilterChange = (newFilter: string) => {
+    setCurrentFilter(newFilter);
+  };
 
   return (
     <div className="main-container">
       <Navbar />
       <Searchbar setSearchResults={setSearchResults} />
       <DestinationPopUp />
-      <Filtercomponent />
-      <CardContainer destinationsFromSearch={searchResults} />{" "}
-      {/* Then passes the stored searchresult down to cardcontainer*/}
+      <Filtercomponent onFilterChange={handleFilterChange} />
+      <CardContainer destinationsFromSearch={searchResults} currentFilter={currentFilter} />
       <div className="annonse">
         <img src={Annonse}></img>
       </div>

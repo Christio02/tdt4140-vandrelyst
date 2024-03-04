@@ -20,17 +20,18 @@ interface Destination {
   imageURL: string;
   country: string;
   city: string;
+  type?: string;
 }
 
 interface CardContainerProps {
   destinationsFromSearch: Destination[];
+  currentFilter: string; 
 }
 
-function CardContainer({ destinationsFromSearch }: CardContainerProps) {
+function CardContainer({ destinationsFromSearch, currentFilter }: CardContainerProps) {
   const [destinations, setDestinations] = useState<Destination[]>([]);
 
-  const destinationsToDisplay =
-    destinationsFromSearch.length > 0 ? destinationsFromSearch : destinations; // if we are getting searchresult, then store this in an array otherwise store the normal o
+  // KOMMENTERER UT HELE DENNE FORDI VENTER MED Å DEFINERE TIL ETTER FETCHDATA const destinationsToDisplay = destinationsFromSearch.length > 0 ? destinationsFromSearch : destinations; // 
   const fetchData = async () => {
     // Updates the array of destinations, by fetching data from the database.
     try {
@@ -75,10 +76,50 @@ function CardContainer({ destinationsFromSearch }: CardContainerProps) {
   };
 
   useEffect(() => {
-    fetchData();
-  }, []); // The empty array means that the effect will only run once, after the initial render.
+    const fetchData = async () => {
+      const db = getFirestore();
+      const storage = getStorage();
+      const collectionRef = collection(db, "destinations");
+      const querySnapshot = await getDocs(collectionRef);
 
-  console.log(destinations); // Log the state
+      const destinationsArray: Promise<Destination | null>[] = querySnapshot.docs.map(async (doc) => {
+        const destinationData = doc.data();
+        let url = null;
+        try {
+          url = await getDownloadURL(ref(storage, destinationData.mainImage));
+        } catch (error) {
+          console.error("Error fetching image from Firebase: ", destinationData.city);
+        }
+        if (url === null) {
+          console.log("No main image for this destination: ", destinationData.city);
+          return null;
+        }
+        return {
+          id: doc.id,
+          imageURL: url,
+          country: destinationData.country,
+          city: destinationData.city,
+          type: destinationData.type, 
+        };
+      });
+
+      const resolvedDestinationsArray = await Promise.all(destinationsArray);
+      const validDestinationsArray = resolvedDestinationsArray.filter((destination) => destination !== null) as Destination[];
+
+      
+      const filteredDestinations = validDestinationsArray.filter(destination =>
+        currentFilter === 'Alle' || destination.type === currentFilter
+      );
+
+      setDestinations(filteredDestinations);
+    };
+
+    fetchData();
+  }, [currentFilter]); 
+  console.log(destinations);
+
+  const destinationsToDisplay = destinationsFromSearch.length > 0 ? destinationsFromSearch : destinations;
+  
 
   return (
     <div className="container">
