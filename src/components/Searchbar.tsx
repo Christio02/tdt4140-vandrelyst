@@ -11,9 +11,11 @@ import "../style/searchbar.css";
 
 interface SearchbarProps {
   setSearchResults: (results: any[]) => void;
+  placeholder: string;
+  title: string;
 }
 
-const Searchbar = ({ setSearchResults }: SearchbarProps) => {
+const Searchbar = ({ setSearchResults, placeholder, title }: SearchbarProps) => {
   const [searchText, setSearchText] = useState(""); // save input text in hook
 
   const trackSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -68,10 +70,11 @@ const Searchbar = ({ setSearchResults }: SearchbarProps) => {
 
   return (
     <div className="searchbar-container">
+      <h2>{title}</h2>
       <Form className="search">
         <Form.Control
           type="text"
-          placeholder="Søk på et reisemål!"
+          placeholder={placeholder}
           className="search-bar"
           value={searchText}
           onChange={trackSearch}
