@@ -1,14 +1,6 @@
 import {
-  DocumentData,
-  Query,
   addDoc,
   collection,
-  deleteDoc,
-  doc,
-  getDoc,
-  getDocs,
-  query,
-  where,
 } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import React, { useEffect, useState } from "react";
@@ -27,10 +19,6 @@ import "../style/addDestinationPopUp.css";
  * Saves the destination data to a database upon user submission.
  */
 
-interface Destination {
-  id: string;
-  city: string;
-}
 const DestinationPopUp = () => {
   const [showAddDestination, setShowAddDestination] = useState(false);
 
@@ -41,6 +29,7 @@ const DestinationPopUp = () => {
   const [temperature, setTemperature] = useState("");
   const [city, setCity] = useState("");
   const [country, setCountry] = useState("");
+  const [type, setType] = useState("");
   const [rating, setRating] = useState("");
   const [price, setPrice] = useState("");
   const [description, setDescription] = useState("");
@@ -77,10 +66,13 @@ const DestinationPopUp = () => {
   const handleCountryChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setCountry(event.target.value);
   };
-  const handleRatingChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleTypeChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setType(event.target.value);
+  };
+  const handleRatingChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setRating(event.target.value);
   };
-  const handlePriceChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePriceChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setPrice(event.target.value);
   };
   const handleTemperatureChange = (
@@ -191,6 +183,7 @@ const DestinationPopUp = () => {
         mainImage: mainImageUrl,
         city,
         country,
+        type,
         rating: rating ? parseInt(rating) : 0,
         price: price ? parseInt(price) : 0,
         temperature: temperature ? parseInt(temperature) : 0,
@@ -206,6 +199,10 @@ const DestinationPopUp = () => {
       alert("An error occurred while adding the destination.");
     }
   };
+  
+  function range(start: number, end: number) { // Function to create a range of numbers
+    return Array(end - start + 1).fill(0).map((_, idx) => start + idx);
+  }
 
   return (
     <>
@@ -248,7 +245,7 @@ const DestinationPopUp = () => {
                 </Form.Group>
               </Row>
               <Row className="mb-1">
-                <Col md={3}>
+                <Col md={2}>
                   <InputGroup>
                     <Form.Control
                       type="text"
@@ -258,7 +255,7 @@ const DestinationPopUp = () => {
                     />
                   </InputGroup>
                 </Col>
-                <Col md={3}>
+                <Col md={2}>
                   <InputGroup>
                     <Form.Control
                       type="text"
@@ -269,20 +266,32 @@ const DestinationPopUp = () => {
                 </Col>
                 <Col md={2}>
                   <InputGroup>
-                    <Form.Control
-                      type="text"
-                      placeholder="Rating [0-5]"
-                      onChange={handleRatingChange}
-                    />
+                    <Form.Select onChange={handleTypeChange} defaultValue="">
+                      <option value="" disabled>Type</option>
+                      {["Vinter", "Natur", "Storby", "Strand"].map(type => (
+                        <option key={type} value={type}>{type}</option>
+                      ))}
+                    </Form.Select>
                   </InputGroup>
                 </Col>
                 <Col md={2}>
                   <InputGroup>
-                    <Form.Control
-                      type="text"
-                      placeholder="Pris [0-5]"
-                      onChange={handlePriceChange}
-                    />
+                    <Form.Select onChange={handleRatingChange} defaultValue="">
+                      <option value="" disabled>Rating</option>
+                      {range(0, 5).map(rating => (
+                        <option key={rating} value={rating}>{rating}</option>
+                      ))}
+                    </Form.Select>
+                  </InputGroup>
+                </Col>
+                <Col md={2}>
+                  <InputGroup>
+                    <Form.Select onChange={handlePriceChange} defaultValue="">
+                      <option value="" disabled>Pris</option>
+                      {range(0, 5).map(price => (
+                        <option key={price} value={price}>{price}</option>
+                      ))}
+                    </Form.Select>
                   </InputGroup>
                 </Col>
                 <Col md={2}>
