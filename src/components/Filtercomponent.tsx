@@ -16,23 +16,23 @@ function FilterComponent({ onFilterChange }: FilterComponentProps) {
             <h4>Utforsk ditt favorittsted</h4>
             <div className = "buttons">
             <div className="button-container" onClick={() => onFilterChange('Alle')}>
-                <button><FontAwesomeIcon icon={faEarthAmericas} /></button>
+                <button><FontAwesomeIcon icon={faEarthAmericas} className="icon"/></button>
                 <p>Alle</p>
             </div>
             <div className="button-container" onClick={() => onFilterChange('Strand')}>
-                <button><FontAwesomeIcon icon={faUmbrellaBeach} /></button>
+                <button><FontAwesomeIcon icon={faUmbrellaBeach} className="icon"/></button>
                 <p>Strand</p>
             </div>
             <div className="button-container" onClick={() => onFilterChange('Natur')}>
-                <button><FontAwesomeIcon icon={faPersonHiking} /></button>
+                <button><FontAwesomeIcon icon={faPersonHiking} className="icon" /></button>
                 <p>Natur</p>
             </div>
             <div className="button-container" onClick={() => onFilterChange('Storby')}>
-                <button><FontAwesomeIcon icon={faCity} /></button>
+                <button><FontAwesomeIcon icon={faCity} className="icon"/></button>
                 <p>Storby</p>
             </div>
             <div className="button-container" onClick={() => onFilterChange('Vinter')}>
-                <button><FontAwesomeIcon icon={faPersonSkiing} /></button>
+                <button><FontAwesomeIcon icon={faPersonSkiing} className="icon"/></button>
                 <p>Vinter</p>
             </div>
             <div className="button-container">
