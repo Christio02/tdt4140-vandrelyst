@@ -9,31 +9,31 @@ function Filtercomponent () {
 
     
     return (
-        <div className="filterContaier">
-            <h2>Utforsk ditt favorittsted</h2>
+        <div className="filterContainer">
+            <h4>Utforsk ditt favorittsted</h4>
             <div className = "buttons">
             <div className="button-container">
-                <button><FontAwesomeIcon icon={faEarthAmericas} /></button>
+                <button><FontAwesomeIcon icon={faEarthAmericas} className="icon" /></button>
                 <p>Alle</p>
             </div>
             <div className="button-container">
-                <button><FontAwesomeIcon icon={faUmbrellaBeach} /></button>
+                <button><FontAwesomeIcon icon={faUmbrellaBeach} className="icon"/></button>
                 <p>Strand</p>
             </div>
             <div className="button-container">
-                <button><FontAwesomeIcon icon={faPersonHiking} /></button>
+                <button><FontAwesomeIcon icon={faPersonHiking} className="icon"/></button>
                 <p>Natur</p>
             </div>
             <div className="button-container">
-                <button><FontAwesomeIcon icon={faCity} /></button>
+                <button><FontAwesomeIcon icon={faCity} className="icon"/></button>
                 <p>Storby</p>
             </div>
             <div className="button-container">
-                <button><FontAwesomeIcon icon={faPersonSkiing} /></button>
+                <button><FontAwesomeIcon icon={faPersonSkiing} className="icon"/></button>
                 <p>Vinter</p>
             </div>
             <div className="button-container">
-                <button><FontAwesomeIcon icon={faEllipsis} /></button>
+                <button><FontAwesomeIcon icon={faEllipsis} className="icon"/></button>
                 <p>Mer</p>
             </div>
             </div>
