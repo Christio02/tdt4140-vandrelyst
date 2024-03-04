@@ -3,6 +3,7 @@ import Logo from '../assets/logo_hele.png';
 import Plane from '../assets/fly.png';
 import Jorda from '../assets/globe.png';
 import { Link } from 'react-router-dom';
+import Navbar from "../components/Navbar";
 import "../style/OmOss.css";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEarthAmericas, faPhone, faMailBulk, faGlobe, faGlobeAmericas, faPlaneDeparture, faPlaneCircleCheck, faPaperPlane, faPlane, faGlobeAfrica, faGlobeAsia, faGlobeEurope, faPeopleArrowsLeftRight} from '@fortawesome/free-solid-svg-icons';
@@ -10,7 +11,7 @@ import { faEarthAmericas, faPhone, faMailBulk, faGlobe, faGlobeAmericas, faPlane
 const OmOss: React.FC = () => {
     return (
         <div >
-            <LogoBilde />
+            <Navbar />
             <LinkToText />
             <Linje />
             <Fly />
@@ -32,15 +33,6 @@ const Linje = () => {
         </div>    
     );
 };
-
-const LogoBilde = () => {
-    return (
-      <div className="logoBilde">
-        <img src={Logo} alt="logo" />
-      </div>
-    );
-};
-
 
 const LinkToText = () => {
     return(

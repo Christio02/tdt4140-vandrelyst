@@ -13,7 +13,7 @@ function FilterComponent({ onFilterChange }: FilterComponentProps) {
     
     return (
         <div className="filterContainer">
-            <h4>Utforsk ditt favorittsted</h4>
+            <h4 style={{ textAlign: "center" }}>Utforsk ditt favorittsted</h4>
             <div className = "buttons">
             <div className="button-container" onClick={() => onFilterChange('Alle')}>
                 <button><FontAwesomeIcon icon={faEarthAmericas} className="icon"/></button>

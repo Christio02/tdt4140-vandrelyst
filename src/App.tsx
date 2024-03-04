@@ -23,7 +23,7 @@ function App() {
     <div className="main-container">
       <Navbar />
       <Searchbar setSearchResults={setSearchResults} />
-      <DestinationPopUp />
+      
       <Filtercomponent onFilterChange={handleFilterChange} />
       <CardContainer destinationsFromSearch={searchResults} currentFilter={currentFilter} />
       <div className="annonse">

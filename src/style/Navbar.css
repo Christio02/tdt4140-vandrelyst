@@ -1,6 +1,5 @@
-
-
 /* Add a black background color to the top navigation */
+
 #topnav {
     background-color:#2B6777;
     overflow: hidden;
@@ -8,14 +7,13 @@
     width: 100%;
     overflow: visible;
   }
-  
-  /* Style the links inside the navigation bar */
+
 #topnav a:nth-child(n+3) {
     color: white;
-    padding: 20px 30px;
+    padding: 20px 10px;
     text-decoration: none;
-    font-size: 17px;
-    font-family: "Poppins", Calibri, sans-serif;
+    font-size: 17px !important;
+    font-family: "Poppins", Calibri, sans-serif !important;
     height: 70px;
   }
 
@@ -50,3 +48,11 @@
   color: #000000;
   margin: 14px
 }
+
+.destinationPopupContainer {
+  float: right; 
+  margin-right: 10px; 
+} 
+
+
+
