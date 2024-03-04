@@ -15,7 +15,7 @@ const Navbar = () => {
     <div id="topnav">
         <Link id = "logo" to="/"> <img src = {logo_navn} alt="Logo i navbar" ></img> </Link>
         
-        <a href='/logginn'> <button type="button" className="btn btn-outline-primary">Primary</button> 
+        <a href='/logginn'> <button type="button" id="LogInIcon"><CircleUserRound size={24} /></button> 
             </a>
 
         {/* <a> <DropdownButton

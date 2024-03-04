@@ -8,6 +8,7 @@ import DestinationPage from "./pages/DestinationPage";
 import reportWebVitals from "./reportWebVitals";
 import OmOss from "./pages/OmOss";
 import LogInPage from "./pages/LogInPage";
+import RegisterUserPage from "./pages/RegisterUserPage";
 
 
 const root = ReactDOM.createRoot(
@@ -17,11 +18,11 @@ root.render(
   <React.StrictMode>
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<App />} />
+        <Route path="/" element={<App/>} />
         <Route path="/destination/:id" element={<DestinationPage />} />
         <Route path="/omoss" element={<OmOss/>} />
         <Route path="/logginn" element={<LogInPage/>} />
-
+        <Route path="/registrering" element={<RegisterUserPage/>} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>
