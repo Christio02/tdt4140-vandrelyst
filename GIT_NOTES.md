@@ -40,3 +40,21 @@ To list all branches, including remote branches.
 To list all local branches, their upstream branches, and their status. Useful if you want to check that you have set the upstream branch for your local branch correctly.
 - `git remote show origin`
 To get detailed information about the remote repository. This includes the URL of the remote repository, the branches that are tracked, and the branches that are pushed to.
+
+## Commit conventions
+
+**feat** Commits, that adds or remove a new feature
+
+**fix** Commits, that fixes a bug
+
+**refactor** Commits, that rewrite/restructure your code, however does not change any API behaviour
+
+**style** Commits, that do not affect the meaning (white-space, formatting, missing semi-colons, etc)
+
+**test** Commits, that add missing tests or correcting existing tests
+
+**docs** Commits, that affect documentation only
+
+**build** Commits, that affect build components like build tool, ci pipeline, dependencies, project version
+
+**chore** Miscellaneous commits e.g. modifying .gitignore

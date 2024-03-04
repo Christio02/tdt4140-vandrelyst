@@ -271,7 +271,7 @@ const DestinationPopUp = () => {
                   <InputGroup>
                     <Form.Control
                       type="text"
-                      placeholder="Rating"
+                      placeholder="Rating [0-5]"
                       onChange={handleRatingChange}
                     />
                   </InputGroup>
@@ -280,7 +280,7 @@ const DestinationPopUp = () => {
                   <InputGroup>
                     <Form.Control
                       type="text"
-                      placeholder="Pris"
+                      placeholder="Pris [0-5]"
                       onChange={handlePriceChange}
                     />
                   </InputGroup>
