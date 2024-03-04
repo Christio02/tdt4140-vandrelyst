@@ -7,6 +7,7 @@ import { CircleUserRound } from 'lucide-react';
 import Dropdown from 'react-bootstrap/Dropdown';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 import { Link } from 'react-router-dom';
+import DestinationPopUp from "./AddDestinationForm";
   
   
 //nav bar full screen
@@ -15,20 +16,28 @@ const Navbar = () => {
     <div id="topnav">
         <Link id = "logo" to="/"> <img src = {logo_navn} alt="Logo i navbar" ></img> </Link>
         
-        <a> <DropdownButton
+        <a>
+            <DropdownButton
                 title={<CircleUserRound size={24} />}
                 id="dropdown-menu"
                 variant="string" >
 
                 <Dropdown.Item href="#">Logg inn</Dropdown.Item>
                 <Dropdown.Item href="#">Logg ut</Dropdown.Item>
-
-                
-            </DropdownButton> </a>
-    
-        <Link to="/omoss">Om oss</Link>
+            </DropdownButton>    
+        </a>
         
-        </div>
+        <Link to="/omoss">Om oss</Link>
+
+        <a>
+            <div className="destinationPopupContainer">
+                <DestinationPopUp />
+            </div>
+        </a>
+
+        
+        
+    </div>
     
     );
 }
