@@ -54,7 +54,8 @@
   }
 
   .button-container button.active {
-    background-color: #9bbdd9 !important; 
+    background-color: #0bebc9; 
+    transform: translateY(-5px); 
     
   }
 
@@ -64,6 +65,10 @@
 
 .sorting-button {
   background-color: #c8d8e4 !important;
+}
+
+.sorting-button.active{
+  background-color: #66747e !important; 
 }
 
 .more-options-button {

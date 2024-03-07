@@ -9,38 +9,41 @@ interface FilterComponentProps {
     onSortChange: (criterion: string) => void; 
     activeSort: string | null;  
     sortDirection: 'asc' | 'desc';
-
   }
 
 function FilterComponent({ onFilterChange, onSortChange, activeSort, sortDirection }: FilterComponentProps) {
-    const [showSortOptions, setShowSortOptions] = useState(false);
+  const [showSortOptions, setShowSortOptions] = useState(false);
+  const [selectedFilter, setSelectedFilter] = useState<string | null>(null);
 
+  const handleFilterSelection = (filter: string) => {
+    setSelectedFilter(filter);
+    onFilterChange(filter);
+  };
 
-    
-    return (
-        <div className="filterContainer">
-            <h4>Utforsk ditt favorittsted</h4>
-            <div className = "buttons">
-            <div className="button-container" onClick={() => onFilterChange('Alle')}>
-                <button><FontAwesomeIcon icon={faEarthAmericas} className="icon"/></button>
-                <p>Alle</p>
-            </div>
-            <div className="button-container" onClick={() => onFilterChange('Strand')}>
-                <button><FontAwesomeIcon icon={faUmbrellaBeach} className="icon"/></button>
-                <p>Strand</p>
-            </div>
-            <div className="button-container" onClick={() => onFilterChange('Natur')}>
-                <button><FontAwesomeIcon icon={faPersonHiking} className="icon" /></button>
-                <p>Natur</p>
-            </div>
-            <div className="button-container" onClick={() => onFilterChange('Storby')}>
-                <button><FontAwesomeIcon icon={faCity} className="icon"/></button>
-                <p>Storby</p>
-            </div>
-            <div className="button-container" onClick={() => onFilterChange('Vinter')}>
-                <button><FontAwesomeIcon icon={faPersonSkiing} className="icon"/></button>
-                <p>Vinter</p>
-            </div>
+  return (
+    <div className="filterContainer">
+      <h4>Utforsk ditt favorittsted</h4>
+      <div className="buttons">
+        <div className="button-container" onClick={() => handleFilterSelection('Alle')}>
+          <button className={selectedFilter === 'Alle' ? 'active' : ''}><FontAwesomeIcon icon={faEarthAmericas} className="icon" /></button>
+          <p>Alle</p>
+        </div>
+        <div className="button-container" onClick={() => handleFilterSelection('Strand')}>
+          <button className={selectedFilter === 'Strand' ? 'active' : ''}><FontAwesomeIcon icon={faUmbrellaBeach} className="icon" /></button>
+          <p>Strand</p>
+        </div>
+            <div className="button-container" onClick={() => handleFilterSelection('Natur')}>
+          <button className={selectedFilter === 'Natur' ? 'active' : ''}><FontAwesomeIcon icon={faPersonHiking} className="icon" /></button>
+          <p>Natur</p>
+        </div>
+            <div className="button-container" onClick={() => handleFilterSelection('Storby')}>
+          <button className={selectedFilter === 'Storby' ? 'active' : ''}><FontAwesomeIcon icon={faCity} className="icon" /></button>
+          <p>Storby</p>
+        </div>
+            <div className="button-container" onClick={() => handleFilterSelection('Vinter')}>
+          <button className={selectedFilter === 'Vinter' ? 'active' : ''}><FontAwesomeIcon icon={faPersonSkiing} className="icon" /></button>
+          <p>Vinter</p>
+        </div>
             <div className="button-container" onClick={() => setShowSortOptions(!showSortOptions)}>
   <button className="more-options-button"><FontAwesomeIcon icon={faEllipsis} className="icon"/></button>
   <p>Sortering</p>
