@@ -3,7 +3,7 @@
     flex-direction: column;
     margin-left: 50px;
     margin-right: 50px;
-    margin-top: 3%;
+    margin-top: 1px;
     margin-bottom: 6%;
 }
 
@@ -14,7 +14,6 @@
     position: relative;
     flex-direction: column;
     text-align: center;
-    margin-top: 3%;
 }
 
 #Rating {
@@ -42,6 +41,8 @@
     display: flex;
     flex-direction: row;
     justify-content: center;
+    margin-top: 1px;
+    margin-bottom: 1px;
 }
 
 
@@ -94,11 +95,6 @@ h4 {
     margin-left: 6%;
 }
 
-/* .Carousel {
-    width: 1000px;
-    height: auto;
-} */
-
 .ActivityBox {
     display: flex;
     flex-direction: column;
@@ -119,21 +115,23 @@ h4 {
 
 .PhotoOfCity {
   width: 100%;
-  height: 60vh;
+  height: 50vh;
   overflow: hidden;
   position: relative;
+  margin-bottom: 2%;
 }
 
 .PhotoOfCity img {
     width: 100%;
-    height: auto; /* Adjust to fit the image properly within the container */
-    position: absolute;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
     top: 5%;
-    transform: translateY(-50%); 
+    /* height: auto;
+    position: absolute;
+    transform: translateY(-50%); */
 
 }
-
-
   
   .review-summary,
   .review-list {

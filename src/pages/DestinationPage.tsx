@@ -89,7 +89,6 @@ const DestinationPage = () => {
       <MainPhoto url={mainPhotoUrl} />
       <TitleDiv destination={destination} />
       <AllRatings destination={destination} />
-      <DeleteDestinationForm id={id} city={destination.city} />
       <div className="AllContentDivs">
         <DescriptionDiv destination={destination} />
         <ActivitesDiv
@@ -98,6 +97,8 @@ const DestinationPage = () => {
         />
         <ActivitesDiv title="Bilder" activities={destination.extraImages} />
       </div>
+      
+      <DeleteDestinationForm id={id} city={destination.city} />
 
       <div className="review-container">
         <h2 className="reviews-title">REVIEWS</h2>
