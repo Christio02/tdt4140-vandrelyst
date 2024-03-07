@@ -26,7 +26,7 @@ import {
 } from "react-router-dom";
 import paris from "../assets/Paris.jpeg";
 import paris3 from "../assets/fly.png";
-import CardImage from "../assets/globe.png";
+import CardImage from "../assets/oslo.jpeg";
 import { default as Ola } from "../assets/profilbilde.jpeg";
 import AddDestinationForm from "../components/AddDestinationForm";
 import Footer from "../components/Footer";
@@ -146,6 +146,31 @@ const MyReviews = ({ rating, reviewTitle, comment, date }: MyReviewsProps) => {
     { name: "Paris", src: paris },
     { name: "Paris3", src: paris3 },
   ];
+
+  const myReviewsData: MyReviewsProps[] = [
+    {
+      rating: 4,
+      reviewTitle: "Amazing Experience",
+      comment:
+        "Paris was amazing. The Eiffel Tower was a sight to behold. Would definitely recommend!",
+      date: "2022-01-01",
+    },
+    {
+      rating: 5,
+      reviewTitle: "Unforgettable Journey",
+      comment:
+        "The Louvre Museum was breathtaking. The Mona Lisa is truly a masterpiece!",
+      date: "2022-02-15",
+    },
+    {
+      rating: 3,
+      reviewTitle: "Good, but could be better",
+      comment:
+        "The food was great, but the service was a bit slow. Overall, a good experience.",
+      date: "2022-03-10",
+    },
+  ];
+
   // the reviews that user has made
   const [myReviews, setMyReviews] = useState<any[]>([]);
   // pass rating down from user entry in database, and calculate average rating based on total number of reviews
@@ -164,43 +189,39 @@ const MyReviews = ({ rating, reviewTitle, comment, date }: MyReviewsProps) => {
           <div className="my-reviews-header">
             <h3>Dine anmeldelser</h3>
             <StarRating rating={rating || 0} />
-            <div className="my-review">
-              <div className="my-review-header">
-                <h3>Land, by</h3>
-                <StarRating rating={4} />
-              </div>
-              <div className="image-carousel">
-                <Carousel>
-                  {images.map((item) => (
-                    <Carousel.Item key={item.name}>
-                      <img src={item.src} alt="carousel-image" />
+            {myReviewsData.map((review, index) => (
+              <div key={index} className="my-review">
+                <div className="my-review-header">
+                  <h3>{review.reviewTitle}</h3>
+                  <StarRating rating={review.rating || 0} />
+                </div>
+                <div className="image-carousel">
+                  <Carousel
+                    controls
+                    indicators
+                    interval={4000}
+                    style={{ display: "flex", flexDirection: "column" }}
+                  >
+                    <Carousel.Item>
+                      <img src={CardImage} alt="paris" />
                     </Carousel.Item>
-                  ))}
-                  <Carousel.Item>
-                    <img src={CardImage} alt="paris" />
-                  </Carousel.Item>
-                  <Carousel.Item>
-                    <img src={CardImage} alt="paris" />
-                  </Carousel.Item>
-                  <Carousel.Item>
-                    <img src={CardImage} alt="paris" />
-                  </Carousel.Item>
-                </Carousel>
-              </div>
-              <div className="my-review-body">
-                <h6>Kommentar</h6>
-                <p>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec
-                  gravida lorem at dui tincidunt, vitae laoreet risus porta.
-                  Nunc euismod ipsum eu libero rutrum, at placerat diam
-                  sollicitudin. Pellentesque auctor tellus eget mi placerat
-                  fermentum. Maecenas eu augue eget magna gravida semper.
-                </p>
-                <div className="my-review-footer">
-                  <span>dd.mm.åå</span>
+                    <Carousel.Item>
+                      <img src={CardImage} alt="paris" />
+                    </Carousel.Item>
+                    <Carousel.Item>
+                      <img src={CardImage} alt="paris" />
+                    </Carousel.Item>
+                  </Carousel>
+                </div>
+                <div className="my-review-body">
+                  <h6>Kommentar</h6>
+                  <p>{review.comment}</p>
+                  <div className="my-review-footer">
+                    <span>{review.date}</span>
+                  </div>
                 </div>
               </div>
-            </div>
+            ))}
           </div>
         </div>
       </div>

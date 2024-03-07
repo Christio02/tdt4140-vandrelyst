@@ -58,11 +58,49 @@
   flex-direction: column;
   gap: 1rem;
 }
-.my-reviews-container {
-    
-}
+
 .my-reviews-header {
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+.image-carousel {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 300px; /* Set a fixed width */
+  height: 300px; /* Set a fixed height */
+  background-color: #f2f2f2;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.image-carousel img {
+  width: auto;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.image-carousel .prev,
+.image-carousel .next {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 24px;
+  color: #fff;
+  background-color: rgba(0, 0, 0, 0.5);
+  padding: 8px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.image-carousel .prev {
+  left: 10px;
+}
+
+.image-carousel .next {
+  right: 10px;
 }
