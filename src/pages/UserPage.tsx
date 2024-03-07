@@ -25,8 +25,9 @@ import {
   useNavigate,
 } from "react-router-dom";
 import paris from "../assets/Paris.jpeg";
+import paris3 from "../assets/fly.png";
 import CardImage from "../assets/globe.png";
-import Ola from "../assets/profilbilde.jpeg";
+import { default as Ola } from "../assets/profilbilde.jpeg";
 import AddDestinationForm from "../components/AddDestinationForm";
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
@@ -134,12 +135,17 @@ const MyDestinations = () => {
 
 interface MyReviewsProps {
   rating?: number;
-  reviewTitle: string;
-  comment: string;
-  date: string;
+  reviewTitle?: string;
+  comment?: string;
+  date?: string;
 }
 
 const MyReviews = ({ rating, reviewTitle, comment, date }: MyReviewsProps) => {
+  const images = [
+    { name: "Ola", src: Ola },
+    { name: "Paris", src: paris },
+    { name: "Paris3", src: paris3 },
+  ];
   // the reviews that user has made
   const [myReviews, setMyReviews] = useState<any[]>([]);
   // pass rating down from user entry in database, and calculate average rating based on total number of reviews
@@ -165,14 +171,19 @@ const MyReviews = ({ rating, reviewTitle, comment, date }: MyReviewsProps) => {
               </div>
               <div className="image-carousel">
                 <Carousel>
+                  {images.map((item) => (
+                    <Carousel.Item key={item.name}>
+                      <img src={item.src} alt="carousel-image" />
+                    </Carousel.Item>
+                  ))}
                   <Carousel.Item>
-                    <img src={CardImage} alt="paris"></img>
+                    <img src={CardImage} alt="paris" />
                   </Carousel.Item>
                   <Carousel.Item>
-                    <img src={CardImage} alt="paris"></img>
+                    <img src={CardImage} alt="paris" />
                   </Carousel.Item>
                   <Carousel.Item>
-                    <img src={CardImage} alt="paris"></img>
+                    <img src={CardImage} alt="paris" />
                   </Carousel.Item>
                 </Carousel>
               </div>
@@ -197,13 +208,10 @@ const MyReviews = ({ rating, reviewTitle, comment, date }: MyReviewsProps) => {
   );
 };
 
-const VisitedDestinations = () => {
-  // all the visisted destinations
+export const VisitedDestinations = () => {
   return (
     <>
-      <div className="user-container">
-        {/* Add content for VisitedDestinations subpage */}
-      </div>
+      <h1> Hello world</h1>
     </>
   );
 };
