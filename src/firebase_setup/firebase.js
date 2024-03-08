@@ -32,6 +32,7 @@ export const storageRef = ref(
 );
 export const db = getFirestore(app);
 export const destinationRef = collection(db, "destinations");
+export const userRef = collection(db, "users");
 // const querySnapshot = await getDocs(destinationRef);
 
 export const auth = getAuth(app);

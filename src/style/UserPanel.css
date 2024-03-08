@@ -23,6 +23,11 @@ h1 {
     border-color: #2B6777;
 }
 
+#submitButton:hover {
+    background-color: #22525f;
+}
+
+
 #submitButton {
     width: 200px;
     margin-top: 6%;
@@ -32,9 +37,15 @@ h1 {
 }
 
 #backToFrontPage {
-    width: 200px;
+    width: 100px;
     background-color: #2B6777;
     border-color: #2B6777;
+    margin-left: 20px;
+    margin-top: 20px;
+}
+
+#backToFrontPage:hover {
+    background-color: #22525f;
 }
 
 
