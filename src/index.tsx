@@ -9,6 +9,7 @@ import reportWebVitals from "./reportWebVitals";
 import OmOss from "./pages/OmOss";
 import LogInPage from "./pages/LogInPage";
 import RegisterUserPage from "./pages/RegisterUserPage";
+import MyPage from "./pages/MyPage";
 
 
 const root = ReactDOM.createRoot(
@@ -23,6 +24,8 @@ root.render(
         <Route path="/omoss" element={<OmOss/>} />
         <Route path="/logginn" element={<LogInPage/>} />
         <Route path="/registrering" element={<RegisterUserPage/>} />
+        <Route path="/minside" element={<MyPage/>} />
+
       </Routes>
     </BrowserRouter>
   </React.StrictMode>
