@@ -2,23 +2,26 @@
 
 #topnav {
     background-color:#2B6777;
-    overflow: hidden;
+    overflow: visible;
     height: 70px;
     width: 100%;
-    overflow: visible;
+    align-items: center;
   }
-
-#topnav a:nth-child(n+3) {
+  
+  /* Style the links inside the navigation bar */
+#topnav a:nth-child(n+2) {
     color: white;
     padding: 20px 10px;
     text-decoration: none;
-    font-size: 17px !important;
-    font-family: "Poppins", Calibri, sans-serif !important;
+    font-size: 17px;
+    font-family: "Poppins";
     height: 70px;
   }
 
   #topnav a:not(:first-child) {
     float:right;
+    display: flex;
+    align-items: center;
   }
   
   
@@ -27,7 +30,7 @@
 
   }
 
- #topnav a:nth-child(n+3):hover {
+ #topnav a:nth-child(n+2):hover {
         color: black;
       }
 
@@ -36,6 +39,10 @@
     width: auto; 
     margin-left: 5%; 
     margin: 13px 
+}
+
+#icon {
+  margin: 5px;
 }
 
 #dropdown-menu {
@@ -53,6 +60,5 @@
   float: right; 
   margin-right: 10px; 
 } 
-
 
 

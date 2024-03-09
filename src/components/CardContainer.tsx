@@ -55,7 +55,7 @@ function CardContainer({ destinationsFromSearch, currentFilter, sortCriterion, s
           } catch (error) {
             console.error("Error fetching image from Firebase: ", destinationData.city);
           }
-          console.log(url);
+          // console.log(url);
           if (url === null) {
             console.log("No main image for this destination: ", destinationData.city)
             return null;

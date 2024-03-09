@@ -11,6 +11,7 @@ import Navbar from "./components/Navbar";
 import Searchbar from "./components/Searchbar";
 import OmOss from "./pages/OmOss";
 
+
 function App() {
   const [searchResults, setSearchResults] = useState<any[]>([]); // parent stores search from searchbar
   const [currentFilter, setCurrentFilter] = useState<string>("Alle"); // oppdatere foreløpige filter fra Alle som start
@@ -54,7 +55,6 @@ function App() {
         placeholder="Søk på reisemål"
         title="Finn ditt reisemål"
       />
-<DestinationPopUp />
       <Filtercomponent onFilterChange={handleFilterChange} onSortChange={handleSortChange} activeSort={sortCriterion} sortDirection={sortDirection} />
       <CardContainer
         destinationsFromSearch={searchResults}
