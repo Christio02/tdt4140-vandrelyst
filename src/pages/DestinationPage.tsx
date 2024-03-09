@@ -114,9 +114,15 @@ const DestinationPage = () => {
 const AllRatings = ({ destination }: { destination: Destination }) => {
   return (
     <div className="AllRatings">
-      <StarRating rating={destination.rating} />
-      <PriceRating price={destination.price} />
-      <TempRating temp={destination.temperature} />
+      
+      <div className="centerContent">
+        <StarRating rating={destination.rating} />
+        <PriceRating price={destination.price} />
+        <TempRating temp={destination.temperature} />
+      </div>
+      <div className="deleteButtonContainer">
+        <DeleteDestinationForm id={destination.city} city={destination.city}/>
+      </div>
     </div>
   );
 };
