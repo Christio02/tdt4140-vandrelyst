@@ -124,7 +124,7 @@ interface StarRatingProps {
   rating: number;
 }
 
-const StarRating: React.FC<StarRatingProps> = ({ rating }) => {
+export const StarRating: React.FC<StarRatingProps> = ({ rating }) => {
   const totalStars = 5;
   const fullStars = Math.round(rating);
   const emptyStars = totalStars - fullStars;
@@ -144,7 +144,6 @@ const StarRating: React.FC<StarRatingProps> = ({ rating }) => {
     </div>
   );
 };
-
 interface PriceRatingProps {
   price: number;
 }
