@@ -56,7 +56,7 @@ const Navbar = () => {
                         title={<CircleUserRound size={24} />}
                         id="dropdown-menu"
                         variant="string" >
-                            <Dropdown.Item as={Link} to="/minside">Min side (ADMIN)</Dropdown.Item>
+                            <Dropdown.Item as={Link} to="/mypage">Min side (ADMIN)</Dropdown.Item>
                             <Dropdown.Item href='/' onClick={logOut}> Logg ut </Dropdown.Item>
                     </DropdownButton></a>
 
@@ -65,7 +65,7 @@ const Navbar = () => {
                         title={<CircleUserRound size={24}/> }
                         id="dropdown-menu"
                         variant="string" >
-                            <Dropdown.Item as={Link} to="/minside">Min side (BRUKER)</Dropdown.Item>
+                            <Dropdown.Item as={Link} to="/mypage">Min side (BRUKER)</Dropdown.Item>
                             <Dropdown.Item href='/' onClick={logOut}> Logg ut </Dropdown.Item>
                     </DropdownButton></a>
                 )
@@ -134,7 +134,7 @@ const Navbar = () => {
                 <DestinationPopUp />
             </div>
         </a>
-        
+
         </div>
 
         

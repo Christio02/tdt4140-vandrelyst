@@ -24,7 +24,6 @@ root.render(
         <Route path="/omoss" element={<OmOss/>} />
         <Route path="/logginn" element={<LogInPage/>} />
         <Route path="/registrering" element={<RegisterUserPage/>} />
-        <Route path="/minside" element={<MyPage/>} />
         <Route path="/mypage/*" element={<UserPage />} />
       </Routes>
     </BrowserRouter>
