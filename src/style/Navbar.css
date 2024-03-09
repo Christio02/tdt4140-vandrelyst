@@ -3,24 +3,26 @@
 /* Add a black background color to the top navigation */
 #topnav {
     background-color:#2B6777;
-    overflow: hidden;
+    overflow: visible;
     height: 70px;
     width: 100%;
-    overflow: visible;
+    align-items: center;
   }
   
   /* Style the links inside the navigation bar */
-#topnav a:nth-child(n+3) {
+#topnav a:nth-child(n+2) {
     color: white;
     padding: 20px 30px;
     text-decoration: none;
     font-size: 17px;
-    font-family: "Poppins", Calibri, sans-serif;
+    font-family: "Poppins";
     height: 70px;
   }
 
   #topnav a:not(:first-child) {
     float:right;
+    display: flex;
+    align-items: center;
   }
   
   
@@ -29,7 +31,7 @@
 
   }
 
- #topnav a:nth-child(n+3):hover {
+ #topnav a:nth-child(n+2):hover {
         color: black;
       }
 
@@ -38,6 +40,10 @@
     width: auto; 
     margin-left: 5%; 
     margin: 13px 
+}
+
+#icon {
+  margin: 5px;
 }
 
 #dropdown-menu {
