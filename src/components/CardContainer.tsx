@@ -49,7 +49,7 @@ function CardContainer({ destinationsFromSearch }: CardContainerProps) {
           } catch (error) {
             console.error("Error fetching image from Firebase: ", destinationData.city);
           }
-          console.log(url);
+          // console.log(url);
           if (url === null) {
             console.log("No main image for this destination: ", destinationData.city)
             return null;
@@ -78,7 +78,7 @@ function CardContainer({ destinationsFromSearch }: CardContainerProps) {
     fetchData();
   }, []); // The empty array means that the effect will only run once, after the initial render.
 
-  console.log(destinations); // Log the state
+  // console.log(destinations); // Log the state
 
   return (
     <div className="container">

@@ -62,14 +62,16 @@ export const userIsAdmin = async () => {
   
   //! Henter data fra document
   try {
+    console.log("INNE I TRY")
     const snapshotOfData = await getDoc(userDocument);
+    
     //! Sjekke om snapshotQuery faktisk finnes
     if (snapshotOfData.exists()) {
         const userInfo = snapshotOfData.data();  
         // console.log("SJEKKSJEKKSJEKK")
         console.log("Document data:", userInfo);
-        // console.log(userInfo.admin);
-        return userInfo.admin;
+        console.log(userInfo.isAdmin);
+        return userInfo.isAdmin;
       }
       
       else {
@@ -174,9 +176,9 @@ const registerUser = (event: React.FormEvent<HTMLFormElement>) => {
 let functions = [logIn, registerUser];
 
 console.log(auth?.currentUser?.email);
-userIsAdmin().then(isAdmin => {
-  console.log("BOOL ER: " + isAdmin);
-});
+// userIsAdmin().then(isAdmin => {
+  // console.log("BOOL ER: " + isAdmin);
+// });
 
     return (
         <div className='wholeDiv'>

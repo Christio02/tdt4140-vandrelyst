@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import "../style/Navbar.css"
 import { assert } from 'console';
 import logo_navn from "../assets/logo_navn.png";
@@ -9,28 +9,71 @@ import DropdownButton from 'react-bootstrap/DropdownButton';
 import { Link } from 'react-router-dom';
 import { auth } from '../firebase_setup/firebase';
 import { logOut, userIsAdmin } from './RegisterPanel';
+import { onAuthStateChanged } from 'firebase/auth';
   
   
 //nav bar full screen
 const Navbar = () => {
 
+//  Må sette STATE for om du er admin/logget inn og listene for om man er logget inn
+// eller admin. 
+// Usikker på om userIsAdmin ble helt riktig brukt, men freestyla og det funka
     const [isLoading, setIsLoading] = useState(true);
-    const [isAdmin, setIsAdmin] = useState(false);
+    const [currentUserIsAdmin, setcurrentUserIsAdmin] = useState(false);
+    const [currentUser, setCurrentUser] = useState(null);
 
-    userIsAdmin().then(isAdmin =>{
-        if (isAdmin == undefined) {
-            return;
-        }
-        setIsAdmin(isAdmin);
-        setIsLoading(false);
-    });
+
+
+    console.log(auth?.currentUser?.email)
+    
+    useEffect(() => {
+        console.log("INNE USE EFFECT")
+        auth.onAuthStateChanged( user => {
+            console.log("INNE onAuthStateChanged")
+            console.log(user?.email)
+
+            userIsAdmin().then(isAdmin =>{
+                setcurrentUserIsAdmin(isAdmin);
+                setIsLoading(false);
+            });
+
+        })
+    },[])
+
+
 
     // logOut();
+
     return (
     <div id="topnav">
         <Link id = "logo" to="/"> <img src = {logo_navn} alt="Logo i navbar" ></img> </Link>
-        
-        {auth?.currentUser?.email 
+        {isLoading ? (
+                <p>Laster...</p>
+            ) : auth?.currentUser ? (
+                currentUserIsAdmin ? (
+                    <DropdownButton
+                        title={<CircleUserRound size={24} />}
+                        id="dropdown-menu"
+                        variant="string" >
+                            <Dropdown.Item as={Link} to="/minside">Min side (ADMIN)</Dropdown.Item>
+                            <Dropdown.Item onClick={logOut}> Logg ut </Dropdown.Item>
+                    </DropdownButton>
+
+                ) : (
+                    <DropdownButton
+                        title={<CircleUserRound size={24} />}
+                        id="dropdown-menu"
+                        variant="string" >
+                            <Dropdown.Item as={Link} to="/minside">Min side (BRUKER)</Dropdown.Item>
+                            <Dropdown.Item onClick={logOut}> Logg ut </Dropdown.Item>
+                    </DropdownButton>
+                )
+            ) : (
+                <a href='/logginn'> <button type="button" id="LogInIcon">LOGG INN HER</button></a>
+            )}
+
+
+        {/* {auth?.currentUser?.email 
             ? // HVIS LOGGET INN:
                 // Sjekk om loader(håndtere at det er asynkront) 
                 // , om admin eller om vanlig bruker 
@@ -43,7 +86,7 @@ const Navbar = () => {
             )
             :
             <a href='/logginn'> <button type="button" id="LogInIcon">LOGG INN HER</button></a> 
-        }
+        } */}
         {
         // // Kun hvis logget inn
         // (isLoading ? (<p>VET IKKE</p>)
