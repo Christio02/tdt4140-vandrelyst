@@ -19,7 +19,6 @@ const DeleteDestinationForm = ({ id, city }: Destination) => {
   const [isDeleteForm, setIsDeleteForm] = useState(false);
   const [data, setData] = useState<Destination>();
 
-  const [selectedDest, setSelectedDest] = useState("");
   const handleShowDelete = () => setIsDeleteForm(true);
   const handleCloseDelete = () => setIsDeleteForm(false);
 
@@ -48,15 +47,12 @@ const DeleteDestinationForm = ({ id, city }: Destination) => {
     }
   }, [isDeleteForm, city]);
 
-  const handleSelectedDestination = (selectedCity: string) => {
-    setSelectedDest(selectedCity);
-  };
   const handleDelete = async () => {
     try {
-      console.log(selectedDest);
+      console.log(data?.city);
       const q = query(
         collection(db, "destinations"),
-        where("city", "==", selectedDest)
+        where("city", "==", data?.city)
       );
       const querySnapshot = await getDocs(q);
 
@@ -96,22 +92,10 @@ const DeleteDestinationForm = ({ id, city }: Destination) => {
               gap: "0.5rem",
             }}
           >
-            <Dropdown>
-              <Dropdown.Toggle variant="success" id="dropdown-basic">
-                Velg destination
-              </Dropdown.Toggle>
-              <Dropdown.Menu>
-                {/* Need to map over destinations, and then display dropdowns*/}
-                {
-                  <Dropdown.Item
-                    key={data?.id ?? ""}
-                    onClick={() => handleSelectedDestination(data?.city ?? "")}
-                  >
-                    {data?.city ?? ""}
-                  </Dropdown.Item>
-                }
-              </Dropdown.Menu>
-            </Dropdown>
+            <p>
+              Er du sikker på at du vil slette destinasjonen, {data?.city ?? ""}
+              ?
+            </p>
           </Modal.Body>
           <Modal.Footer
             style={{ display: "flex", justifyContent: "center", gap: "5rem" }}
