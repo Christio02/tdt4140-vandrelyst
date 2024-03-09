@@ -55,7 +55,6 @@ function App() {
         placeholder="Søk på reisemål"
         title="Finn ditt reisemål"
       />
-<DestinationPopUp />
       <Filtercomponent onFilterChange={handleFilterChange} onSortChange={handleSortChange} activeSort={sortCriterion} sortDirection={sortDirection} />
       <CardContainer
         destinationsFromSearch={searchResults}
