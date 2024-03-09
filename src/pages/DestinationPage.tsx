@@ -124,7 +124,7 @@ interface StarRatingProps {
   rating: number;
 }
 
-const StarRating: React.FC<StarRatingProps> = ({ rating }) => {
+export const StarRating: React.FC<StarRatingProps> = ({ rating }) => {
   const totalStars = 5;
   const fullStars = Math.round(rating);
   const emptyStars = totalStars - fullStars;
@@ -144,21 +144,33 @@ const StarRating: React.FC<StarRatingProps> = ({ rating }) => {
     </div>
   );
 };
-
 interface PriceRatingProps {
   price: number;
 }
 
 const PriceRating: React.FC<PriceRatingProps> = ({ price }) => {
+  const totalDollars = 5;
+  const fullDollars = Math.round(price);
+  const emptyDollars = totalDollars - price;
   return (
     <div className="PriceRating" id="Rating">
-      {Array(price)
+      {Array(fullDollars)
         .fill(0)
         .map((_, index) => (
           <FontAwesomeIcon
             icon={faDollarSign}
             className="faDollarSign"
             key={`Dollar-${index}`}
+          />
+        ))}
+      {Array(emptyDollars)
+        .fill(0)
+        .map((_, index) => (
+          <FontAwesomeIcon
+            icon={faDollarSign}
+            className="faDollarSign"
+            key={`Dollar-${index}`}
+            color="grey"
           />
         ))}
       {/*It might seem overly complex to write all of this code to do something as simple as creating an array, but this seems to be standard.

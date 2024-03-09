@@ -5,12 +5,12 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import App from "./App";
 import "./index.css";
 import DestinationPage from "./pages/DestinationPage";
-import reportWebVitals from "./reportWebVitals";
 import OmOss from "./pages/OmOss";
 import LogInPage from "./pages/LogInPage";
 import RegisterUserPage from "./pages/RegisterUserPage";
 import MyPage from "./pages/MyPage";
-
+import UserPage from "./pages/UserPage";
+import reportWebVitals from "./reportWebVitals";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
@@ -25,7 +25,7 @@ root.render(
         <Route path="/logginn" element={<LogInPage/>} />
         <Route path="/registrering" element={<RegisterUserPage/>} />
         <Route path="/minside" element={<MyPage/>} />
-
+        <Route path="/mypage/*" element={<UserPage />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>

@@ -8,3 +8,13 @@ body {
   align-items: center;
   gap: 1rem;
 }
+
+.annonse{
+  width: 600px;
+  height: 200px;
+}
+
+.annonse img{
+  width:inherit;
+  height: inherit;
+}
