@@ -74,59 +74,57 @@ const DeleteDestinationForm = ({ id, city }: Destination) => {
 
   return (
     <>
-        <div className="deleteButtonContainer">
-        <Button
-          variant="danger"
-          onClick={handleShowDelete}
-          style={{ maxWidth: "200px" }}
-        >
-          Slett destinasjonen
-        </Button>
-        </div>
-        <div className="delete-modal">
-          <Modal show={isDeleteForm} onHide={handleCloseDelete} size="lg">
-            <Modal.Header closeButton>
-              <Modal.Title className="ms-auto">
-                Skjema for sletting av destinasjon
-              </Modal.Title>
-            </Modal.Header>
-            <Modal.Body
-              as={"div"}
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                gap: "0.5rem",
-              }}
-            >
-              <Dropdown>
-                <Dropdown.Toggle variant="success" id="dropdown-basic">
-                  Velg destination
-                </Dropdown.Toggle>
-                <Dropdown.Menu>
-                  {/* Need to map over destinations, and then display dropdowns*/}
-                  {
-                    <Dropdown.Item
-                      key={data?.id ?? ""}
-                      onClick={() => handleSelectedDestination(data?.city ?? "")}
-                    >
-                      {data?.city ?? ""}
-                    </Dropdown.Item>
-                  }
-                </Dropdown.Menu>
-              </Dropdown>
-            </Modal.Body>
-            <Modal.Footer
-              style={{ display: "flex", justifyContent: "center", gap: "5rem" }}
-            >
-              <Button variant="danger" onClick={handleCloseDelete}>
-                Lukk
-              </Button>
-              <Button variant="success" onClick={handleDelete}>
-                Lagre endringer
-              </Button>
-            </Modal.Footer>
-          </Modal>
-        </div>
+      <Button
+        variant="danger"
+        onClick={handleShowDelete}
+        style={{ maxWidth: "200px" }}
+      >
+        Slett destinasjonen
+      </Button>
+      <div className="delete-modal">
+        <Modal show={isDeleteForm} onHide={handleCloseDelete} size="lg">
+          <Modal.Header closeButton>
+            <Modal.Title className="ms-auto">
+              Skjema for sletting av destinasjon
+            </Modal.Title>
+          </Modal.Header>
+          <Modal.Body
+            as={"div"}
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: "0.5rem",
+            }}
+          >
+            <Dropdown>
+              <Dropdown.Toggle variant="success" id="dropdown-basic">
+                Velg destination
+              </Dropdown.Toggle>
+              <Dropdown.Menu>
+                {/* Need to map over destinations, and then display dropdowns*/}
+                {
+                  <Dropdown.Item
+                    key={data?.id ?? ""}
+                    onClick={() => handleSelectedDestination(data?.city ?? "")}
+                  >
+                    {data?.city ?? ""}
+                  </Dropdown.Item>
+                }
+              </Dropdown.Menu>
+            </Dropdown>
+          </Modal.Body>
+          <Modal.Footer
+            style={{ display: "flex", justifyContent: "center", gap: "5rem" }}
+          >
+            <Button variant="danger" onClick={handleCloseDelete}>
+              Lukk
+            </Button>
+            <Button variant="success" onClick={handleDelete}>
+              Lagre endringer
+            </Button>
+          </Modal.Footer>
+        </Modal>
+      </div>
     </>
   );
 };
