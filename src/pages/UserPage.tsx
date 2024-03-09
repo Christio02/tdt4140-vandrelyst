@@ -15,6 +15,7 @@ import {
   faPlaneDeparture,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { link } from "fs";
 import { useEffect, useState } from "react";
 import { Card, Carousel } from "react-bootstrap";
 import {
@@ -22,6 +23,7 @@ import {
   Route,
   BrowserRouter as Router,
   Routes,
+  useLocation,
   useNavigate,
 } from "react-router-dom";
 import paris from "../assets/Paris.jpeg";
@@ -57,7 +59,7 @@ const UserPage = () => {
           <img src={paris} alt="destination"></img>
         </div>
         <h4 className="name">Ola Nordmann</h4>
-        <div className="admin">Admin</div>
+        <span className="admin">Admin</span>
         <div className="crown">
           <FontAwesomeIcon icon={faCrown}></FontAwesomeIcon>
         </div>
@@ -66,21 +68,14 @@ const UserPage = () => {
         </div>
       </div>
       {/* Navigations */}
-      <div
-        style={{
-          display: "flex",
-          gap: "2rem",
-          marginTop: "6rem",
-          marginLeft: "1rem",
-        }}
-      >
-        <Link to="myDestinations" style={{ textDecoration: "none" }}>
+      <div className="my-page-link">
+        <Link to="myDestinations" className="link">
           Mine destinasjoner
         </Link>
-        <Link to="myReviews" style={{ textDecoration: "none" }}>
+        <Link to="myReviews" className="link">
           Mine anmelderlser
         </Link>
-        <Link to="visitedDestinations" style={{ textDecoration: "none" }}>
+        <Link to="visitedDestinations" className="link">
           Besøkte destinasjoner
         </Link>
       </div>
@@ -97,6 +92,23 @@ const UserPage = () => {
 export default UserPage;
 
 const MyDestinations = () => {
+  const mockDestinations = [
+    {
+      id: 1,
+      name: "Paris",
+      description: "Lorem ipsum",
+      imageUrl: "https://example.com/paris.jpg",
+      createdDate: "04.03.24",
+    },
+    {
+      id: 2,
+      name: "London",
+      description: "Lorem ipsum",
+      imageUrl: "https://example.com/london.jpg",
+      createdDate: "05.03.24",
+    },
+    // add more destinations as needed
+  ];
   // the destinations added
 
   const [myDestinations, setMydestinations] = useState<any[]>([]);
@@ -113,20 +125,24 @@ const MyDestinations = () => {
           setSearchResults={setMydestinations}
           placeholder="Søk i mine destinasjoner"
         />
-        <div className="your-destinations">
-          <Link to="/" style={{ textDecoration: "none" }}>
-            <Card>
-              <Card.Img variant="top" src={CardImage} />
-              <Card.Body>
-                <Card.Title>Paris</Card.Title>
-                <Card.Text>Lorem ipsum</Card.Text>
-                <Card.Footer>
-                  <p>Opprettet 04.03.24</p>
-                </Card.Footer>
-              </Card.Body>
-            </Card>
-          </Link>
-        </div>
+
+        {mockDestinations.map((dest) => (
+          <div className="your-destinations" key={dest.id}>
+            <Link to="/" style={{ textDecoration: "none" }}>
+              <Card>
+                <Card.Img variant="top" src={CardImage} />
+                <Card.Body>
+                  <Card.Title>{dest.name}</Card.Title>
+                  <Card.Text>{dest.description}</Card.Text>
+                  <Card.Footer>
+                    <p>Opprettet {dest.createdDate}</p>
+                  </Card.Footer>
+                </Card.Body>
+              </Card>
+            </Link>
+          </div>
+        ))}
+
         <AddDestinationForm />
       </div>
     </>
@@ -186,9 +202,9 @@ const MyReviews = ({ rating, reviewTitle, comment, date }: MyReviewsProps) => {
           placeholder="Søk i mine anmeldelser"
         />
         <div className="my-reviews-container">
-          <div className="my-reviews-header">
-            <h3>Dine anmeldelser</h3>
-            <StarRating rating={rating || 0} />
+          <h3>Dine anmeldelser</h3>
+          <StarRating rating={rating || 0} />
+          <div className="carousel-data">
             {myReviewsData.map((review, index) => (
               <div key={index} className="my-review">
                 <div className="my-review-header">
@@ -217,7 +233,7 @@ const MyReviews = ({ rating, reviewTitle, comment, date }: MyReviewsProps) => {
                   <h6>Kommentar</h6>
                   <p>{review.comment}</p>
                   <div className="my-review-footer">
-                    <span>{review.date}</span>
+                    <span style={{ fontWeight: "500" }}>{review.date}</span>
                   </div>
                 </div>
               </div>
@@ -230,9 +246,28 @@ const MyReviews = ({ rating, reviewTitle, comment, date }: MyReviewsProps) => {
 };
 
 export const VisitedDestinations = () => {
+  const [visitedDestination, setVisitedDestinations] = useState<any[]>([]);
   return (
     <>
-      <h1> Hello world</h1>
+      <div className="visited-container">
+        <Searchbar
+          setSearchResults={setVisitedDestinations}
+          placeholder="Søk på dine besøkte destinasjoner"
+        />
+
+        <div className="visited-carousel">
+          <Card>
+            <Card.Img variant="top" src={CardImage}></Card.Img>
+            <div style={{ padding: "2rem" }}>
+              <Card.Title>Tromsø</Card.Title>
+              <Card.Text>Norge</Card.Text>
+            </div>
+          </Card>
+          <span style={{ position: "relative", top: "2rem" }}>
+            <h4>20.03.23 - 05.04.23</h4>
+          </span>
+        </div>
+      </div>
     </>
   );
 };

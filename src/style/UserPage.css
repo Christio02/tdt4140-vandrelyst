@@ -1,3 +1,20 @@
+.my-page-link {
+  display: flex;
+  gap: 2rem;
+  margin-top: 6rem;
+  margin-left: 1rem;
+}
+
+.link {
+  text-decoration: none;
+  color: inherit;
+}
+
+.link:hover {
+  text-decoration: underline;
+  color: #2b6777;
+}
+
 .profilepicture img {
   width: 150px;
   height: 150px;
@@ -59,16 +76,22 @@
   gap: 1rem;
 }
 
-.my-reviews-header {
+.my-reviews-container {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  padding: 2rem;
+}
+
+.my-review-header {
+  margin-top: 2rem;
+  margin-bottom: 3rem;
+}
+
+.my-review-body {
+  margin-top: 3rem;
 }
 
 .image-carousel {
-  display: flex;
-  justify-content: center;
-  align-items: center;
   width: 300px; /* Set a fixed width */
   height: 300px; /* Set a fixed height */
   background-color: #f2f2f2;
@@ -103,4 +126,12 @@
 
 .image-carousel .next {
   right: 10px;
+}
+
+.visited-carousel {
+  display: flex;
+}
+
+.visited-carousel img {
+  object-fit: fill;
 }
