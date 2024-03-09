@@ -82,7 +82,7 @@ const DeleteDestinationForm = ({ id, city }: Destination) => {
         Slett destinasjonen
       </Button>
       <div className="delete-modal">
-        <Modal show={isDeleteForm} onHide={handleCloseDelete} size="lg">
+        <Modal show={isDeleteForm} onHide={handleCloseDelete}>
           <Modal.Header closeButton>
             <Modal.Title className="ms-auto">
               Skjema for sletting av destinasjon
@@ -94,11 +94,12 @@ const DeleteDestinationForm = ({ id, city }: Destination) => {
               display: "flex",
               flexDirection: "column",
               gap: "0.5rem",
+              alignItems: "center",
             }}
           >
             <Dropdown>
               <Dropdown.Toggle variant="success" id="dropdown-basic">
-                Velg destination
+                Velg destinasjon
               </Dropdown.Toggle>
               <Dropdown.Menu>
                 {/* Need to map over destinations, and then display dropdowns*/}

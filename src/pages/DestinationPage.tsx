@@ -89,7 +89,6 @@ const DestinationPage = () => {
       <MainPhoto url={mainPhotoUrl} />
       <TitleDiv destination={destination} />
       <AllRatings destination={destination} />
-      <DeleteDestinationForm id={id} city={destination.city} />
       <div className="AllContentDivs">
         <DescriptionDiv destination={destination} />
         <ActivitesDiv
@@ -98,7 +97,7 @@ const DestinationPage = () => {
         />
         <ActivitesDiv title="Bilder" activities={destination.extraImages} />
       </div>
-
+      
       <div className="review-container">
         <h2 className="reviews-title">REVIEWS</h2>
         <div className="review-section">
@@ -113,9 +112,15 @@ const DestinationPage = () => {
 const AllRatings = ({ destination }: { destination: Destination }) => {
   return (
     <div className="AllRatings">
-      <StarRating rating={destination.rating} />
-      <PriceRating price={destination.price} />
-      <TempRating temp={destination.temperature} />
+      
+      <div className="centerContent">
+        <StarRating rating={destination.rating} />
+        <PriceRating price={destination.price} />
+        <TempRating temp={destination.temperature} />
+      </div>
+      <div className="deleteButtonContainer">
+        <DeleteDestinationForm id={destination.city} city={destination.city}/>
+      </div>
     </div>
   );
 };
