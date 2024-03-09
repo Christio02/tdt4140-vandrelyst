@@ -22,7 +22,7 @@ function FilterComponent({ onFilterChange, onSortChange, activeSort, sortDirecti
 
   return (
     <div className="filterContainer">
-      <h4>Utforsk ditt favorittsted</h4>
+      <h4 style={{textAlign: 'center'}}>Utforsk ditt favorittsted</h4>
       <div className="buttons">
         <div className="button-container" onClick={() => handleFilterSelection('Alle')}>
           <button className={selectedFilter === 'Alle' ? 'active' : ''}><FontAwesomeIcon icon={faEarthAmericas} className="icon" /></button>
