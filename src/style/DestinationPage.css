@@ -36,34 +36,24 @@
   font-size: 1.2em
 }
 
-
-
-
-
 .AllRatings{
-    width: 100%;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    margin-top: 1px;
-    margin-bottom: 1px;
+  position: relative; /* Allows the deleteButton to be positioned relative to the container */
+  width: 100%;
+  display: flex;
+  justify-content: center; /* Centers the children, in this case, the centerContent div */
+  margin-top: 1px;
+  margin-bottom: 1px;
 }
 
 .centerContent {
   display: flex;
-  justify-content: center; /* Center the content */
-  width: 100%;
-  flex-grow: 1; /* Allows the container to grow and take up available space */
-  gap: 10px; /* Optional: Adds space between the centered components */
 }
 
 .deleteButtonContainer {
-    display: flex;
-    justify-content: right;
-    align-items: center;
-    margin-top: 10px;
-    margin-bottom: 10px;
-    margin-left: auto;
+    position: absolute; /* Position delete button relative to the AllRatings div */
+    right: 0; /* 0 pixels from the right */
+    top: 50%; /* Top of container starts at 50% of the parent container */
+    transform: translateY(-50%); /* Translate the button up by 50% of its own height, effectively centering it */
 }
 
 h1 {
