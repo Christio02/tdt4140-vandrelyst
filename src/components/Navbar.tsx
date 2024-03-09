@@ -10,6 +10,7 @@ import { Link } from 'react-router-dom';
 import { auth } from '../firebase_setup/firebase';
 import { logOut, userIsAdmin } from './RegisterPanel';
 import { onAuthStateChanged } from 'firebase/auth';
+import DestinationPopUp from "./AddDestinationForm";
   
   
 //nav bar full screen
@@ -127,7 +128,16 @@ const Navbar = () => {
                 // <a href='/logginn'> <button type="button" id="LogInIcon"><CircleUserRound size={24} /></button></a> 
         }
         <a href="/omoss">Om oss</a> 
+
+        <a>
+            <div className="destinationPopupContainer">
+                <DestinationPopUp />
+            </div>
+        </a>
+        
         </div>
+
+        
     
     );
 }
