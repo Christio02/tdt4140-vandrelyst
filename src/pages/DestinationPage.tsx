@@ -14,7 +14,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import DeleteDestinationForm from "../components/DeleteDestinationForm";
 import "../style/CardContainer.css";
-import ReviewButton from "../components/AddReviewFrom";
+import AddReviewForm from "../components/";
 
 interface Destination {
   mainImage: string;
@@ -339,7 +339,7 @@ const ReviewSummary = () => {
       </button>
               */}
       <div className="add-review-button">
-        <ReviewButton />
+        <AddReviewForm />
       </div>
     </div>
   );
