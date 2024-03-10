@@ -27,50 +27,42 @@ const Searchbar = ({
     setSearchText(event.target.value);
     // console.log(searchText)
   };
-  const sendSearch = async (searchtext: string) => {
-    if (searchtext == null) {
+  const sendSearch = async (searchtext:string) => {
+    if (!searchtext) {
       return;
     }
-
+  
     const getDestinationsDatabase = collection(db, "destinations");
-    const searchQueryCity = query(
-      getDestinationsDatabase,
-      where("city", "==", searchtext)
-    );
-    const searchQueryCountry = query(
-      getDestinationsDatabase,
-      where("country", "==", searchText)
-    );
+    const searchQueryCity = query(getDestinationsDatabase, where("city", "==", searchtext));
+    const searchQueryCountry = query(getDestinationsDatabase, where("country", "==", searchText));
     const snapshotCity = await getDocs(searchQueryCity);
     const snapshotCountry = await getDocs(searchQueryCountry);
-
+  
     if (snapshotCity.empty && snapshotCountry.empty) {
-      alert("Ingen destinasjoner funnet basert på søket ditt!");
+      alert("No destinations found based on your search!");
+      return; // Ensure function exits here if no documents are found
     }
-
+  
     const mergedDocs = [...snapshotCity.docs, ...snapshotCountry.docs];
     const destinationsWithImages = await Promise.all(
       mergedDocs.map(async (doc) => {
         const data = doc.data();
-        const imageRef = ref(storage, `images/${doc.id}.jpg`); // create a reference to the image in Firebase Storage
+        const imageRef = ref(storage, data.mainImage); // Use the 'mainImage' field from the document
+  
         try {
-          const imageURL = await getDownloadURL(imageRef); // get the download URL of the image
-          console.log(
-            `Here is document id : ${doc.id} and the correct imageurl from storage: ${imageURL}`
-          );
-          return { ...data, id: doc.id, imageURL }; // add the image URL to the destination data
+          const imageURL = await getDownloadURL(imageRef); // Attempt to get the download URL of the image
+          console.log(`Document id: ${doc.id}, Image URL from storage: ${imageURL}`);
+          return { ...data, id: doc.id, imageURL }; // Include the image URL in the destination data
         } catch (error) {
-          console.error(
-            `Error getting download URL for image ${doc.id}.jpg:`,
-            error
-          );
-          return { ...data, id: doc.id }; // if there was an error getting the image URL, return the destination data without the image URL
+          console.error(`Error getting download URL for image from 'mainImage' field:`, error);
+          // Handle the error appropriately (e.g., log, use a default image, etc.)
         }
       })
     );
-
+  
     setSearchResults(destinationsWithImages);
   };
+  
 
   return (
     <div className="searchbar-container">
