@@ -14,7 +14,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import DeleteDestinationForm from "../components/DeleteDestinationForm";
 import "../style/CardContainer.css";
-import AddReviewForm from "../components/";
+import AddReviewForm from "../components/AddReviewFrom";
 
 interface Destination {
   mainImage: string;
