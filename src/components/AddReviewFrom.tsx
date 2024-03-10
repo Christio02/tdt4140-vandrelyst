@@ -40,23 +40,17 @@ const ReviewPopUp = () => {
         };
     
         const sendDataToFirestore = async () => {
-        
-
-        
-        
             try {
-        
-        
-              const docRef = await addDoc(collection(db, "destinations"), {
+              const docRef = await addDoc(collection(db, "reviews"), {
                 rating: rating ? parseInt(rating) : 0,
                 description,
               });
         
               console.log("Document written with id: ", docRef.id);
-              alert("Destination added successfully!");
+              alert("Review added successfully!");
             } catch (error) {
               console.error("Error: ", error);
-              alert("An error occurred while adding the destination.");
+              alert("An error occurred while adding the review.");
             }
           };
         
