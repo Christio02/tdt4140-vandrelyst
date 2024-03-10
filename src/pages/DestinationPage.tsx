@@ -14,6 +14,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import DeleteDestinationForm from "../components/DeleteDestinationForm";
 import "../style/CardContainer.css";
+import ReviewButton from "../components/AddReviewFrom";
 
 interface Destination {
   mainImage: string;
@@ -332,9 +333,14 @@ const ReviewSummary = () => {
           </div>
         ))}
       </div>
+      {/*
       <button className="add-review-button" onClick={handleAddReviewClick}>
         Legg til omtale
       </button>
+              */}
+      <div className="add-review-button">
+        <ReviewButton />
+      </div>
     </div>
   );
 };
