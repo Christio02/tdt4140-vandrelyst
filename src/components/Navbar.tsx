@@ -25,12 +25,9 @@ const Navbar = () => {
 
 
 
-    console.log(auth?.currentUser?.email)
     
     useEffect(() => {
-        console.log("INNE USE EFFECT")
         auth.onAuthStateChanged( user => {
-            console.log("INNE onAuthStateChanged")
             console.log(user?.email)
 
             userIsAdmin().then(isAdmin =>{

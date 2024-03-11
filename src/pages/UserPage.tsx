@@ -1,22 +1,5 @@
-import {
-  faCrow,
-  faCrown,
-  faEarthAmericas,
-  faGlobe,
-  faGlobeAfrica,
-  faGlobeAmericas,
-  faGlobeAsia,
-  faGlobeEurope,
-  faMailBulk,
-  faPaperPlane,
-  faPeopleArrowsLeftRight,
-  faPhone,
-  faPlane,
-  faPlaneCircleCheck,
-  faPlaneDeparture,
-} from "@fortawesome/free-solid-svg-icons";
+import { faCrown } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { link } from "fs";
 import { useEffect, useState } from "react";
 import { Card, Carousel } from "react-bootstrap";
 import {
@@ -24,7 +7,6 @@ import {
   Route,
   BrowserRouter as Router,
   Routes,
-  useLocation,
   useNavigate,
 } from "react-router-dom";
 import paris from "../assets/Paris.jpeg";
@@ -41,19 +23,25 @@ import App from "../App";
 import { logOut, userIsAdmin } from '../components/RegisterPanel';
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
-import { db } from "../firebase_setup/firebase";
+import { auth, db } from "../firebase_setup/firebase";
 import { getDownloadURL, getStorage, ref } from "firebase/storage";
+import { collection, getDocs, getFirestore, where, query } from 'firebase/firestore';
+import CardContainer from "../components/CardContainer";
+
 
 
 interface UserProps {
-  name: string;
   userName: string;
+  email: string;
+  imageUrl: string;
 }
 
 const UserPage = () => {
   const navigate = useNavigate(); // used to navigate to default page
   
   const [userName, setUserName] = useState("");
+  const [userEmail, setUserEmail] = useState("");
+
   const [profilePicture, setProfilePicture] = useState<string | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
 
@@ -68,19 +56,17 @@ const UserPage = () => {
           const userSnapshot = await getDoc(userDocument);
 
           if (userSnapshot.exists()) {
+            //Getting the name
             const userData = userSnapshot.data();
             setUserName(userData.userFullName);
-            console.log("hei0");
-
-            //Getting the profile pic
-            const storage = getStorage();
+            setUserEmail(userData.userEmail);
+            
+            const storage = getStorage(); //Getting the profile pic
             const imageRef = ref(storage, `profilePic/${user.email}`);
             const imageUrl = await getDownloadURL(imageRef);
-            console.log("Image URL:", imageUrl);
             setProfilePicture(imageUrl);  
 
-            //Fetch user admin status
-            const adminStatus = await userIsAdmin();
+            const adminStatus = await userIsAdmin(); //Fetch user admin status
             setIsAdmin(adminStatus);
           }
         } catch (error) {
@@ -106,7 +92,7 @@ const UserPage = () => {
           <img src={paris} alt="destination"></img>
         </div>
         <div id="topContainer">
-        <button id="logUtButton"><Link to="/" id="homeLink" onClick={logOut}>Log ut</Link></button>
+        <button id="logUtButton"><Link to="/" id="homeLink" onClick={logOut}>Logg ut</Link></button>
           <div id="nameAndAdmin">
         <h4 className="name">{userName}</h4>
         {isAdmin && (
@@ -147,50 +133,94 @@ const UserPage = () => {
 export default UserPage;
 
 const MyDestinations = () => {
-  const mockDestinations = [
-    {
-      id: 1,
-      name: "Paris",
-      description: "Lorem ipsum",
-      imageUrl: "https://example.com/paris.jpg",
-      createdDate: "04.03.24",
-    },
-    {
-      id: 2,
-      name: "London",
-      description: "Lorem ipsum",
-      imageUrl: "https://example.com/london.jpg",
-      createdDate: "05.03.24",
-    },
-    // add more destinations as needed
-  ];
-  // the destinations added
+  const [myDestinations, setMyDestinations] = useState<any[]>([]);
 
-  const [myDestinations, setMydestinations] = useState<any[]>([]);
-
-  const getMydestinations = (name: UserProps) => {
-    // communicate with database
+  // Function to fetch destinations
+  const getMyDestinations = async () => {
+    const userEmail = auth.currentUser?.email;
+    if (!userEmail) {
+      console.log('User email not found, possibly because auth state is not initialized yet.');
+      return;
+    }
+    try {
+      const db = getFirestore();
+      const destinationsRef = collection(db, "destinations");
+      const q = query(destinationsRef, where("email", "==", userEmail));
+      const querySnapshot = await getDocs(q);
+      const destinations = querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+        imageUrl: '', // Initial placeholder for the image URL
+      }));
+      setMyDestinations(destinations);
+    } catch (error) {
+      console.error("Error fetching destinations:", error);
+    }
   };
+
+  // useEffect to fetch destinations when the component mounts
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged(user => {
+      if (user) {
+        getMyDestinations();
+      } else {
+        console.log('User is not logged in.');
+      }
+    });
+
+    // Cleanup subscription on unmount
+    return () => unsubscribe();
+  }, []);
+
+  // Separate useEffect to fetch images once destinations are set
+  useEffect(() => {
+    const fetchImages = async () => {
+      const updatedDestinations = await Promise.all(
+        myDestinations.map(async (dest) => {
+          try {
+            const imageUrl = await getDownloadURL(ref(getStorage(), dest.mainImage));
+            return { ...dest, imageUrl };
+          } catch (error) {
+            console.error("Error fetching image URL:", error);
+            return { ...dest, imageUrl: '' }; // Handle the case where the image URL couldn't be fetched
+          }
+        })
+      );
+      setMyDestinations(updatedDestinations);
+    };
+
+    if (myDestinations.length > 0) {
+      fetchImages();
+    }
+  }, [myDestinations]); // This useEffect depends on `myDestinations`
+
+
+
 
   return (
     <>
       <div className="user-container">
         <div style={{ marginBottom: "2rem" }}></div>
         <Searchbar
-          setSearchResults={setMydestinations}
+          setSearchResults={setMyDestinations}
           placeholder="Søk i mine destinasjoner"
         />
 
-        {mockDestinations.map((dest) => (
+        {myDestinations.map((dest) => (
           <div className="your-destinations" key={dest.id}>
-            <Link to="/" style={{ textDecoration: "none" }}>
+            <Link to={`/destination/${dest.id}`} style={{ textDecoration: "none" }}>
               <Card>
-                <Card.Img variant="top" src={CardImage} />
+                <Card.Img variant="top" src={dest.imageUrl} />
                 <Card.Body>
-                  <Card.Title>{dest.name}</Card.Title>
+                  <Card.Title>{dest.city}</Card.Title>
                   <Card.Text>{dest.description}</Card.Text>
                   <Card.Footer>
-                    <p>Opprettet {dest.createdDate}</p>
+                    <p>Opprettet {dest.date ? new Date(dest.date.toDate()).toLocaleDateString('nb-NO', {
+                      day: 'numeric',
+                      month: 'long',
+                      year: 'numeric'
+                    }) : ''}</p>
+                    {/* <p>Opprettet {dest.date ? new Date(dest.date).getDate() : ''}</p> */}
                   </Card.Footer>
                 </Card.Body>
               </Card>

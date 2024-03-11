@@ -192,7 +192,9 @@ const DestinationPopUp = () => {
         temperature: temperature ? parseInt(temperature) : 0,
         description,
         thingsToDo: thingsToDoData,
-        extraImages: extraImagesData
+        extraImages: extraImagesData,
+        email: auth.currentUser?.email,
+        date: new Date(),
       });
 
       console.log("Document written with id: ", docRef.id);
@@ -267,7 +269,7 @@ const DestinationPopUp = () => {
                     />
                   </InputGroup>
                 </Col>
-                <Col md={2}>git 
+                <Col md={2}> 
                   <InputGroup>
                     <Form.Select onChange={handleTypeChange} defaultValue="">
                       <option value="" disabled>Type</option>
