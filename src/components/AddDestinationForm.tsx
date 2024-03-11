@@ -264,7 +264,7 @@ const DestinationPopUp = () => {
                     />
                   </InputGroup>
                 </Col>
-                <Col md={2}>
+                <Col md={2}>git 
                   <InputGroup>
                     <Form.Select onChange={handleTypeChange} defaultValue="">
                       <option value="" disabled>Type</option>

@@ -14,6 +14,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import DeleteDestinationForm from "../components/DeleteDestinationForm";
 import "../style/CardContainer.css";
+import AddReviewForm from "../components/AddReviewFrom";
 
 interface Destination {
   mainImage: string;
@@ -306,11 +307,6 @@ const ReviewSummary = () => {
     starsCount[review.rating - 1]++;
   });
 
-  const handleAddReviewClick = () => {
-    console.log("klikkklikk");
-    // Implementere funksjonalitet når man trykker på knappen!!
-  };
-
   return (
     <div className="review-summary">
       <h2>SUMMARY</h2>
@@ -336,9 +332,9 @@ const ReviewSummary = () => {
           </div>
         ))}
       </div>
-      <button className="add-review-button" onClick={handleAddReviewClick}>
-        Legg til omtale
-      </button>
+      <div className="add-review-button">
+        <AddReviewForm />
+      </div>
     </div>
   );
 };
