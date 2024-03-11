@@ -21,6 +21,14 @@ import "../style/addDestinationPopUp.css";
 const AddDestinationForm = () => {
   const [showAddDestination, setShowAddDestination] = useState(false);
 
+  const [currentDestination, setCurrentDestination] =
+    useState<Destination | null>(null);
+
+  const location = useLocation();
+
+  const [isOnDestination, setIsOnDestination] = useState(false);
+
+
   const handleAddClose = () => setShowAddDestination(false);
   const handleAddShow = () => setShowAddDestination(true);
 

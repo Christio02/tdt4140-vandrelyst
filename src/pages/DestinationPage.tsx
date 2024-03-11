@@ -18,7 +18,6 @@ import AddDestinationForm from "../components/AddDestinationForm";
 import AddReviewForm from "../components/AddReviewFrom";
 import UpdateDestinationForm from "../components/UpdateDestinationForm";
 import "../style/CardContainer.css";
-import UpdateDestinationForm from "../components/UpdateDestinationForm";
 
 export interface Destination {
   mainImage: string;
