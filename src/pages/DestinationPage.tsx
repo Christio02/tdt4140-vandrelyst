@@ -276,19 +276,29 @@ type queryForReviews = {
 };
 
 const getReviews = async (props : queryForReviews) => {
+  const reviews: Review[] = [];
 
   const reviewsForDestination = collection(db, "reviews");
 
   const allReviewsQuery = query(reviewsForDestination, where("destination", "==", `${props.destination}`))
   const reviewsSnapshot = await getDocs(allReviewsQuery);
-    
-    
-  };
 
-const reviews: Review[] = [
-  
-];
-const [reviews, setReviews] = useState<Review[]>([]);
+  reviewsSnapshot.forEach((doc) => {
+    const reviewData = doc.data();
+    console.log(reviewData);
+    let review: Review = {
+      userName: reviewData.user,
+      date: reviewData.date,
+      rating: reviewData.rating,
+      description: reviewData.description,
+    };
+    reviews.push(review);
+  });
+
+  return reviews;
+};
+
+
 
 // const getReviews = async () => {
 //   const reviewsSnapshot = await getDocs(query(collection(db, "reviews"), where("destination", "==", `${destination?.city}_${destination?.country}`)));
@@ -296,15 +306,20 @@ const [reviews, setReviews] = useState<Review[]>([]);
 //   setReviews(reviewsData);
 // };
 
-const averageRating =
-  reviews.reduce((acc, review) => acc + review.rating, 0) / reviews.length;
 
 type reviewSummaryProp = {
   sendDestination1 : string;
 } 
 
-const ReviewSummary = (props : reviewSummaryProp) => {
+const ReviewSummary = async (props : reviewSummaryProp) => {
+
+  const destination : queryForReviews = {
+    destination : props.sendDestination1
+  };
+  const reviews = await getReviews(destination);
   // regne ut average rating her
+  const averageRating =
+  reviews.reduce((acc, review) => acc + review.rating, 0) / reviews.length;
 
   // Antall reviews for hver stjernerating
   const starsCount = new Array(5).fill(0);
@@ -370,7 +385,11 @@ type reviewListProps = {
   sendDestination : string
 }
 
-const ReviewList = (props : reviewListProps) => {
+const ReviewList = async (props : reviewListProps) => {
+  const destination : queryForReviews = {
+    destination : props.sendDestination1
+  };
+  const reviews = await getReviews(destination);
   return (
     <div className="review-list">
       {reviews.map((review, index) => (
