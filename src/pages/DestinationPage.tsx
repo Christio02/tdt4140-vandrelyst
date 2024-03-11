@@ -16,7 +16,7 @@ import DeleteDestinationForm from "../components/DeleteDestinationForm";
 
 import AddDestinationForm from "../components/AddDestinationForm";
 import "../style/CardContainer.css";
-import AddReviewForm from "../components/AddReviewFrom";
+import UpdateDestinationForm from "../components/UpdateDestinationForm";
 
 export interface Destination {
   mainImage: string;
@@ -102,7 +102,7 @@ const DestinationPage = () => {
       <TitleDiv destination={destination} />
       <AllRatings destination={destination} />
       <DeleteDestinationForm id={id} city={destination.city} />
-      <AddDestinationForm destination={destination} />
+      <UpdateDestinationForm/>
       <div className="AllContentDivs">
         <DescriptionDiv destination={destination} />
         <ActivitesDiv
