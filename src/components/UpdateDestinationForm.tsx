@@ -1,58 +1,19 @@
-import { addDoc, collection } from "firebase/firestore";
-import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
-import React, { useEffect, useState } from "react";
-import { Col, Dropdown, Row } from "react-bootstrap";
-import Button from "react-bootstrap/Button";
-import Form from "react-bootstrap/Form";
-import InputGroup from "react-bootstrap/InputGroup";
-import Modal from "react-bootstrap/Modal";
-import { auth, db, storage } from "../firebase_setup/firebase";
-import "../style/addDestinationPopUp.css";
-import { LucideCircleFadingPlus } from 'lucide-react';
+import { collection, doc, getDoc, query, where } from "firebase/firestore";
+import { useEffect, useState } from "react";
+import { Button, Col, Form, InputGroup, Modal, Row } from "react-bootstrap";
+import { db } from "../firebase_setup/firebase";
+import AddDestinationForm from "./AddDestinationForm";
 
+interface Destination {
+  city: string;
+}
+const UpdateDestinationForm = (destination: Destination) => {
+  const [destinationData, setDestinationData] = useState<Destination>();
+  const [showUpdateDestination, setShowUpdateDestination] = useState(false);
+  const []
 
-
-/**
- * Renders a pop-up component for creating a destination.
- * Allows the user to input various details such as temperature, city, country, rating, price, description, and things to do.
- * Provides an option to upload an image for the destination.
- * Saves the destination data to a database upon user submission.
- */
-
-const AddDestinationForm = (isUpdate: boolean) => {
-  const [showAddDestination, setShowAddDestination] = useState(false);
-
-  const handleAddClose = () => setShowAddDestination(false);
-  const handleAddShow = () => setShowAddDestination(true);
-
-  const [image, setImage] = useState<File | null>(null);
-  const [temperature, setTemperature] = useState("");
-  const [city, setCity] = useState("");
-  const [country, setCountry] = useState("");
-  const [type, setType] = useState("");
-  const [rating, setRating] = useState("");
-  const [price, setPrice] = useState("");
-  const [description, setDescription] = useState("");
-
-  const [thingsImages, setThingsImages] = useState<(File | null)[]>([
-    null,
-    null,
-    null,
-  ]);
-  const [imageTitles, setImageTitles] = useState<string[]>(["", "", ""]);
-  const [imageDescriptions, setImageDescriptions] = useState<string[]>([
-    "",
-    "",
-    "",
-  ]);
-
-  const [extraImages, setExtraImages] = useState<(File | null)[]>([
-    null,
-    null,
-    null,
-    null,
-  ]);
-  const [extraImageTitles, setExtraImageTitles] = useState(["", "", "", ""]);
+  const handleUpdateShow = () => setShowUpdateDestination(true);
+  const handleUpdateClose = () => setShowUpdateDestination(false);
 
   const handleImageChange = (event: React.FormEvent) => {
     const files = (event.target as HTMLInputElement).files;
@@ -60,167 +21,35 @@ const AddDestinationForm = (isUpdate: boolean) => {
       setImage(files[0]);
     }
   };
-  const handleCityChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setCity(event.target.value);
-  };
-  const handleCountryChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setCountry(event.target.value);
-  };
-  const handleTypeChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setType(event.target.value);
-  };
-  const handleRatingChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setRating(event.target.value);
-  };
-  const handlePriceChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setPrice(event.target.value);
-  };
-  const handleTemperatureChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setTemperature(event.target.value);
-  };
-  const handleDescriptionChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setDescription(event.target.value);
-  };
 
-  const handleThingsImagesChange =
-    (index: number) => (event: React.ChangeEvent<HTMLInputElement>) => {
-      const newImages = [...thingsImages];
-      const files = event.target.files;
-      if (files && files.length > 0) {
-        newImages[index] = files[0];
-      } else {
-        newImages[index] = null;
-      }
-      setThingsImages(newImages); // Set the new images array
-    };
+  const fetchDataToForm = async (destination: Destination) => {
+    const destinationRef = doc(db, "destinations", destination.city);
+    const destinationSnap = await getDoc(destinationRef);
 
-  const handlePictureTitleChange =
-    (index: number) => (event: React.ChangeEvent<HTMLInputElement>) => {
-      const newTitles = [...imageTitles];
-      newTitles[index] = event.target.value;
-      setImageTitles(newTitles);
-    };
-
-  const handlePictureDescriptionChange =
-    (index: number) => (event: React.ChangeEvent<HTMLInputElement>) => {
-      const newDescriptions = [...imageDescriptions];
-      newDescriptions[index] = event.target.value;
-      setImageDescriptions(newDescriptions);
-    };
-  const handleExtraImagesChange =
-    (index: number) => (event: React.ChangeEvent<HTMLInputElement>) => {
-      const newImages = [...extraImages];
-      const files = event.target.files;
-      if (files && files.length > 0) {
-        newImages[index] = files[0];
-      } else {
-        newImages[index] = null;
-      }
-      setExtraImages(newImages); // Set the new images array
-    };
-
-  const handleExtraImageTitleChange =
-    (index: number) => (event: React.ChangeEvent<HTMLInputElement>) => {
-      const newTitles = [...extraImageTitles];
-      newTitles[index] = event.target.value;
-      setExtraImageTitles(newTitles);
-    };
-
-  const sendDataToFirestore = async () => {
-    let mainImageUrl = null;
-    if (image != null) {
-      const imageRef = ref(storage, `images/${city}_${country}/main.jpg`);
-      await uploadBytes(imageRef, image);
-      mainImageUrl = await getDownloadURL(imageRef);
-    }
-
-    const uploadImageAndGetURL = async (
-      imageFile: Blob | ArrayBuffer | null,
-      path: string | undefined
-    ) => {
-      if (imageFile) {
-        const imageRef = ref(storage, path);
-        await uploadBytes(imageRef, imageFile);
-        return getDownloadURL(imageRef);
-      }
-      return null;
-    };
-
-    const thingsToDoPromises = thingsImages.map((file, index) =>
-      uploadImageAndGetURL(
-        file,
-        `images/${city}_${country}/thingsToDo_${index}.jpg`
-      )
-    );
-    const extraImagesPromises = extraImages.map((file, index) =>
-      uploadImageAndGetURL(
-        file,
-        `images/${city}_${country}/extraImages_${index}.jpg`
-      )
-    );
-
-    try {
-      const thingsToDoUrls = await Promise.all(thingsToDoPromises);
-      const extraImagesUrls = await Promise.all(extraImagesPromises);
-
-      const thingsToDoData = thingsToDoUrls.map((url, index) => ({
-        caption: imageTitles[index],
-        description: imageDescriptions[index],
-        imgLink: url,
-      }));
-
-      const extraImagesData = extraImagesUrls.map((url, index) => ({
-        caption: extraImageTitles[index],
-        description: "",
-        imgLink: url,
-      }));
-
-      const docRef = await addDoc(collection(db, "destinations"), {
-        mainImage: mainImageUrl,
-        city,
-        country,
-        type,
-        rating: rating ? parseInt(rating) : 0,
-        price: price ? parseInt(price) : 0,
-        temperature: temperature ? parseInt(temperature) : 0,
-        description,
-        thingsToDo: thingsToDoData,
-        extraImages: extraImagesData
-      });
-
-      console.log("Document written with id: ", docRef.id);
-      alert("Destination added successfully!");
-    } catch (error) {
-      console.error("Error: ", error);
-      alert("An error occurred while adding the destination.");
+    if (destinationSnap.exists()) {
+      setDestinationData(destinationSnap.data() as Destination);
+    } else {
+      console.log("No destination");
     }
   };
-
-  function range(start: number, end: number) {
-    // Function to create a range of numbers
-    return Array(end - start + 1)
-      .fill(0)
-      .map((_, idx) => start + idx);
-  }
+  useEffect(() => {
+    fetchDataToForm(destination);
+  }, [destination]);
 
   return (
     <>
-      {/* <AddDestinationButton className="createButton"></AddDestinationButton> */}
       <Button
-        className="NewDest"
+        className="updateButton"
         variant="primary"
-        onClick={handleAddShow}
-      > <LucideCircleFadingPlus size={25} id="icon" />
-        Ny destinasjon
-      </Button>
-
-      {showAddDestination && (
+        onClick={handleUpdateShow}
+      ></Button>
+      {showUpdateDestination && (
         <div className="modal-container">
-          <Modal show={showAddDestination} onHide={handleAddClose} size="xl">
+          <Modal
+            show={showUpdateDestination}
+            onHide={handleUpdateClose}
+            size="xl"
+          >
             {/* from https://react-bootstrap.netlify.app/docs/components/modal */}
             <Modal.Header closeButton>
               {/* Top bar, where the X is.*/}
@@ -267,7 +96,7 @@ const AddDestinationForm = (isUpdate: boolean) => {
                     />
                   </InputGroup>
                 </Col>
-                <Col md={2}>git 
+                <Col md={2}>
                   <InputGroup>
                     <Form.Select onChange={handleTypeChange} defaultValue="">
                       <option value="" disabled>
@@ -526,4 +355,5 @@ const AddDestinationForm = (isUpdate: boolean) => {
     </>
   );
 };
-export default AddDestinationForm;
+
+export default UpdateDestinationForm;
