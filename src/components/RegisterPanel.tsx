@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { auth } from '../firebase_setup/firebase.js';
+import { ChangeEvent, useEffect, useState } from 'react';
+import { auth, storage } from '../firebase_setup/firebase.js';
 import { createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword, signOut} from "firebase/auth";
 import "../style/RegisterPanel.css"
 import { useNavigate } from "react-router-dom";
@@ -10,6 +10,7 @@ import { where, query} from 'firebase/firestore';
 
 
 import { doc, setDoc, getDoc } from "firebase/firestore"; 
+import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 
 
 
@@ -27,21 +28,27 @@ type UserLogInProps = {
 
 } 
 
+let mainImageUrl: File | null = null;
 
-
-const makeEntryForUser = (email:string, password:string,  
-  name:string, phoneNumber:string,
+const makeEntryForUser = async (email:string, password:string,  
+  name:string, phoneNumber:string, mainImageUrl: File | null = null,
   adminPrivileges:boolean) => {
   const userDocument = doc(db, "users", email);
+
+
   const data = {
     userEmail: email,
     userPassword: password,
     userFullName: name,
     userPhoneNumber: phoneNumber,
+    mainImage: mainImageUrl,
     isAdmin: adminPrivileges
   }
   console.log(data);
   console.log(userDocument);
+
+  // Save user data to Firestore
+  await setDoc(userDocument, data);
 
   setDoc(userDocument, data);
 }
@@ -99,6 +106,7 @@ const RegisterPanel = (props : UserLogInProps) => {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [image, setImage] = useState<File | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -147,19 +155,30 @@ const RegisterPanel = (props : UserLogInProps) => {
     });
   };
 
+  const sendDataToFirestore = async () => {
+    let mainImageUrl = null;
+    if (image != null) {
+      const imageRef = ref(storage, `profilePic/${email}`);
+      await uploadBytes(imageRef, image);
+      mainImageUrl = await getDownloadURL(imageRef);
+    }
+  }
 
 
 const registerUser = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault(); // Prevent default form submission behavior
     createUserWithEmailAndPassword(auth, email, password)
-    .then((userCredential) => {
+    .then(async (userCredential) => {
     // Signed up 
     const user = userCredential.user;
     console.log("Registrert bruker");
 
+    await sendDataToFirestore();
+
+
     //! Lage entry
     const isAdmin = false;
-    makeEntryForUser(email, password, name, phoneNumber, isAdmin);
+    makeEntryForUser(email, password, name, phoneNumber, mainImageUrl,  isAdmin);
     
     //! Logg inn og bli sendt tilbake til forside
     logIn(event);
@@ -171,9 +190,17 @@ const registerUser = (event: React.FormEvent<HTMLFormElement>) => {
     });
 };
 
+const handleImageChange = (event: React.FormEvent) => {
+  const files = (event.target as HTMLInputElement).files;
+  if (files && files.length > 0) {
+    setImage(files[0]);
+  }
+};
 
 
-let functions = [logIn, registerUser];
+
+
+let functions = [logIn, registerUser, sendDataToFirestore];
 
 console.log(auth?.currentUser?.email);
 // userIsAdmin().then(isAdmin => {
@@ -226,6 +253,16 @@ console.log(auth?.currentUser?.email);
             onChange={(e) => setEmail(e.target.value)}
             required
             />
+          </div>
+          <div className='mb-3'>
+          <label htmlFor="inputProfilePic" className="form-label">Profile Picture</label>
+          <input
+            type="file"
+            className="form-control"
+            id="inputProfilePic"
+            onChange={handleImageChange}
+            accept="image/*"
+          />
           </div>
           <div className="mb-3">
             <label htmlFor="inputPassword" className="form-label">Passord</label>

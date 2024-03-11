@@ -109,7 +109,7 @@ const registerUser = (event: React.FormEvent<HTMLFormElement>) => {
     const errorMessage = error.message;
     // ..
     });
-};
+}; 
 
 const logOut = () => {
     signOut(auth).then(() => {
