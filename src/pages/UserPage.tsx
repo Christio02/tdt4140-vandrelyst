@@ -30,6 +30,8 @@ import CardContainer from "../components/CardContainer";
 
 
 
+
+
 interface UserProps {
   userName: string;
   email: string;
@@ -198,15 +200,15 @@ const MyDestinations = () => {
           setSearchResults={setMyDestinations}
           placeholder="Søk i mine destinasjoner"
         />
-
+        <div className="cards">
         {myDestinations.map((dest) => (
-          <div className="your-destinations" key={dest.id}>
+          <div key={dest.id}>
             <Link to={`/destination/${dest.id}`} style={{ textDecoration: "none" }}>
-              <Card id="card">
-                <Card.Img variant="top" src={dest.imageUrl} id="card-img" />
+              <Card className="card">
+                <Card.Img variant="top" src={dest.imageUrl} className="card-img" />
                 <Card.Body>
                   <Card.Title>{dest.city}</Card.Title>
-                  <Card.Text>{dest.description}</Card.Text>
+                  <Card.Text>{dest.country}</Card.Text>
                   <Card.Footer>
                     <p>Opprettet {dest.date ? new Date(dest.date.toDate()).toLocaleDateString('nb-NO', {
                       day: 'numeric',
@@ -219,7 +221,7 @@ const MyDestinations = () => {
             </Link>
           </div>
         ))}
-
+      </div>
         <AddDestinationForm />
       </div>
     </>

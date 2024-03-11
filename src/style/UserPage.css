@@ -53,10 +53,7 @@
   height: 250px;
   object-fit: cover;
 }
-.user-container {
-  width: 70%;
-  margin: 0 auto;
-}
+
 
 .my-reviews-container {
   display: flex;
@@ -139,7 +136,7 @@
 }
 
 #topContainer {
-  width: 70%;
+  width: 80%;
   margin: 0 auto;
   
   
@@ -149,17 +146,14 @@
   display: inline-block;
 }
 
-.your-destinations{
+.cards {
   display: flex;
-    flex-wrap: wrap;
-    padding-left: 5%;
-    padding-right: 5%;
-    justify-content:flex-start;
+  flex-wrap: wrap;
+  justify-content:flex-start;
 }
 
-#card{
-  width: 22rem;
-  margin:15px;
+.card {
+  width: 20rem;
   border-radius: 15px; 
   box-shadow: 0 6px 8px rgba(0, 0, 0, 0.1); 
   transition: transform 0.2s; 
@@ -167,7 +161,7 @@
 }
 
 .card:hover {
-  transform: scale(1.01); /* Scale the card on hover for a subtle effect */
+  transform: scale(1.01); 
 }
 
 .card-img {
@@ -175,4 +169,10 @@
   object-fit: cover;    
   border-top-left-radius: 15px; 
   border-top-right-radius: 15px; 
+}
+
+.user-container{
+  margin: 0 auto;
+  width: 80%;
+  margin-top: 1rem;
 }
