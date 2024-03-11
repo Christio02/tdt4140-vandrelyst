@@ -1,4 +1,4 @@
-import { addDoc, collection } from "firebase/firestore";
+import { addDoc, collection, doc, getDoc } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import React, { useEffect, useState } from "react";
 import { Col, Dropdown, Row } from "react-bootstrap";
@@ -6,6 +6,7 @@ import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import InputGroup from "react-bootstrap/InputGroup";
 import Modal from "react-bootstrap/Modal";
+import { useLocation } from "react-router-dom";
 import { auth, db, storage } from "../firebase_setup/firebase";
 import "../style/addDestinationPopUp.css";
 import { LucideCircleFadingPlus } from 'lucide-react';
@@ -18,9 +19,19 @@ import { LucideCircleFadingPlus } from 'lucide-react';
  * Provides an option to upload an image for the destination.
  * Saves the destination data to a database upon user submission.
  */
-
-const AddDestinationForm = (isUpdate: boolean) => {
+interface Destination {
+  city: string;
+}
+const AddDestinationForm = () => {
   const [showAddDestination, setShowAddDestination] = useState(false);
+
+  const [currentDestination, setCurrentDestination] =
+    useState<Destination | null>(null);
+
+  const location = useLocation();
+
+  const [isOnDestination, setIsOnDestination] = useState(false);
+
 
   const handleAddClose = () => setShowAddDestination(false);
   const handleAddShow = () => setShowAddDestination(true);
@@ -206,6 +217,22 @@ const AddDestinationForm = (isUpdate: boolean) => {
       .fill(0)
       .map((_, idx) => start + idx);
   }
+
+  const fetchDataToForm = async (destination: Destination) => {
+    const destinationRef = doc(db, "destinations", destination.city);
+    const destinationSnap = await getDoc(destinationRef);
+
+    if (destinationSnap.exists()) {
+      setCurrentDestination(destinationSnap.data() as Destination);
+    } else {
+      console.log("No destination");
+    }
+  };
+  useEffect(() => {
+    if (currentDestination) {
+      fetchDataToForm(currentDestination);
+    }
+  }, [currentDestination]);
 
   return (
     <>
