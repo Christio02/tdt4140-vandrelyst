@@ -263,12 +263,6 @@ const AddDestinationForm = () => {
     return Array(end - start + 1)
       .fill(0)
       .map((_, idx) => start + idx);
-
-  function range(start: number, end: number) {
-    // Function to create a range of numbers
-    return Array(end - start + 1)
-      .fill(0)
-      .map((_, idx) => start + idx);
   }
 
   const fetchDataToForm = async (destination: Destination) => {
