@@ -135,7 +135,6 @@ export default UserPage;
 const MyDestinations = () => {
   const [myDestinations, setMyDestinations] = useState<any[]>([]);
 
-  // Function to fetch destinations
   const getMyDestinations = async () => {
     const userEmail = auth.currentUser?.email;
     if (!userEmail) {
@@ -150,7 +149,7 @@ const MyDestinations = () => {
       const destinations = querySnapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data(),
-        imageUrl: '', // Initial placeholder for the image URL
+        imageUrl: '',
       }));
       setMyDestinations(destinations);
     } catch (error) {
@@ -158,7 +157,6 @@ const MyDestinations = () => {
     }
   };
 
-  // useEffect to fetch destinations when the component mounts
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(user => {
       if (user) {
@@ -168,11 +166,9 @@ const MyDestinations = () => {
       }
     });
 
-    // Cleanup subscription on unmount
     return () => unsubscribe();
   }, []);
 
-  // Separate useEffect to fetch images once destinations are set
   useEffect(() => {
     const fetchImages = async () => {
       const updatedDestinations = await Promise.all(
@@ -182,7 +178,7 @@ const MyDestinations = () => {
             return { ...dest, imageUrl };
           } catch (error) {
             console.error("Error fetching image URL:", error);
-            return { ...dest, imageUrl: '' }; // Handle the case where the image URL couldn't be fetched
+            return { ...dest, imageUrl: '' }; 
           }
         })
       );
@@ -192,10 +188,7 @@ const MyDestinations = () => {
     if (myDestinations.length > 0) {
       fetchImages();
     }
-  }, [myDestinations]); // This useEffect depends on `myDestinations`
-
-
-
+  }, [myDestinations]);
 
   return (
     <>
@@ -209,8 +202,8 @@ const MyDestinations = () => {
         {myDestinations.map((dest) => (
           <div className="your-destinations" key={dest.id}>
             <Link to={`/destination/${dest.id}`} style={{ textDecoration: "none" }}>
-              <Card>
-                <Card.Img variant="top" src={dest.imageUrl} />
+              <Card id="card">
+                <Card.Img variant="top" src={dest.imageUrl} id="card-img" />
                 <Card.Body>
                   <Card.Title>{dest.city}</Card.Title>
                   <Card.Text>{dest.description}</Card.Text>
@@ -220,7 +213,6 @@ const MyDestinations = () => {
                       month: 'long',
                       year: 'numeric'
                     }) : ''}</p>
-                    {/* <p>Opprettet {dest.date ? new Date(dest.date).getDate() : ''}</p> */}
                   </Card.Footer>
                 </Card.Body>
               </Card>
