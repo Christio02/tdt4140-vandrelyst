@@ -100,9 +100,9 @@ const DestinationPage = () => {
       </div>
       
       <div className="review-container">
-        <h2 className="reviews-title">REVIEWS</h2>
+        <h2 className="reviews-title">Omtaler</h2>
         <div className="review-section">
-          <ReviewSummary />
+          <ReviewSummary sendDestination1={"PortoPortugal"}/>
           <ReviewList />
         </div>
       </div>
@@ -298,7 +298,11 @@ const reviews: Review[] = [
 const averageRating =
   reviews.reduce((acc, review) => acc + review.rating, 0) / reviews.length;
 
-const ReviewSummary = () => {
+type reviewSummaryProp = {
+  sendDestination1 : string;
+} 
+
+const ReviewSummary = (props : reviewSummaryProp) => {
   // regne ut average rating her
 
   // Antall reviews for hver stjernerating
@@ -309,16 +313,16 @@ const ReviewSummary = () => {
 
   return (
     <div className="review-summary">
-      <h2>SUMMARY</h2>
+      <h2>Omtaler</h2>
       <div className="average-rating">
         {averageRating.toFixed(1)}
-        <span className="total-reviews">({reviews.length} reviews)</span>
+        <span className="total-reviews">({reviews.length} omtale{reviews.length > 1 ? "r" : ""})</span>
       </div>
       <div className="star-rating-summary">
         {[5, 4, 3, 2, 1].map((star) => (
           <div key={star} className="star-row">
             <div className="star-label">
-              {star} star{star > 1 ? "s" : ""}
+              {star} stjerne{star > 1 ? "r" : ""}
             </div>
             <div className="star-bar">
               <div
@@ -333,7 +337,7 @@ const ReviewSummary = () => {
         ))}
       </div>
       <div className="add-review-button">
-        <AddReviewForm />
+        <AddReviewForm sendDestination2={""+props.sendDestination1}/>
       </div>
     </div>
   );

@@ -9,7 +9,11 @@ import {
     import Form from "react-bootstrap/Form";
     import InputGroup from "react-bootstrap/InputGroup";
     import Modal from "react-bootstrap/Modal";
-    import { db, storage } from "../firebase_setup/firebase";
+    import { auth, db, storage } from "../firebase_setup/firebase";
+    import { doc, setDoc } from "firebase/firestore";
+    import firebase from 'firebase/app';
+    import 'firebase/firestore'; 
+
     import "../style/addDestinationPopUp.css";
     
     /**
@@ -19,7 +23,11 @@ import {
      * Saves the destination data to a database upon user submission.
      */
     
-const ReviewPopUp = () => {
+type reviewFormProp = {
+    sendDestination2 : string
+} 
+
+const AddReviewForm = (props : reviewFormProp) => {
         const [showAddReview, setShowAddReview] = useState(false);
     
         const handleAddClose = () => setShowAddReview(false);
@@ -27,28 +35,64 @@ const ReviewPopUp = () => {
     
         const [rating, setRating] = useState("");
         const [description, setDescription] = useState("");
+        const [destination, setDestination] = useState("");
+        const [user, setUser] = useState("");
+        const [date, setDate] = useState("");
     
 
         const handleRatingChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
             setRating(event.target.value);
         };
  
-        const handleDescriptionChange = (
-            event: React.ChangeEvent<HTMLInputElement>
-        ) => {
+        const handleDescriptionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
             setDescription(event.target.value);
         };
     
         const sendDataToFirestore = async () => {
             try {
-              const docRef = await addDoc(collection(db, "reviews"), {
-                rating: rating ? parseInt(rating) : 0,
-                description,
-              });
-        
-              console.log("Document written with id: ", docRef.id);
+                //! Hente ut doc med ID for destinasjonen "ByLand"
+                    //! Sende fra DestinationPage til ReviewSUmmary
+                    //! ReviewSummary til addReviewForm  
+                //! Hente ut brukeren med email fra siden med auth?.currentUser?.email
+
+                //! Lagre reviews i collection på hver destination
+                    //! Hvordan henter man i så fall ut?
+                
+                //! Hente ut for bruker:
+                    //! Peke på bruker i reviewen
+
+                //! Hente ut for destinasjon:
+                    //! Hente ut på samme format er greit
+
+                
+                const DESTINATION = props.sendDestination2;
+                const userDocument = doc(db, "reviews", DESTINATION);
+
+                const currentDate = new Date();
+                
+                const formattedDate = currentDate.toLocaleDateString('no', { 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                });
+
+                const userID = auth?.currentUser?.email;
+
+                console.log(formattedDate);
+
+                const data = {
+                    rating: rating ? parseInt(rating) : 0,
+                    description : description,
+                    destination: props.sendDestination2,
+                    date : currentDate,
+                    user : "userID"
+                }
+                await setDoc(userDocument, data);
+                
+            //   console.log("Document written with id: ", docRef.id);
               alert("Review added successfully!");
-            } catch (error) {
+            } 
+            catch (error) {
               console.error("Error: ", error);
               alert("An error occurred while adding the review.");
             }
@@ -57,6 +101,7 @@ const ReviewPopUp = () => {
         function range(start: number, end: number) { // Function to create a range of numbers
                 return Array(end - start + 1).fill(0).map((_, idx) => start + idx);
             }
+
     
         return (
             <>
@@ -65,7 +110,7 @@ const ReviewPopUp = () => {
                     className="createButton"
                     variant="primary"
                     onClick={handleAddShow}
-                >
+                    >
                     Legg til omtale
                 </Button>
     
@@ -130,5 +175,5 @@ const ReviewPopUp = () => {
     };
 
 
-export default ReviewPopUp;
+export default AddReviewForm;
   
