@@ -14,7 +14,6 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import DeleteDestinationForm from "../components/DeleteDestinationForm";
 import "../style/CardContainer.css";
-import UpdateDestinationForm from "../components/UpdateDestinationForm";
 
 interface Destination {
   mainImage: string;
@@ -91,7 +90,6 @@ const DestinationPage = () => {
       <TitleDiv destination={destination} />
       <AllRatings destination={destination} />
       <DeleteDestinationForm id={id} city={destination.city} />
-      <UpdateDestinationForm/>
       <div className="AllContentDivs">
         <DescriptionDiv destination={destination} />
         <ActivitesDiv
