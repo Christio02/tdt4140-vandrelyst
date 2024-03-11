@@ -198,7 +198,7 @@ const MyDestinations = () => {
           </div>
         ))}
 
-        <AddDestinationForm />
+        {/* <AddDestinationForm /> */}
       </div>
     </>
   );
