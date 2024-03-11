@@ -92,7 +92,6 @@ const DestinationPage = () => {
       <TitleDiv destination={destination} />
       <AllRatings destination={destination} />
       <DeleteDestinationForm id={id} city={destination.city} />
-      <UpdateDestinationForm/>
       <div className="AllContentDivs">
         <DescriptionDiv destination={destination} />
         <ActivitesDiv
