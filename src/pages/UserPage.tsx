@@ -1,4 +1,5 @@
 import {
+  faCrow,
   faCrown,
   faEarthAmericas,
   faGlobe,
@@ -36,6 +37,13 @@ import Navbar from "../components/Navbar";
 import Searchbar from "../components/Searchbar";
 import "../style/UserPage.css";
 import { StarRating } from "./DestinationPage";
+import App from "../App";
+import { logOut, userIsAdmin } from '../components/RegisterPanel';
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "../firebase_setup/firebase";
+import { getDownloadURL, getStorage, ref } from "firebase/storage";
+
 
 interface UserProps {
   name: string;
@@ -44,29 +52,74 @@ interface UserProps {
 
 const UserPage = () => {
   const navigate = useNavigate(); // used to navigate to default page
+  
+  const [userName, setUserName] = useState("");
+  const [profilePicture, setProfilePicture] = useState<string | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
+
+
 
   useEffect(() => {
-    navigate("myDestinations");
+    const auth = getAuth();
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (user && user.email) {
+        try {
+          const userDocument = doc(db as any, "users", user.email);
+          const userSnapshot = await getDoc(userDocument);
+
+          if (userSnapshot.exists()) {
+            const userData = userSnapshot.data();
+            setUserName(userData.userFullName);
+            console.log("hei0");
+
+            //Getting the profile pic
+            const storage = getStorage();
+            const imageRef = ref(storage, `profilePic/${user.email}`);
+            const imageUrl = await getDownloadURL(imageRef);
+            console.log("Image URL:", imageUrl);
+            setProfilePicture(imageUrl);  
+
+            //Fetch user admin status
+            const adminStatus = await userIsAdmin();
+            setIsAdmin(adminStatus);
+          }
+        } catch (error) {
+          console.error("Error fetching user data:", error);
+        }
+      } else {
+        // Handle user not logged in
+      }
+    });
+
+    navigate('myDestinations');
+
+    return () => unsubscribe();
   }, []); // empty dependency array, only navigate to myDestinations first time
 
   return (
     <>
       <Navbar />
 
-      <div>
+      
         {/* Profile Information */}
         <div className="image-container">
           <img src={paris} alt="destination"></img>
         </div>
-        <h4 className="name">Ola Nordmann</h4>
-        <span className="admin">Admin</span>
-        <div className="crown">
-          <FontAwesomeIcon icon={faCrown}></FontAwesomeIcon>
+        <div id="topContainer">
+        <button id="logUtButton"><Link to="/" id="homeLink" onClick={logOut}>Log ut</Link></button>
+          <div id="nameAndAdmin">
+        <h4 className="name">{userName}</h4>
+        {isAdmin && (
+        <span className="admin"><FontAwesomeIcon icon={faCrown} className="crown" /> Admin</span>
+        )}
         </div>
         <div className="profilepicture">
-          <img src={Ola} alt="profile"></img>
+          <img src={profilePicture?.toString()} alt="profile"></img>
         </div>
-      </div>
+    
+  
+        
+
       {/* Navigations */}
       <div className="my-page-link">
         <Link to="myDestinations" className="link">
@@ -79,10 +132,12 @@ const UserPage = () => {
           Besøkte destinasjoner
         </Link>
       </div>
+      </div>
       <Routes>
         <Route path="myDestinations" element={<MyDestinations />} />
         <Route path="myReviews" element={<MyReviews />} />
         <Route path="visitedDestinations" element={<VisitedDestinations />} />
+        <Route path="/" element={<App/>} />
       </Routes>
       <Footer />
     </>
@@ -120,7 +175,7 @@ const MyDestinations = () => {
   return (
     <>
       <div className="user-container">
-        <div style={{ marginBottom: "5rem" }}></div>
+        <div style={{ marginBottom: "2rem" }}></div>
         <Searchbar
           setSearchResults={setMydestinations}
           placeholder="Søk i mine destinasjoner"

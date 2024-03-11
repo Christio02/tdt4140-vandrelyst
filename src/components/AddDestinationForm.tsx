@@ -9,8 +9,11 @@ import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import InputGroup from "react-bootstrap/InputGroup";
 import Modal from "react-bootstrap/Modal";
-import { db, storage } from "../firebase_setup/firebase";
+import { auth, db, storage } from "../firebase_setup/firebase";
 import "../style/addDestinationPopUp.css";
+import { LucideCircleFadingPlus } from 'lucide-react';
+
+
 
 /**
  * Renders a pop-up component for creating a destination.
@@ -189,7 +192,7 @@ const DestinationPopUp = () => {
         temperature: temperature ? parseInt(temperature) : 0,
         description,
         thingsToDo: thingsToDoData,
-        extraImages: extraImagesData,
+        extraImages: extraImagesData
       });
 
       console.log("Document written with id: ", docRef.id);
@@ -208,11 +211,11 @@ const DestinationPopUp = () => {
     <>
       {/* <AddDestinationButton className="createButton"></AddDestinationButton> */}
       <Button
-        className="createButton"
+        className="NewDest"
         variant="primary"
         onClick={handleAddShow}
-      >
-        Legg til destinasjon
+      > <LucideCircleFadingPlus size={25} id="icon" />
+        Ny destinasjon
       </Button>
 
       {showAddDestination && (

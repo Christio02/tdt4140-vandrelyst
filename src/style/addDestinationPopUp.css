@@ -9,8 +9,6 @@
     background-color: transparent !important;
     border: none !important;
     cursor: pointer !important;
-    border-radius: 25px !important;
-    width: auto !important;
     margin: 0 auto;
     border: 1px solid transparent !important;
     padding: 1px 1px !important;
@@ -20,3 +18,23 @@
 .createButton:hover {
     color: black !important;
   }
+
+#icon {
+    margin-left: 5px;
+}
+
+.NewDest{
+    color: white;
+    text-decoration: none;
+    background-color: transparent !important;
+    border-color: transparent;
+    font-size: 17px;
+    font-family: "Poppins";
+    height: 70px;
+}
+
+.NewDest:hover {
+    border-color: transparent;
+    color: black;
+}
+  

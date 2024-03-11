@@ -52,25 +52,13 @@ const Navbar = () => {
                 <p>Laster...</p>
             ) : auth?.currentUser ? (
                 currentUserIsAdmin ? (
-                    <a><DropdownButton
-                        title={<CircleUserRound size={24} />}
-                        id="dropdown-menu"
-                        variant="string" >
-                            <Dropdown.Item as={Link} to="/mypage">Min side (ADMIN)</Dropdown.Item>
-                            <Dropdown.Item href='/' onClick={logOut}> Logg ut </Dropdown.Item>
-                    </DropdownButton></a>
+                    <a href='/mypage' className="LogInMyPage"><CircleUserRound size={25} id="icon"/> Min side (A)</a>
 
                 ) : (
-                    <a><DropdownButton
-                        title={<CircleUserRound size={24}/> }
-                        id="dropdown-menu"
-                        variant="string" >
-                            <Dropdown.Item as={Link} to="/mypage">Min side (BRUKER)</Dropdown.Item>
-                            <Dropdown.Item href='/' onClick={logOut}> Logg ut </Dropdown.Item>
-                    </DropdownButton></a>
+                    <a href='/mypage' className="LogInMyPage"><CircleUserRound size={25} id="icon"/> Min side (B)</a>
                 )
             ) : (
-                <a href='/logginn' id="LogInIcon"  ><CircleUserRound size={24} id="icon"/>Log inn</a> 
+                <a href='/logginn' className="LogInMyPage"  ><CircleUserRound size={25} id="icon"/>Log inn</a> 
             )}
 
 
@@ -127,13 +115,13 @@ const Navbar = () => {
                 // : 
                 // <a href='/logginn'> <button type="button" id="LogInIcon"><CircleUserRound size={24} /></button></a> 
         }
-        <a href="/omoss">Om oss</a> 
 
         <a>
             <div className="destinationPopupContainer">
                 <DestinationPopUp />
             </div>
         </a>
+        <a href="/omoss">Om oss</a> 
 
         </div>
 
