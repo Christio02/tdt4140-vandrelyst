@@ -31,7 +31,13 @@ const AddReviewForm = (props : reviewFormProp) => {
         const [showAddReview, setShowAddReview] = useState(false);
     
         const handleAddClose = () => setShowAddReview(false);
-        const handleAddShow = () => setShowAddReview(true);
+        const handleAddShow = () => {
+            if (!auth?.currentUser?.email) {
+                alert("Du må logge inn");
+                return;
+            }
+            setShowAddReview(true);
+        }
     
         const [rating, setRating] = useState("");
         const [description, setDescription] = useState("");
@@ -50,10 +56,10 @@ const AddReviewForm = (props : reviewFormProp) => {
     
         const sendDataToFirestore = async () => {
             try {
-                //! Hente ut doc med ID for destinasjonen "ByLand"
-                    //! Sende fra DestinationPage til ReviewSUmmary
-                    //! ReviewSummary til addReviewForm  
-                //! Hente ut brukeren med email fra siden med auth?.currentUser?.email
+                //* Hente ut doc med ID for destinasjonen "ByLand"
+                    //* Sende fra DestinationPage til ReviewSUmmary
+                    //* ReviewSummary til addReviewForm  
+                //* Hente ut brukeren med email fra siden med auth?.currentUser?.email
 
                 //! Lagre reviews i collection på hver destination
                     //! Hvordan henter man i så fall ut?
@@ -64,10 +70,7 @@ const AddReviewForm = (props : reviewFormProp) => {
                 //! Hente ut for destinasjon:
                     //! Hente ut på samme format er greit
 
-                
-                const DESTINATION = props.sendDestination2;
-                const userDocument = doc(db, "reviews", DESTINATION);
-
+            
                 const currentDate = new Date();
                 
                 const formattedDate = currentDate.toLocaleDateString('no', { 
@@ -85,8 +88,12 @@ const AddReviewForm = (props : reviewFormProp) => {
                     description : description,
                     destination: props.sendDestination2,
                     date : currentDate,
-                    user : "userID"
+                    user : userID
                 }
+
+                const DESTINATION = props.sendDestination2+"_"+userID;
+                const userDocument = doc(db, "reviews", DESTINATION);
+
                 await setDoc(userDocument, data);
                 
             //   console.log("Document written with id: ", docRef.id);
@@ -113,7 +120,7 @@ const AddReviewForm = (props : reviewFormProp) => {
                     >
                     Legg til omtale
                 </Button>
-    
+                
                 {showAddReview && (
                     <div className="modal-container">
                         <Modal show={showAddReview} onHide={handleAddClose} size="xl">

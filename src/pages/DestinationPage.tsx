@@ -8,7 +8,8 @@ import React from "react";
 import Navbar from "../components/Navbar";
 import "../style/DestinationPage.css";
 
-import { doc, getDoc, getFirestore } from "firebase/firestore";
+import { collection, doc, getDoc, getDocs, getFirestore, query, where } from "firebase/firestore";
+import { db } from "../firebase_setup/firebase";
 import { getDownloadURL, getStorage, ref } from "firebase/storage";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
@@ -102,8 +103,11 @@ const DestinationPage = () => {
       <div className="review-container">
         <h2 className="reviews-title">Omtaler</h2>
         <div className="review-section">
-          <ReviewSummary sendDestination1={"PortoPortugal"}/>
-          <ReviewList />
+          <ReviewSummary sendDestination1={destination.city}
+          />
+          <ReviewList 
+            sendDestination={destination.city+"_"+destination.country}
+          />
         </div>
       </div>
     </div>
@@ -261,39 +265,36 @@ const ActivitesDiv = (props: ActivitiesDivProps) => {
 };
 
 interface Review {
-  username: string;
+  userName: string;
   date: string;
   rating: number;
-  comment: string;
+  description: string;
 }
 
+type queryForReviews = {
+  destination : string
+};
+
+const getReviews = async (props : queryForReviews) => {
+
+  const reviewsForDestination = collection(db, "reviews");
+
+  const allReviewsQuery = query(reviewsForDestination, where("destination", "==", `${props.destination}`))
+  const reviewsSnapshot = await getDocs(allReviewsQuery);
+    
+    
+  };
+
 const reviews: Review[] = [
-  {
-    username: "@Olebole",
-    date: "15.02.24",
-    rating: 5,
-    comment:
-      "Lorem ipsum dolor sit amet. Sed fugit exercitationem non optio duimus quia corporis diucimus sed perferendis omnis vel laudantium molestiae. At quibusdam accusantium id reprehenderit rerum aut corporis suscipit.",
-  },
-  {
-    username: "@tore tang",
-    date: "02.02.24",
-    rating: 3,
-    comment: "beste nettside noensinne",
-  },
-  {
-    username: "@testtest",
-    date: "30.01.24",
-    rating: 5,
-    comment: "test",
-  },
-  {
-    username: "@bruker",
-    date: "27.01.24",
-    rating: 4,
-    comment: "!!",
-  },
+  
 ];
+const [reviews, setReviews] = useState<Review[]>([]);
+
+// const getReviews = async () => {
+//   const reviewsSnapshot = await getDocs(query(collection(db, "reviews"), where("destination", "==", `${destination?.city}_${destination?.country}`)));
+//   const reviewsData = reviewsSnapshot.docs.map((doc) => doc.data() as Review);
+//   setReviews(reviewsData);
+// };
 
 const averageRating =
   reviews.reduce((acc, review) => acc + review.rating, 0) / reviews.length;
@@ -354,22 +355,27 @@ const ReviewItem: React.FC<{ review: Review; index: number }> = ({
       }`}
     >
       <div className="review-user">
-        {review.username} <span className="review-date">{review.date}</span>
+        {review.userName} <span className="review-date">{review.date}</span>
       </div>
       <div className="star-rating">
         {"★".repeat(review.rating)}
         <span className="star-count">({review.rating})</span>
       </div>
-      <p>{review.comment}</p>
+      <p>{review.description}</p>
     </div>
   );
 };
 
-const ReviewList = () => {
+type reviewListProps = {
+  sendDestination : string
+}
+
+const ReviewList = (props : reviewListProps) => {
   return (
     <div className="review-list">
       {reviews.map((review, index) => (
-        <ReviewItem key={index} review={review} index={index} />
+        <ReviewItem key={index} review={review} index={index} 
+          />
       ))}
       <button>See more reviews</button>
     </div>
