@@ -13,11 +13,12 @@ import { getDownloadURL, getStorage, ref } from "firebase/storage";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import DeleteDestinationForm from "../components/DeleteDestinationForm";
+
+import AddDestinationForm from "../components/AddDestinationForm";
 import "../style/CardContainer.css";
 import AddReviewForm from "../components/AddReviewFrom";
-import UpdateDestinationForm from "../components/UpdateDestinationForm";
 
-interface Destination {
+export interface Destination {
   mainImage: string;
   city: string;
   country: string;
@@ -25,8 +26,17 @@ interface Destination {
   price: number;
   temperature: number;
   description: string;
-  thingsToDo: Array<object>;
-  extraImages: Array<object>;
+  thingsToDo: Array<{
+    caption: string;
+    description: string;
+    imgLink: string;
+  }>;
+  extraImages: Array<{
+    caption: string;
+    description: string;
+    imgLink: string;
+  }>;
+  type?: string;
 }
 
 const DestinationPage = () => {
@@ -92,7 +102,7 @@ const DestinationPage = () => {
       <TitleDiv destination={destination} />
       <AllRatings destination={destination} />
       <DeleteDestinationForm id={id} city={destination.city} />
-      <UpdateDestinationForm/>
+      <AddDestinationForm destination={destination} />
       <div className="AllContentDivs">
         <DescriptionDiv destination={destination} />
         <ActivitesDiv
@@ -101,7 +111,7 @@ const DestinationPage = () => {
         />
         <ActivitesDiv title="Bilder" activities={destination.extraImages} />
       </div>
-      
+
       <div className="review-container">
         <h2 className="reviews-title">REVIEWS</h2>
         <div className="review-section">
@@ -116,14 +126,13 @@ const DestinationPage = () => {
 const AllRatings = ({ destination }: { destination: Destination }) => {
   return (
     <div className="AllRatings">
-      
       <div className="centerContent">
         <StarRating rating={destination.rating} />
         <PriceRating price={destination.price} />
         <TempRating temp={destination.temperature} />
       </div>
       <div className="deleteButtonContainer">
-        <DeleteDestinationForm id={destination.city} city={destination.city}/>
+        <DeleteDestinationForm id={destination.city} city={destination.city} />
       </div>
     </div>
   );
