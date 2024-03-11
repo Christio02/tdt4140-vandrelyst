@@ -52,6 +52,38 @@ const AddDestinationForm = () => {
     null,
   ]);
   const [extraImageTitles, setExtraImageTitles] = useState(["", "", "", ""]);
+  useEffect(() => {
+    if (location.pathname.includes("/destination")) {
+      setIsOnDestination(true);
+    }
+  }, [location.pathname, isOnDestination]);
+
+  const updateStateVariables = () => {
+    setCity(destination?.city ?? "");
+    setCountry(destination?.country ?? "");
+    setType(destination?.type ?? "");
+    setTemperature(destination?.temperature.toString() ?? "");
+    setRating(destination?.rating.toString() ?? "");
+    setPrice(destination?.price.toString() ?? "");
+    setThingsImages([
+      new File([destination?.thingsToDo[0]?.imgLink ?? ""], "image.jpg"),
+    ]);
+  };
+
+  useEffect(() => {
+    if (isOnDestination && destination !== null) {
+      updateStateVariables();
+      console.log("Temperatur: " + temperature);
+      console.log("city: " + city);
+    }
+  }, [isOnDestination, destination]);
+
+  useEffect(() => {
+    updateStateVariables();
+  }, [destination]);
+
+  console.log("Temperatur: " + temperature);
+  console.log("city: " + city);
 
   const handleImageChange = (event: React.FormEvent) => {
     const files = (event.target as HTMLInputElement).files;
