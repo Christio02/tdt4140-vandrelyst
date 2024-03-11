@@ -1,19 +1,16 @@
 import { addDoc, collection, doc, getDoc } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { LucideCircleFadingPlus } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { Col, Dropdown, Row } from "react-bootstrap";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import InputGroup from "react-bootstrap/InputGroup";
 import Modal from "react-bootstrap/Modal";
-import { useLocation } from "react-router-dom";
-import { useLocation } from "react-router-dom";
+import { useLocation, useLocation } from "react-router-dom";
 import { auth, db, storage } from "../firebase_setup/firebase";
 import { Destination } from "../pages/DestinationPage";
 import "../style/addDestinationPopUp.css";
-import { LucideCircleFadingPlus } from 'lucide-react';
-
-
 
 /**
  * Renders a pop-up component for creating a destination.
@@ -21,10 +18,12 @@ import { LucideCircleFadingPlus } from 'lucide-react';
  * Provides an option to upload an image for the destination.
  * Saves the destination data to a database upon user submission.
  */
-interface Destination {
-  city: string;
+interface AddDestinationFormProps {
+  destination?: Destination;
 }
-const AddDestinationForm = () => {
+const AddDestinationForm: React.FC<AddDestinationFormProps> = ({
+  destination,
+}) => {
   const [showAddDestination, setShowAddDestination] = useState(false);
 
   const [currentDestination, setCurrentDestination] =
@@ -34,18 +33,6 @@ const AddDestinationForm = () => {
 
   const [isOnDestination, setIsOnDestination] = useState(false);
 
-
-  const [currentDestination, setCurrentDestination] =
-    useState<Destination | null>(null);
-
-  const location = useLocation();
-
-  const [isOnDestination, setIsOnDestination] = useState(false);
-
-
-  const location = useLocation();
-
-  const [isOnDestination, setIsOnDestination] = useState(false);
   const handleAddClose = () => setShowAddDestination(false);
   const handleAddShow = () => setShowAddDestination(true);
 
@@ -245,7 +232,7 @@ const AddDestinationForm = () => {
         temperature: temperature ? parseInt(temperature) : 0,
         description,
         thingsToDo: thingsToDoData,
-        extraImages: extraImagesData
+        extraImages: extraImagesData,
       });
 
       console.log("Document written with id: ", docRef.id);
@@ -263,147 +250,151 @@ const AddDestinationForm = () => {
       .map((_, idx) => start + idx);
   }
 
-  const fetchDataToForm = async (destination: Destination) => {
-    const destinationRef = doc(db, "destinations", destination.city);
-    const destinationSnap = await getDoc(destinationRef);
-
-    if (destinationSnap.exists()) {
-      setCurrentDestination(destinationSnap.data() as Destination);
-    } else {
-      console.log("No destination");
-    }
-  };
-  useEffect(() => {
-    if (currentDestination) {
-      fetchDataToForm(currentDestination);
-    }
-  }, [currentDestination]);
-
-  return (
-    <>
-      {/* <AddDestinationButton className="createButton"></AddDestinationButton> */}
-      <Button
-        className="createButton"
-        variant="primary"
-        onClick={handleAddShow}
-      >
-        Legg til destinasjon
-      </Button>
-
-      {showAddDestination && (
-        <div className="modal-container">
-          <Modal show={showAddDestination} onHide={handleAddClose} size="xl">
-            {/* from https://react-bootstrap.netlify.app/docs/components/modal */}
-            <Modal.Header closeButton>
-              {/* Top bar, where the X is.*/}
-              <Modal.Title className="ms-auto">
-                Skjema for oppretting av destinasjon
-              </Modal.Title>
-            </Modal.Header>
-            <Modal.Body as={"div"} style={{ padding: "1rem" }}>
-              <Row className="mb-1 justify-content-center">
-                <Col>
-                  <Modal.Title className="text-center">
-                    Generell informasjon
+  const RenderDestinationForm = () => {
+    return (
+      <>
+        {!isOnDestination && (
+          <Button
+            className="createButton"
+            variant="primary"
+            onClick={handleAddShow}
+          >
+            Legg til destinasjon
+          </Button>
+        )}
+        {showAddDestination && !isOnDestination && (
+          <>
+            <div className="modal-container">
+              <Modal
+                show={showAddDestination}
+                onHide={handleAddClose}
+                size="xl"
+              >
+                {/* from https://react-bootstrap.netlify.app/docs/components/modal */}
+                <Modal.Header closeButton>
+                  {/* Top bar, where the X is.*/}
+                  <Modal.Title className="ms-auto">
+                    Skjema for oppretting av destinasjon
                   </Modal.Title>
-                </Col>
-              </Row>
-              <Row className="mb-1">
-                <Form.Group controlId="formFile" className="destination-file">
-                  {/* For image upload*/}
-                  <Form.Label>Forsidebilde</Form.Label>
-                  <Form.Control
-                    type="file"
-                    size="lg"
-                    onChange={handleImageChange}
-                  />
-                </Form.Group>
-              </Row>
-              <Row className="mb-1">
-                <Col md={2}>
-                  <InputGroup>
-                    <Form.Control
-                      type="text"
-                      placeholder="By"
-                      onChange={handleCityChange}
-                      autoFocus
-                    />
-                  </InputGroup>
-                </Col>
-                <Col md={2}>
-                  <InputGroup>
-                    <Form.Control
-                      type="text"
-                      placeholder="Land"
-                      onChange={handleCountryChange}
-                    />
-                  </InputGroup>
-                </Col>
-                <Col md={2}>
-                  <InputGroup>
-                    <Form.Select onChange={handleTypeChange} defaultValue="">
-                      <option value="" disabled>
-                        Type
-                      </option>
-                      {["Vinter", "Natur", "Storby", "Strand"].map((type) => (
-                        <option key={type} value={type}>
-                          {type}
-                        </option>
-                      ))}
-                    </Form.Select>
-                  </InputGroup>
-                </Col>
-                <Col md={2}>
-                  <InputGroup>
-                    <Form.Select onChange={handleRatingChange} defaultValue="">
-                      <option value="" disabled>
-                        Rating
-                      </option>
-                      {range(0, 5).map((rating) => (
-                        <option key={rating} value={rating}>
-                          {rating}
-                        </option>
-                      ))}
-                    </Form.Select>
-                  </InputGroup>
-                </Col>
-                <Col md={2}>
-                  <InputGroup>
-                    <Form.Select onChange={handlePriceChange} defaultValue="">
-                      <option value="" disabled>
-                        Pris
-                      </option>
-                      {range(0, 5).map((price) => (
-                        <option key={price} value={price}>
-                          {price}
-                        </option>
-                      ))}
-                    </Form.Select>
-                  </InputGroup>
-                </Col>
-                <Col md={2}>
-                  <InputGroup>
-                    <Form.Control
-                      type="text"
-                      placeholder="Temperatur"
-                      onChange={handleTemperatureChange}
-                    />
-                  </InputGroup>
-                </Col>
-              </Row>
-              {/* Description */}
-              <Row className="mb-5">
-                <Col>
-                  <Form.Group controlId="description">
-                    <Form.Label>Beskrivelse</Form.Label>
-                    <Form.Control
-                      as="textarea"
-                      rows={3}
-                      onChange={handleDescriptionChange}
-                    ></Form.Control>
-                  </Form.Group>
-                </Col>
-              </Row>
+                </Modal.Header>
+                <Modal.Body as={"div"} style={{ padding: "1rem" }}>
+                  <Row className="mb-1 justify-content-center">
+                    <Col>
+                      <Modal.Title className="text-center">
+                        Generell informasjon
+                      </Modal.Title>
+                    </Col>
+                  </Row>
+                  <Row className="mb-1">
+                    <Form.Group
+                      controlId="formFile"
+                      className="destination-file"
+                    >
+                      {/* For image upload*/}
+                      <Form.Label>Forsidebilde</Form.Label>
+                      <Form.Control
+                        type="file"
+                        size="lg"
+                        onChange={handleImageChange}
+                      />
+                    </Form.Group>
+                  </Row>
+                  <Row className="mb-1">
+                    <Col md={2}>
+                      <InputGroup>
+                        <Form.Control
+                          type="text"
+                          placeholder="By"
+                          onChange={handleCityChange}
+                          autoFocus
+                        />
+                      </InputGroup>
+                    </Col>
+                    <Col md={2}>
+                      <InputGroup>
+                        <Form.Control
+                          type="text"
+                          placeholder="Land"
+                          onChange={handleCountryChange}
+                        />
+                      </InputGroup>
+                    </Col>
+                    <Col md={2}>
+                      <InputGroup>
+                        <Form.Select
+                          onChange={handleTypeChange}
+                          defaultValue=""
+                        >
+                          <option value="" disabled>
+                            Type
+                          </option>
+                          {["Vinter", "Natur", "Storby", "Strand"].map(
+                            (type) => (
+                              <option key={type} value={type}>
+                                {type}
+                              </option>
+                            )
+                          )}
+                        </Form.Select>
+                      </InputGroup>
+                    </Col>
+                    <Col md={2}>
+                      <InputGroup>
+                        <Form.Select
+                          onChange={handleRatingChange}
+                          defaultValue=""
+                        >
+                          <option value="" disabled>
+                            Rating
+                          </option>
+                          {range(0, 5).map((rating) => (
+                            <option key={rating} value={rating}>
+                              {rating}
+                            </option>
+                          ))}
+                        </Form.Select>
+                      </InputGroup>
+                    </Col>
+                    <Col md={2}>
+                      <InputGroup>
+                        <Form.Select
+                          onChange={handlePriceChange}
+                          defaultValue=""
+                        >
+                          <option value="" disabled>
+                            Pris
+                          </option>
+                          {range(0, 5).map((price) => (
+                            <option key={price} value={price}>
+                              {price}
+                            </option>
+                          ))}
+                        </Form.Select>
+                      </InputGroup>
+                    </Col>
+                    <Col md={2}>
+                      <InputGroup>
+                        <Form.Control
+                          type="text"
+                          placeholder="Temperatur"
+                          onChange={handleTemperatureChange}
+                        />
+                      </InputGroup>
+                    </Col>
+                  </Row>
+                  {/* Description */}
+                  <Row className="mb-5">
+                    <Col>
+                      <Form.Group controlId="description">
+                        <Form.Label>Beskrivelse</Form.Label>
+                        <Form.Control
+                          as="textarea"
+                          rows={3}
+                          onChange={handleDescriptionChange}
+                        ></Form.Control>
+                      </Form.Group>
+                    </Col>
+                  </Row>
 
                   <Row className="mb-1 justify-content-center">
                     <Col>
@@ -993,4 +984,5 @@ const AddDestinationForm = () => {
     </>
   );
 };
+
 export default AddDestinationForm;
