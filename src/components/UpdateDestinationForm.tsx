@@ -13,21 +13,21 @@ interface UpdateFormProps {
 
 const UpdateDestinationForm = ({ destination }: UpdateFormProps) => {
   useEffect(() => {
-    console.log(destination.city);
-  });
+    console.log(destination);
+  }, []);
   const [showUpdateForm, setShowUpdateForm] = useState(false);
 
   const handleShow = () => setShowUpdateForm(true);
   const handleClose = () => setShowUpdateForm(false);
 
   const [image, setImage] = useState<File | null>(null);
-  const [temperature, setTemperature] = useState("");
-  const [city, setCity] = useState("");
-  const [country, setCountry] = useState("");
-  const [type, setType] = useState("");
-  const [rating, setRating] = useState("");
-  const [price, setPrice] = useState("");
-  const [description, setDescription] = useState("");
+  const [temperature, setTemperature] = useState(destination.temperature);
+  const [city, setCity] = useState(destination.city);
+  const [country, setCountry] = useState(destination.country);
+  const [type, setType] = useState(destination.type);
+  const [rating, setRating] = useState(destination.rating);
+  const [price, setPrice] = useState(destination.price);
+  const [description, setDescription] = useState(destination.description);
 
   const [thingsImages, setThingsImages] = useState<(File | null)[]>([
     null,
@@ -65,15 +65,15 @@ const UpdateDestinationForm = ({ destination }: UpdateFormProps) => {
     setType(event.target.value);
   };
   const handleRatingChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setRating(event.target.value);
+    setRating(Number(event.target.value));
   };
   const handlePriceChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setPrice(event.target.value);
+    setPrice(Number(event.target.value));
   };
   const handleTemperatureChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    setTemperature(event.target.value);
+    setTemperature(Number(event.target.value));
   };
   const handleDescriptionChange = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -243,7 +243,7 @@ const UpdateDestinationForm = ({ destination }: UpdateFormProps) => {
                     <Form.Control
                       type="text"
                       placeholder="By"
-                      value={destination.city}
+                      value={city}
                       onChange={handleCityChange}
                       autoFocus
                     />
@@ -254,15 +254,15 @@ const UpdateDestinationForm = ({ destination }: UpdateFormProps) => {
                     <Form.Control
                       type="text"
                       placeholder="Land"
-                      value={destination.country}
+                      value={country}
                       onChange={handleCountryChange}
                     />
                   </InputGroup>
                 </Col>
                 <Col md={2}>
                   <InputGroup>
-                    <Form.Select onChange={handleTypeChange} defaultValue="">
-                      <option value={destination.type} disabled>
+                    <Form.Select onChange={handleTypeChange}>
+                      <option value={type} disabled>
                         Type
                       </option>
                       {["Vinter", "Natur", "Storby", "Strand"].map((type) => (
@@ -275,8 +275,8 @@ const UpdateDestinationForm = ({ destination }: UpdateFormProps) => {
                 </Col>
                 <Col md={2}>
                   <InputGroup>
-                    <Form.Select onChange={handleRatingChange} defaultValue="">
-                      <option value={destination.rating} disabled>
+                    <Form.Select onChange={handleRatingChange}>
+                      <option value={rating} disabled>
                         Rating
                       </option>
                       {range(0, 5).map((rating) => (
@@ -289,12 +289,12 @@ const UpdateDestinationForm = ({ destination }: UpdateFormProps) => {
                 </Col>
                 <Col md={2}>
                   <InputGroup>
-                    <Form.Select onChange={handlePriceChange} defaultValue="">
-                      <option value={destination.price} disabled>
+                    <Form.Select onChange={handlePriceChange}>
+                      <option value={price} disabled>
                         Pris
                       </option>
                       {range(0, 5).map((price) => (
-                        <option key={price} value={destination.price}>
+                        <option key={price} value={price}>
                           {price}
                         </option>
                       ))}
