@@ -15,7 +15,8 @@ import { useParams } from "react-router-dom";
 import DeleteDestinationForm from "../components/DeleteDestinationForm";
 
 import AddDestinationForm from "../components/AddDestinationForm";
-
+import AddReviewForm from "../components/AddReviewFrom";
+import UpdateDestinationForm from "../components/UpdateDestinationForm";
 import "../style/CardContainer.css";
 
 export interface Destination {
@@ -102,7 +103,7 @@ const DestinationPage = () => {
       <TitleDiv destination={destination} />
       <AllRatings destination={destination} />
       <DeleteDestinationForm id={id} city={destination.city} />
-      <AddDestinationForm destination={destination} />
+      <UpdateDestinationForm destination={destination} />
       <div className="AllContentDivs">
         <DescriptionDiv destination={destination} />
         <ActivitesDiv
