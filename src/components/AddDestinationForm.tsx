@@ -1,5 +1,6 @@
 import { addDoc, collection, doc, getDoc } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { LucideCircleFadingPlus } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { Col, Dropdown, Row } from "react-bootstrap";
 import Button from "react-bootstrap/Button";
@@ -10,9 +11,6 @@ import { useLocation } from "react-router-dom";
 import { auth, db, storage } from "../firebase_setup/firebase";
 import { Destination } from "../pages/DestinationPage";
 import "../style/addDestinationPopUp.css";
-import { LucideCircleFadingPlus } from 'lucide-react';
-
-
 
 /**
  * Renders a pop-up component for creating a destination.
@@ -230,7 +228,7 @@ const AddDestinationForm: React.FC<AddDestinationFormProps> = ({
         temperature: temperature ? parseInt(temperature) : 0,
         description,
         thingsToDo: thingsToDoData,
-        extraImages: extraImagesData
+        extraImages: extraImagesData,
       });
 
       console.log("Document written with id: ", docRef.id);
@@ -252,11 +250,9 @@ const AddDestinationForm: React.FC<AddDestinationFormProps> = ({
     return (
       <>
         {!isOnDestination && (
-          <Button
-            className="NewDest"
-            variant="primary"
-            onClick={handleAddShow}
-          > <LucideCircleFadingPlus size={25} id="icon" />
+          <Button className="NewDest" variant="primary" onClick={handleAddShow}>
+            {" "}
+            <LucideCircleFadingPlus size={25} id="icon" />
             Ny destinasjon
           </Button>
         )}
@@ -317,7 +313,8 @@ const AddDestinationForm: React.FC<AddDestinationFormProps> = ({
                         />
                       </InputGroup>
                     </Col>
-                    <Col md={2}>git 
+                    <Col md={2}>
+                      git
                       <InputGroup>
                         <Form.Select
                           onChange={handleTypeChange}
