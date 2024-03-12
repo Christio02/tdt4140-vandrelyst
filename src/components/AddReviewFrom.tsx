@@ -12,12 +12,6 @@ import {
     import { db, storage } from "../firebase_setup/firebase";
     import "../style/addDestinationPopUp.css";
     
-    /**
-     * Renders a pop-up component for creating a destination.
-     * Allows the user to input various details such as temperature, city, country, rating, price, description, and things to do.
-     * Provides an option to upload an image for the destination.
-     * Saves the destination data to a database upon user submission.
-     */
     
 const ReviewPopUp = () => {
         const [showAddReview, setShowAddReview] = useState(false);
