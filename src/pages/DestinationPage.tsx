@@ -88,7 +88,7 @@ const DestinationPage = () => {
     // If destination data hasn't been fetched yet, you return a loading state
     return <div>Loading...</div>;
   }
-
+console.log(id)
   return (
     <div
       style={{
@@ -102,8 +102,11 @@ const DestinationPage = () => {
       <MainPhoto url={mainPhotoUrl} />
       <TitleDiv destination={destination} />
       <AllRatings destination={destination} />
-      <DeleteDestinationForm id={id} city={destination.city} />
-      <UpdateDestinationForm destination={destination} />
+      <div className="deleteButtonContainer">
+        <DeleteDestinationForm id={destination.city} city={destination.city} />
+        <UpdateDestinationForm destination={destination} id={id} />
+      </div>
+
       <div className="AllContentDivs">
         <DescriptionDiv destination={destination} />
         <ActivitesDiv
@@ -131,9 +134,6 @@ const AllRatings = ({ destination }: { destination: Destination }) => {
         <StarRating rating={destination.rating} />
         <PriceRating price={destination.price} />
         <TempRating temp={destination.temperature} />
-      </div>
-      <div className="deleteButtonContainer">
-        <DeleteDestinationForm id={destination.city} city={destination.city} />
       </div>
     </div>
   );
