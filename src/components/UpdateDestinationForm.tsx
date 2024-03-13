@@ -2,18 +2,25 @@ import { type } from "@testing-library/user-event/dist/type";
 import { useEffect, useState } from "react";
 import { Button, Col, Form, InputGroup, Modal, Row } from "react-bootstrap";
 
-import { addDoc, collection } from "firebase/firestore";
+import { addDoc, collection, doc, getDoc, updateDoc } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { useStyleSheetContext } from "styled-components/dist/models/StyleSheetManager";
 import { db, storage } from "../firebase_setup/firebase";
 import { Destination } from "../pages/DestinationPage";
 
 interface UpdateFormProps {
   destination: Destination;
+  id: string | undefined;
 }
 
-const UpdateDestinationForm = ({ destination }: UpdateFormProps) => {
+const UpdateDestinationForm = ({ destination, id }: UpdateFormProps) => {
   useEffect(() => {
-    console.log(destination);
+    console.log(`Rating: ${destination.rating}, Price: ${destination.price}`);
+    console.log("maingImage: " + destination.mainImage);
+    destination.thingsToDo.map((entr) => {
+      console.log(entr);
+      return null; // Add a return statement
+    });
   }, []);
   const [showUpdateForm, setShowUpdateForm] = useState(false);
 
@@ -34,11 +41,16 @@ const UpdateDestinationForm = ({ destination }: UpdateFormProps) => {
     null,
     null,
   ]);
-  const [imageTitles, setImageTitles] = useState<string[]>(["", "", ""]);
+
+  const [imageTitles, setImageTitles] = useState<string[]>([
+    destination.thingsToDo[0].caption,
+    destination.thingsToDo[1].caption,
+    destination.thingsToDo[2].caption,
+  ]);
   const [imageDescriptions, setImageDescriptions] = useState<string[]>([
-    "",
-    "",
-    "",
+    destination.thingsToDo[0].description,
+    destination.thingsToDo[1].description,
+    destination.thingsToDo[2].description,
   ]);
 
   const [extraImages, setExtraImages] = useState<(File | null)[]>([
@@ -47,7 +59,12 @@ const UpdateDestinationForm = ({ destination }: UpdateFormProps) => {
     null,
     null,
   ]);
-  const [extraImageTitles, setExtraImageTitles] = useState(["", "", "", ""]);
+  const [extraImageTitles, setExtraImageTitles] = useState([
+    destination.extraImages[0].caption,
+    destination.extraImages[1].caption,
+    destination.extraImages[2].caption,
+    destination.extraImages[3].caption,
+  ]);
 
   const handleImageChange = (event: React.FormEvent) => {
     const files = (event.target as HTMLInputElement).files;
@@ -126,7 +143,7 @@ const UpdateDestinationForm = ({ destination }: UpdateFormProps) => {
     };
 
   const sendDataToFirestore = async () => {
-    let mainImageUrl = null;
+    let mainImageUrl = destination.mainImage;
     if (image != null) {
       const imageRef = ref(storage, `images/${city}_${country}/main.jpg`);
       await uploadBytes(imageRef, image);
@@ -165,29 +182,29 @@ const UpdateDestinationForm = ({ destination }: UpdateFormProps) => {
       const thingsToDoData = thingsToDoUrls.map((url, index) => ({
         caption: imageTitles[index],
         description: imageDescriptions[index],
-        imgLink: url,
+        imgLink: url !== null ? url : destination.thingsToDo[index].imgLink,
       }));
 
       const extraImagesData = extraImagesUrls.map((url, index) => ({
         caption: extraImageTitles[index],
         description: "",
-        imgLink: url,
+        imgLink: url !== null ? url : destination.extraImages[index].imgLink,
       }));
 
-      const docRef = await addDoc(collection(db, "destinations"), {
+      await updateDoc(doc(db!, "destinations", id!), {
         mainImage: mainImageUrl,
         city,
         country,
         type,
-        rating: rating ? parseInt(rating) : 0,
-        price: price ? parseInt(price) : 0,
-        temperature: temperature ? parseInt(temperature) : 0,
+        rating: rating ? parseInt(rating.toString()) : 0,
+        price: price ? parseInt(price.toString()) : 0,
+        temperature: temperature ? parseInt(temperature.toString()) : 0,
         description,
         thingsToDo: thingsToDoData,
         extraImages: extraImagesData,
       });
 
-      console.log("Document written with id: ", docRef.id);
+      console.log("Document written with id: ", id);
       alert("Destination added successfully!");
     } catch (error) {
       console.error("Error: ", error);
@@ -210,7 +227,7 @@ const UpdateDestinationForm = ({ destination }: UpdateFormProps) => {
 
       {showUpdateForm && (
         <div className="modal-container">
-          <Modal show={showUpdateForm} onHide={handleClose} size="xl">
+          <Modal show={showUpdateForm} onHide={handleClose} size="xl" centered>
             {/* from https://react-bootstrap.netlify.app/docs/components/modal */}
             <Modal.Header closeButton>
               {/* Top bar, where the X is.*/}
@@ -230,6 +247,7 @@ const UpdateDestinationForm = ({ destination }: UpdateFormProps) => {
                 <Form.Group controlId="formFile" className="destination-file">
                   {/* For image upload*/}
                   <Form.Label>Forsidebilde</Form.Label>
+                  <p style={{ fontSize: "10px" }}>{destination.mainImage}</p>
                   <Form.Control
                     type="file"
                     size="lg"
@@ -275,10 +293,11 @@ const UpdateDestinationForm = ({ destination }: UpdateFormProps) => {
                 </Col>
                 <Col md={2}>
                   <InputGroup>
-                    <Form.Select onChange={handleRatingChange}>
-                      <option value={rating} disabled>
-                        Rating
-                      </option>
+                    <Form.Select
+                      onChange={handleRatingChange}
+                      defaultValue={destination.rating}
+                    >
+                      <option value="">Rating</option>
                       {range(0, 5).map((rating) => (
                         <option key={rating} value={rating}>
                           {rating}
@@ -289,10 +308,11 @@ const UpdateDestinationForm = ({ destination }: UpdateFormProps) => {
                 </Col>
                 <Col md={2}>
                   <InputGroup>
-                    <Form.Select onChange={handlePriceChange}>
-                      <option value={price} disabled>
-                        Pris
-                      </option>
+                    <Form.Select
+                      onChange={handlePriceChange}
+                      defaultValue={destination.price}
+                    >
+                      <option value="">Pris</option>
                       {range(0, 5).map((price) => (
                         <option key={price} value={price}>
                           {price}
@@ -307,7 +327,7 @@ const UpdateDestinationForm = ({ destination }: UpdateFormProps) => {
                       type="text"
                       placeholder="Temperatur"
                       onChange={handleTemperatureChange}
-                      value={destination.temperature}
+                      value={temperature}
                     />
                   </InputGroup>
                 </Col>
@@ -321,7 +341,7 @@ const UpdateDestinationForm = ({ destination }: UpdateFormProps) => {
                       as="textarea"
                       rows={3}
                       onChange={handleDescriptionChange}
-                      value={destination.description}
+                      value={description}
                     ></Form.Control>
                   </Form.Group>
                 </Col>
@@ -338,6 +358,10 @@ const UpdateDestinationForm = ({ destination }: UpdateFormProps) => {
               <Row className="mb-1">
                 <Col md={4}>
                   <Form.Group controlId="formFile" className="destination-file">
+                    <p style={{ fontSize: "10px" }}>
+                      {destination.thingsToDo[0].imgLink}
+                    </p>
+
                     <Form.Control
                       type="file"
                       onChange={handleThingsImagesChange(0)}
@@ -346,6 +370,9 @@ const UpdateDestinationForm = ({ destination }: UpdateFormProps) => {
                 </Col>
                 <Col md={4}>
                   <Form.Group controlId="formFile" className="destination-file">
+                    <p style={{ fontSize: "10px" }}>
+                      {destination.thingsToDo[1].imgLink}
+                    </p>
                     <Form.Control
                       type="file"
                       onChange={handleThingsImagesChange(1)}
@@ -354,6 +381,9 @@ const UpdateDestinationForm = ({ destination }: UpdateFormProps) => {
                 </Col>
                 <Col md={4}>
                   <Form.Group controlId="formFile" className="destination-file">
+                    <p style={{ fontSize: "10px" }}>
+                      {destination.thingsToDo[2].imgLink}
+                    </p>
                     <Form.Control
                       type="file"
                       onChange={handleThingsImagesChange(2)}
@@ -367,6 +397,7 @@ const UpdateDestinationForm = ({ destination }: UpdateFormProps) => {
                     <Form.Control
                       type="text"
                       placeholder="Bildetittel 1"
+                      value={imageTitles[0]}
                       onChange={handlePictureTitleChange(0)}
                     />
                   </InputGroup>
@@ -376,6 +407,7 @@ const UpdateDestinationForm = ({ destination }: UpdateFormProps) => {
                     <Form.Control
                       type="text"
                       placeholder="Bildetittel 2"
+                      value={imageTitles[1]}
                       onChange={handlePictureTitleChange(1)}
                     />
                   </InputGroup>
@@ -385,6 +417,7 @@ const UpdateDestinationForm = ({ destination }: UpdateFormProps) => {
                     <Form.Control
                       type="text"
                       placeholder="Bildetittel 3"
+                      value={imageTitles[2]}
                       onChange={handlePictureTitleChange(2)}
                     />
                   </InputGroup>
@@ -399,6 +432,7 @@ const UpdateDestinationForm = ({ destination }: UpdateFormProps) => {
                       as="textarea"
                       rows={3}
                       onChange={handlePictureDescriptionChange(0)}
+                      value={imageDescriptions[0]}
                     ></Form.Control>
                   </Form.Group>
                 </Col>
@@ -409,6 +443,7 @@ const UpdateDestinationForm = ({ destination }: UpdateFormProps) => {
                       as="textarea"
                       rows={3}
                       onChange={handlePictureDescriptionChange(1)}
+                      value={imageDescriptions[1]}
                     ></Form.Control>
                   </Form.Group>
                 </Col>
@@ -419,6 +454,7 @@ const UpdateDestinationForm = ({ destination }: UpdateFormProps) => {
                       as="textarea"
                       rows={3}
                       onChange={handlePictureDescriptionChange(2)}
+                      value={imageDescriptions[2]}
                     ></Form.Control>
                   </Form.Group>
                 </Col>
@@ -433,6 +469,9 @@ const UpdateDestinationForm = ({ destination }: UpdateFormProps) => {
               <Row className="mb-1">
                 <Col md={3}>
                   <Form.Group controlId="formFile" className="destination-file">
+                    <p style={{ fontSize: "10px" }}>
+                      {destination.extraImages[0].imgLink}
+                    </p>
                     <Form.Control
                       type="file"
                       onChange={handleExtraImagesChange(0)}
@@ -441,6 +480,9 @@ const UpdateDestinationForm = ({ destination }: UpdateFormProps) => {
                 </Col>
                 <Col md={3}>
                   <Form.Group controlId="formFile" className="destination-file">
+                    <p style={{ fontSize: "10px" }}>
+                      {destination.extraImages[1].imgLink}
+                    </p>
                     <Form.Control
                       type="file"
                       onChange={handleExtraImagesChange(1)}
@@ -449,6 +491,9 @@ const UpdateDestinationForm = ({ destination }: UpdateFormProps) => {
                 </Col>
                 <Col md={3}>
                   <Form.Group controlId="formFile" className="destination-file">
+                    <p style={{ fontSize: "10px" }}>
+                      {destination.extraImages[2].imgLink}
+                    </p>
                     <Form.Control
                       type="file"
                       onChange={handleExtraImagesChange(2)}
@@ -457,6 +502,9 @@ const UpdateDestinationForm = ({ destination }: UpdateFormProps) => {
                 </Col>
                 <Col md={3}>
                   <Form.Group controlId="formFile" className="destination-file">
+                    <p style={{ fontSize: "10px" }}>
+                      {destination.extraImages[3].imgLink}
+                    </p>
                     <Form.Control
                       type="file"
                       onChange={handleExtraImagesChange(3)}
@@ -471,6 +519,7 @@ const UpdateDestinationForm = ({ destination }: UpdateFormProps) => {
                       type="text"
                       placeholder="Bildetittel 1"
                       onChange={handleExtraImageTitleChange(0)}
+                      value={extraImageTitles[0]}
                     />
                   </InputGroup>
                 </Col>
@@ -480,6 +529,7 @@ const UpdateDestinationForm = ({ destination }: UpdateFormProps) => {
                       type="text"
                       placeholder="Bildetittel 2"
                       onChange={handleExtraImageTitleChange(1)}
+                      value={extraImageTitles[1]}
                     />
                   </InputGroup>
                 </Col>
@@ -489,6 +539,7 @@ const UpdateDestinationForm = ({ destination }: UpdateFormProps) => {
                       type="text"
                       placeholder="Bildetittel 3"
                       onChange={handleExtraImageTitleChange(2)}
+                      value={extraImageTitles[2]}
                     />
                   </InputGroup>
                 </Col>
@@ -498,6 +549,7 @@ const UpdateDestinationForm = ({ destination }: UpdateFormProps) => {
                       type="text"
                       placeholder="Bildetittel 4"
                       onChange={handleExtraImageTitleChange(3)}
+                      value={extraImageTitles[3]}
                     />
                   </InputGroup>
                 </Col>
