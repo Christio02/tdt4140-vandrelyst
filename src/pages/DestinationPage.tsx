@@ -15,7 +15,8 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import DeleteDestinationForm from "../components/DeleteDestinationForm";
 import "../style/CardContainer.css";
-import AddReviewForm from "../components/AddReviewFrom";
+import AddReviewForm from "../components/AddReviewForm";
+import ReviewsSection from "../components/ReviewsSection";
 
 interface Destination {
   mainImage: string;
@@ -99,15 +100,11 @@ const DestinationPage = () => {
         />
         <ActivitesDiv title="Bilder" activities={destination.extraImages} />
       </div>
-      
+
       <div className="review-container">
         <h2 className="reviews-title">Omtaler</h2>
         <div className="review-section">
-          <ReviewSummary sendDestination1={destination.city}
-          />
-          <ReviewList 
-            sendDestination={destination.city+"_"+destination.country}
-          />
+          <ReviewsSection sendDestination={destination.city} />
         </div>
       </div>
     </div>
@@ -117,14 +114,14 @@ const DestinationPage = () => {
 const AllRatings = ({ destination }: { destination: Destination }) => {
   return (
     <div className="AllRatings">
-      
+
       <div className="centerContent">
         <StarRating rating={destination.rating} />
         <PriceRating price={destination.price} />
         <TempRating temp={destination.temperature} />
       </div>
       <div className="deleteButtonContainer">
-        <DeleteDestinationForm id={destination.city} city={destination.city}/>
+        <DeleteDestinationForm id={destination.city} city={destination.city} />
       </div>
     </div>
   );
@@ -260,143 +257,6 @@ const ActivitesDiv = (props: ActivitiesDivProps) => {
           />
         ))}
       </div>
-    </div>
-  );
-};
-
-interface Review {
-  userName: string;
-  date: string;
-  rating: number;
-  description: string;
-}
-
-type queryForReviews = {
-  destination : string
-};
-
-const getReviews = async (props : queryForReviews) => {
-  const reviews: Review[] = [];
-
-  const reviewsForDestination = collection(db, "reviews");
-
-  const allReviewsQuery = query(reviewsForDestination, where("destination", "==", `${props.destination}`))
-  const reviewsSnapshot = await getDocs(allReviewsQuery);
-
-  reviewsSnapshot.forEach((doc) => {
-    const reviewData = doc.data();
-    console.log(reviewData);
-    let review: Review = {
-      userName: reviewData.user,
-      date: reviewData.date,
-      rating: reviewData.rating,
-      description: reviewData.description,
-    };
-    reviews.push(review);
-  });
-
-  return reviews;
-};
-
-
-
-// const getReviews = async () => {
-//   const reviewsSnapshot = await getDocs(query(collection(db, "reviews"), where("destination", "==", `${destination?.city}_${destination?.country}`)));
-//   const reviewsData = reviewsSnapshot.docs.map((doc) => doc.data() as Review);
-//   setReviews(reviewsData);
-// };
-
-
-type reviewSummaryProp = {
-  sendDestination1 : string;
-} 
-
-const ReviewSummary = async (props : reviewSummaryProp) => {
-
-  const destination : queryForReviews = {
-    destination : props.sendDestination1
-  };
-  const reviews = await getReviews(destination);
-  // regne ut average rating her
-  const averageRating =
-  reviews.reduce((acc, review) => acc + review.rating, 0) / reviews.length;
-
-  // Antall reviews for hver stjernerating
-  const starsCount = new Array(5).fill(0);
-  reviews.forEach((review) => {
-    starsCount[review.rating - 1]++;
-  });
-
-  return (
-    <div className="review-summary">
-      <h2>Omtaler</h2>
-      <div className="average-rating">
-        {averageRating.toFixed(1)}
-        <span className="total-reviews">({reviews.length} omtale{reviews.length > 1 ? "r" : ""})</span>
-      </div>
-      <div className="star-rating-summary">
-        {[5, 4, 3, 2, 1].map((star) => (
-          <div key={star} className="star-row">
-            <div className="star-label">
-              {star} stjerne{star > 1 ? "r" : ""}
-            </div>
-            <div className="star-bar">
-              <div
-                className="star-fill"
-                style={{
-                  width: `${(starsCount[star - 1] / reviews.length) * 100}%`,
-                }}
-              ></div>
-            </div>
-            <div className="star-count">{starsCount[star - 1]}</div>
-          </div>
-        ))}
-      </div>
-      <div className="add-review-button">
-        <AddReviewForm sendDestination2={""+props.sendDestination1}/>
-      </div>
-    </div>
-  );
-};
-
-const ReviewItem: React.FC<{ review: Review; index: number }> = ({
-  review,
-  index,
-}) => {
-  return (
-    <div
-      className={`review-item ${
-        reviews.length - 1 === index ? "no-border" : ""
-      }`}
-    >
-      <div className="review-user">
-        {review.userName} <span className="review-date">{review.date}</span>
-      </div>
-      <div className="star-rating">
-        {"★".repeat(review.rating)}
-        <span className="star-count">({review.rating})</span>
-      </div>
-      <p>{review.description}</p>
-    </div>
-  );
-};
-
-type reviewListProps = {
-  sendDestination : string
-}
-
-const ReviewList = async (props : reviewListProps) => {
-  const destination : queryForReviews = {
-    destination : props.sendDestination1
-  };
-  const reviews = await getReviews(destination);
-  return (
-    <div className="review-list">
-      {reviews.map((review, index) => (
-        <ReviewItem key={index} review={review} index={index} 
-          />
-      ))}
-      <button>See more reviews</button>
     </div>
   );
 };
