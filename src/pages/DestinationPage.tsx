@@ -8,38 +8,56 @@ import React from "react";
 import Navbar from "../components/Navbar";
 import "../style/DestinationPage.css";
 
-import { collection, doc, getDoc, getDocs, getFirestore, query, where } from "firebase/firestore";
-import { db } from "../firebase_setup/firebase";
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  getFirestore,
+  query,
+  where,
+} from "firebase/firestore";
 import { getDownloadURL, getStorage, ref } from "firebase/storage";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import DeleteDestinationForm from "../components/DeleteDestinationForm";
-import "../style/CardContainer.css";
-import AddReviewForm from "../components/AddReviewForm";
-import ReviewsSection from "../components/ReviewsSection";
+import { db } from "../firebase_setup/firebase";
 
-interface Destination {
+import Footer from "../components/Footer";
+import ReviewsSection from "../components/ReviewsSection";
+import UpdateDestinationForm from "../components/UpdateDestinationForm";
+import "../style/CardContainer.css";
+
+export interface Destination {
   mainImage: string;
+  email: string;
   city: string;
   country: string;
   rating: number;
   price: number;
   temperature: number;
   description: string;
-  thingsToDo: Array<object>;
-  extraImages: Array<object>;
+  thingsToDo: Array<{
+    caption: string;
+    description: string;
+    imgLink: string;
+  }>;
+  extraImages: Array<{
+    caption: string;
+    description: string;
+    imgLink: string;
+  }>;
+  type?: string;
 }
 
 const DestinationPage = () => {
   const { id } = useParams(); // route parameter has the same name as the parameter in the route path in App.tsx
   const [mainPhotoUrl, setMainPhotoUrl] = useState("");
   const [destination, setDestination] = useState<Destination | null>(null);
-  // // console.log(id); // This will log the id of the destination to the console.
 
   useEffect(() => {
     const fetchDestinationData = async () => {
       if (!id) {
-        // console.log(id);
         return;
       }
       const db = getFirestore();
@@ -47,7 +65,6 @@ const DestinationPage = () => {
       const docSnap = await getDoc(docRef);
 
       if (docSnap.exists()) {
-        // console.log("Document data:", docSnap.data());
         const destinationData = docSnap.data() as Destination;
         setDestination(destinationData);
 
@@ -71,6 +88,7 @@ const DestinationPage = () => {
 
     if (id) {
       fetchDestinationData();
+      console.log(destination?.email);
     }
   }, [id]);
 
@@ -78,7 +96,7 @@ const DestinationPage = () => {
     // If destination data hasn't been fetched yet, you return a loading state
     return <div>Loading...</div>;
   }
-
+  console.log(id);
   return (
     <div
       style={{
@@ -92,6 +110,15 @@ const DestinationPage = () => {
       <MainPhoto url={mainPhotoUrl} />
       <TitleDiv destination={destination} />
       <AllRatings destination={destination} />
+      <div className="deleteButtonContainer">
+        <DeleteDestinationForm
+          id={destination.city}
+          city={destination.city}
+          email={destination.email}
+        />
+        <UpdateDestinationForm destination={destination} id={id} />
+      </div>
+
       <div className="AllContentDivs">
         <DescriptionDiv destination={destination} />
         <ActivitesDiv
@@ -107,6 +134,7 @@ const DestinationPage = () => {
           <ReviewsSection sendDestination={destination.city} />
         </div>
       </div>
+      <Footer />
     </div>
   );
 };
@@ -114,14 +142,10 @@ const DestinationPage = () => {
 const AllRatings = ({ destination }: { destination: Destination }) => {
   return (
     <div className="AllRatings">
-
       <div className="centerContent">
         <StarRating rating={destination.rating} />
         <PriceRating price={destination.price} />
         <TempRating temp={destination.temperature} />
-      </div>
-      <div className="deleteButtonContainer">
-        <DeleteDestinationForm id={destination.city} city={destination.city} />
       </div>
     </div>
   );
