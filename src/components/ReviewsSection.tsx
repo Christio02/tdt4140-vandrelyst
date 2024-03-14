@@ -31,13 +31,6 @@ const ReviewsSection = (props: revProps) => {
     );
 }
 
-// Legge til funksjonalitet for å endre omtale
-
-
-// Hva gjør vi med stjernerating av destinasjoner?
-//          1: Fjerne stjernerating fra opprettingsskjema og kun basere på reviews
-//          2: tydeliggjøre med "Andres omtaler"
-
 
 
 interface Review {
