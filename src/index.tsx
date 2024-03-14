@@ -5,10 +5,10 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import App from "./App";
 import "./index.css";
 import DestinationPage from "./pages/DestinationPage";
-import OmOss from "./pages/OmOss";
 import LogInPage from "./pages/LogInPage";
+import OmOss from "./pages/OmOss";
 import RegisterUserPage from "./pages/RegisterUserPage";
-import MyPage from "./pages/MyPage";
+// import MyPage from "./pages/MyPage";
 import UserPage from "./pages/UserPage";
 import reportWebVitals from "./reportWebVitals";
 
@@ -19,11 +19,11 @@ root.render(
   <React.StrictMode>
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<App/>} />
+        <Route path="/" element={<App />} />
         <Route path="/destination/:id" element={<DestinationPage />} />
-        <Route path="/omoss" element={<OmOss/>} />
-        <Route path="/logginn" element={<LogInPage/>} />
-        <Route path="/registrering" element={<RegisterUserPage/>} />
+        <Route path="/omoss" element={<OmOss />} />
+        <Route path="/logginn" element={<LogInPage />} />
+        <Route path="/registrering" element={<RegisterUserPage />} />
         <Route path="/mypage/*" element={<UserPage />} />
       </Routes>
     </BrowserRouter>

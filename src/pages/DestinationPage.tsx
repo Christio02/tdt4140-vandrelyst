@@ -14,20 +14,33 @@ import { getDownloadURL, getStorage, ref } from "firebase/storage";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import DeleteDestinationForm from "../components/DeleteDestinationForm";
-import "../style/CardContainer.css";
+
+import AddDestinationForm from "../components/AddDestinationForm";
 import AddReviewForm from "../components/AddReviewForm";
 import ReviewsSection from "../components/ReviewsSection";
+import UpdateDestinationForm from "../components/UpdateDestinationForm";
+import "../style/CardContainer.css";
 
-interface Destination {
+export interface Destination {
   mainImage: string;
+  email: string;
   city: string;
   country: string;
   rating: number;
   price: number;
   temperature: number;
   description: string;
-  thingsToDo: Array<object>;
-  extraImages: Array<object>;
+  thingsToDo: Array<{
+    caption: string;
+    description: string;
+    imgLink: string;
+  }>;
+  extraImages: Array<{
+    caption: string;
+    description: string;
+    imgLink: string;
+  }>;
+  type?: string;
 }
 
 const DestinationPage = () => {
@@ -71,6 +84,7 @@ const DestinationPage = () => {
 
     if (id) {
       fetchDestinationData();
+      console.log(destination?.email);
     }
   }, [id]);
 
@@ -78,7 +92,7 @@ const DestinationPage = () => {
     // If destination data hasn't been fetched yet, you return a loading state
     return <div>Loading...</div>;
   }
-
+  console.log(id);
   return (
     <div
       style={{
@@ -92,6 +106,15 @@ const DestinationPage = () => {
       <MainPhoto url={mainPhotoUrl} />
       <TitleDiv destination={destination} />
       <AllRatings destination={destination} />
+      <div className="deleteButtonContainer">
+        <DeleteDestinationForm
+          id={destination.city}
+          city={destination.city}
+          email={destination.email}
+        />
+        <UpdateDestinationForm destination={destination} id={id} />
+      </div>
+
       <div className="AllContentDivs">
         <DescriptionDiv destination={destination} />
         <ActivitesDiv
@@ -114,14 +137,10 @@ const DestinationPage = () => {
 const AllRatings = ({ destination }: { destination: Destination }) => {
   return (
     <div className="AllRatings">
-
       <div className="centerContent">
         <StarRating rating={destination.rating} />
         <PriceRating price={destination.price} />
         <TempRating temp={destination.temperature} />
-      </div>
-      <div className="deleteButtonContainer">
-        <DeleteDestinationForm id={destination.city} city={destination.city} />
       </div>
     </div>
   );

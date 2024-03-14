@@ -1,47 +1,53 @@
-import { addDoc, collection } from "firebase/firestore";
+import { type } from "@testing-library/user-event/dist/type";
+import { useEffect, useState } from "react";
+import { Button, Col, Form, InputGroup, Modal, Row } from "react-bootstrap";
+
+import { addDoc, collection, doc, getDoc, updateDoc } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
-import { LucideCircleFadingPlus } from "lucide-react";
-import React, { useEffect, useState } from "react";
-import { Col, Dropdown, Row } from "react-bootstrap";
-import Button from "react-bootstrap/Button";
-import Form from "react-bootstrap/Form";
-import InputGroup from "react-bootstrap/InputGroup";
-import Modal from "react-bootstrap/Modal";
+import { check } from "prettier";
+import { useStyleSheetContext } from "styled-components/dist/models/StyleSheetManager";
 import { auth, db, storage } from "../firebase_setup/firebase";
-import "../style/addDestinationPopUp.css";
+import { Destination } from "../pages/DestinationPage";
+import { userIsAdmin } from "./RegisterPanel";
 
-/**
- * Renders a pop-up component for creating a destination.
- * Allows the user to input various details such as temperature, city, country, rating, price, description, and things to do.
- * Provides an option to upload an image for the destination.
- * Saves the destination data to a database upon user submission.
- */
+interface UpdateFormProps {
+  destination: Destination;
+  id: string | undefined;
+}
 
-const DestinationPopUp = () => {
-  const [showAddDestination, setShowAddDestination] = useState(false);
+const UpdateDestinationForm = ({ destination, id }: UpdateFormProps) => {
+  const [showUpdateForm, setShowUpdateForm] = useState(false);
 
-  const handleAddClose = () => setShowAddDestination(false);
-  const handleAddShow = () => setShowAddDestination(true);
+  const handleShow = () => setShowUpdateForm(true);
+  const handleClose = () => setShowUpdateForm(false);
 
   const [image, setImage] = useState<File | null>(null);
-  const [temperature, setTemperature] = useState("");
-  const [city, setCity] = useState("");
-  const [country, setCountry] = useState("");
-  const [type, setType] = useState("");
+  const [temperature, setTemperature] = useState(destination.temperature);
+  const [city, setCity] = useState(destination.city);
+  const [country, setCountry] = useState(destination.country);
+  const [type, setType] = useState(destination.type);
+  const [price, setPrice] = useState(destination.price);
+  const [description, setDescription] = useState(destination.description);
+  const [canShowUpdateButton, setCanShowUpdateButton] = useState(false);
 
-  const [price, setPrice] = useState("");
-  const [description, setDescription] = useState("");
+  const currentLoggedInUserEmail: string | undefined | null =
+    auth?.currentUser?.email;
 
   const [thingsImages, setThingsImages] = useState<(File | null)[]>([
     null,
     null,
     null,
   ]);
-  const [imageTitles, setImageTitles] = useState<string[]>(["", "", ""]);
+
+  const [imageTitles, setImageTitles] = useState<string[]>([
+    destination.thingsToDo[0].caption,
+    destination.thingsToDo[1].caption,
+    destination.thingsToDo[2].caption,
+  ]);
   const [imageDescriptions, setImageDescriptions] = useState<string[]>([
-    "",
-    "",
-    "",
+    destination.thingsToDo[0].description,
+    destination.thingsToDo[1].description,
+    destination.thingsToDo[2].description,
   ]);
 
   const [extraImages, setExtraImages] = useState<(File | null)[]>([
@@ -50,7 +56,12 @@ const DestinationPopUp = () => {
     null,
     null,
   ]);
-  const [extraImageTitles, setExtraImageTitles] = useState(["", "", "", ""]);
+  const [extraImageTitles, setExtraImageTitles] = useState([
+    destination.extraImages[0].caption,
+    destination.extraImages[1].caption,
+    destination.extraImages[2].caption,
+    destination.extraImages[3].caption,
+  ]);
 
   const handleImageChange = (event: React.FormEvent) => {
     const files = (event.target as HTMLInputElement).files;
@@ -69,12 +80,12 @@ const DestinationPopUp = () => {
   };
 
   const handlePriceChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setPrice(event.target.value);
+    setPrice(Number(event.target.value));
   };
   const handleTemperatureChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    setTemperature(event.target.value);
+    setTemperature(Number(event.target.value));
   };
   const handleDescriptionChange = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -126,8 +137,40 @@ const DestinationPopUp = () => {
       setExtraImageTitles(newTitles);
     };
 
+  // check if user actually has created destination, maybe pass down user props from destination page
+  // or if user is admin, show button for every destination
+  // if not, then do not show button to update destination
+
+  // check admin
+
+  useEffect(() => {
+    const checkUser = async () => {
+      console.log(currentLoggedInUserEmail);
+      console.log(destination.email);
+      const admin = await userIsAdmin();
+      console.log("User is admin: " + admin);
+      if (
+        currentLoggedInUserEmail === undefined ||
+        currentLoggedInUserEmail === null ||
+        currentLoggedInUserEmail !== destination.email
+      ) {
+        if (!admin) {
+          setCanShowUpdateButton(false);
+        } else {
+          setCanShowUpdateButton(true);
+        }
+      } else {
+        setCanShowUpdateButton(true);
+      }
+      console.log(
+        `User has created destination or is admin : ${canShowUpdateButton} `
+      );
+    };
+    checkUser();
+  }, [currentLoggedInUserEmail, destination.email, canShowUpdateButton]);
+
   const sendDataToFirestore = async () => {
-    let mainImageUrl = null;
+    let mainImageUrl = destination.mainImage;
     if (image != null) {
       const imageRef = ref(storage, `images/${city}_${country}/main.jpg`);
       await uploadBytes(imageRef, image);
@@ -166,32 +209,29 @@ const DestinationPopUp = () => {
       const thingsToDoData = thingsToDoUrls.map((url, index) => ({
         caption: imageTitles[index],
         description: imageDescriptions[index],
-        imgLink: url,
+        imgLink: url !== null ? url : destination.thingsToDo[index].imgLink,
       }));
 
       const extraImagesData = extraImagesUrls.map((url, index) => ({
         caption: extraImageTitles[index],
         description: "",
-        imgLink: url,
+        imgLink: url !== null ? url : destination.extraImages[index].imgLink,
       }));
 
-      const docRef = await addDoc(collection(db, "destinations"), {
+      await updateDoc(doc(db!, "destinations", id!), {
         mainImage: mainImageUrl,
         city,
         country,
         type,
-
-        price: price ? parseInt(price) : 0,
-        temperature: temperature ? parseInt(temperature) : 0,
+        price: price ? parseInt(price.toString()) : 0,
+        temperature: temperature ? parseInt(temperature.toString()) : 0,
         description,
         thingsToDo: thingsToDoData,
         extraImages: extraImagesData,
-        email: auth.currentUser?.email,
-        date: new Date(),
       });
 
-      alert("Destination added successfully!");
-      handleAddClose();
+      alert("Destination updated successfully!");
+      handleClose();
       window.location.reload();
     } catch (error) {
       console.error("Error: ", error);
@@ -208,21 +248,20 @@ const DestinationPopUp = () => {
 
   return (
     <>
-      {/* <AddDestinationButton className="createButton"></AddDestinationButton> */}
-      <Button className="NewDest" variant="primary" onClick={handleAddShow}>
-        {" "}
-        <LucideCircleFadingPlus size={25} id="icon" />
-        Ny destinasjon
-      </Button>
+      {canShowUpdateButton && (
+        <Button className="updateButton" variant="primary" onClick={handleShow}>
+          Oppdater destinasjon
+        </Button>
+      )}
 
-      {showAddDestination && (
+      {showUpdateForm && (
         <div className="modal-container">
-          <Modal show={showAddDestination} onHide={handleAddClose} size="xl">
+          <Modal show={showUpdateForm} onHide={handleClose} size="xl" centered>
             {/* from https://react-bootstrap.netlify.app/docs/components/modal */}
             <Modal.Header closeButton>
               {/* Top bar, where the X is.*/}
               <Modal.Title className="ms-auto">
-                Skjema for oppretting av destinasjon
+                Skjema for oppdatering av destinasjon
               </Modal.Title>
             </Modal.Header>
             <Modal.Body as={"div"} style={{ padding: "1rem" }}>
@@ -237,6 +276,7 @@ const DestinationPopUp = () => {
                 <Form.Group controlId="formFile" className="destination-file">
                   {/* For image upload*/}
                   <Form.Label>Forsidebilde</Form.Label>
+
                   <Form.Control
                     type="file"
                     size="lg"
@@ -250,6 +290,7 @@ const DestinationPopUp = () => {
                     <Form.Control
                       type="text"
                       placeholder="By"
+                      value={city}
                       onChange={handleCityChange}
                       autoFocus
                     />
@@ -260,14 +301,15 @@ const DestinationPopUp = () => {
                     <Form.Control
                       type="text"
                       placeholder="Land"
+                      value={country}
                       onChange={handleCountryChange}
                     />
                   </InputGroup>
                 </Col>
                 <Col md={2}>
                   <InputGroup>
-                    <Form.Select onChange={handleTypeChange} defaultValue="">
-                      <option value="" disabled>
+                    <Form.Select onChange={handleTypeChange}>
+                      <option value={type} disabled>
                         Type
                       </option>
                       {["Vinter", "Natur", "Storby", "Strand"].map((type) => (
@@ -281,10 +323,11 @@ const DestinationPopUp = () => {
 
                 <Col md={2}>
                   <InputGroup>
-                    <Form.Select onChange={handlePriceChange} defaultValue="">
-                      <option value="" disabled>
-                        Pris
-                      </option>
+                    <Form.Select
+                      onChange={handlePriceChange}
+                      defaultValue={destination.price}
+                    >
+                      <option value="">Pris</option>
                       {range(0, 5).map((price) => (
                         <option key={price} value={price}>
                           {price}
@@ -299,6 +342,7 @@ const DestinationPopUp = () => {
                       type="text"
                       placeholder="Temperatur"
                       onChange={handleTemperatureChange}
+                      value={temperature}
                     />
                   </InputGroup>
                 </Col>
@@ -312,6 +356,7 @@ const DestinationPopUp = () => {
                       as="textarea"
                       rows={3}
                       onChange={handleDescriptionChange}
+                      value={description}
                     ></Form.Control>
                   </Form.Group>
                 </Col>
@@ -357,6 +402,7 @@ const DestinationPopUp = () => {
                     <Form.Control
                       type="text"
                       placeholder="Bildetittel 1"
+                      value={imageTitles[0]}
                       onChange={handlePictureTitleChange(0)}
                     />
                   </InputGroup>
@@ -366,6 +412,7 @@ const DestinationPopUp = () => {
                     <Form.Control
                       type="text"
                       placeholder="Bildetittel 2"
+                      value={imageTitles[1]}
                       onChange={handlePictureTitleChange(1)}
                     />
                   </InputGroup>
@@ -375,6 +422,7 @@ const DestinationPopUp = () => {
                     <Form.Control
                       type="text"
                       placeholder="Bildetittel 3"
+                      value={imageTitles[2]}
                       onChange={handlePictureTitleChange(2)}
                     />
                   </InputGroup>
@@ -389,6 +437,7 @@ const DestinationPopUp = () => {
                       as="textarea"
                       rows={3}
                       onChange={handlePictureDescriptionChange(0)}
+                      value={imageDescriptions[0]}
                     ></Form.Control>
                   </Form.Group>
                 </Col>
@@ -399,6 +448,7 @@ const DestinationPopUp = () => {
                       as="textarea"
                       rows={3}
                       onChange={handlePictureDescriptionChange(1)}
+                      value={imageDescriptions[1]}
                     ></Form.Control>
                   </Form.Group>
                 </Col>
@@ -409,6 +459,7 @@ const DestinationPopUp = () => {
                       as="textarea"
                       rows={3}
                       onChange={handlePictureDescriptionChange(2)}
+                      value={imageDescriptions[2]}
                     ></Form.Control>
                   </Form.Group>
                 </Col>
@@ -461,6 +512,7 @@ const DestinationPopUp = () => {
                       type="text"
                       placeholder="Bildetittel 1"
                       onChange={handleExtraImageTitleChange(0)}
+                      value={extraImageTitles[0]}
                     />
                   </InputGroup>
                 </Col>
@@ -470,6 +522,7 @@ const DestinationPopUp = () => {
                       type="text"
                       placeholder="Bildetittel 2"
                       onChange={handleExtraImageTitleChange(1)}
+                      value={extraImageTitles[1]}
                     />
                   </InputGroup>
                 </Col>
@@ -479,6 +532,7 @@ const DestinationPopUp = () => {
                       type="text"
                       placeholder="Bildetittel 3"
                       onChange={handleExtraImageTitleChange(2)}
+                      value={extraImageTitles[2]}
                     />
                   </InputGroup>
                 </Col>
@@ -488,6 +542,7 @@ const DestinationPopUp = () => {
                       type="text"
                       placeholder="Bildetittel 4"
                       onChange={handleExtraImageTitleChange(3)}
+                      value={extraImageTitles[3]}
                     />
                   </InputGroup>
                 </Col>
@@ -495,9 +550,13 @@ const DestinationPopUp = () => {
             </Modal.Body>
 
             <Modal.Footer
-              style={{ display: "flex", justifyContent: "center", gap: "5rem" }}
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                gap: "5rem",
+              }}
             >
-              <Button variant="danger" onClick={handleAddClose}>
+              <Button variant="danger" onClick={handleClose}>
                 Close
               </Button>
               <Button variant="success" onClick={sendDataToFirestore}>
@@ -510,4 +569,5 @@ const DestinationPopUp = () => {
     </>
   );
 };
-export default DestinationPopUp;
+
+export default UpdateDestinationForm;
