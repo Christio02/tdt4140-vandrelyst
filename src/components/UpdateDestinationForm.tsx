@@ -247,7 +247,7 @@ const UpdateDestinationForm = ({ destination, id }: UpdateFormProps) => {
                 <Form.Group controlId="formFile" className="destination-file">
                   {/* For image upload*/}
                   <Form.Label>Forsidebilde</Form.Label>
-                  <p style={{ fontSize: "10px" }}>{destination.mainImage}</p>
+
                   <Form.Control
                     type="file"
                     size="lg"
@@ -358,10 +358,6 @@ const UpdateDestinationForm = ({ destination, id }: UpdateFormProps) => {
               <Row className="mb-1">
                 <Col md={4}>
                   <Form.Group controlId="formFile" className="destination-file">
-                    <p style={{ fontSize: "10px" }}>
-                      {destination.thingsToDo[0].imgLink}
-                    </p>
-
                     <Form.Control
                       type="file"
                       onChange={handleThingsImagesChange(0)}
@@ -370,9 +366,6 @@ const UpdateDestinationForm = ({ destination, id }: UpdateFormProps) => {
                 </Col>
                 <Col md={4}>
                   <Form.Group controlId="formFile" className="destination-file">
-                    <p style={{ fontSize: "10px" }}>
-                      {destination.thingsToDo[1].imgLink}
-                    </p>
                     <Form.Control
                       type="file"
                       onChange={handleThingsImagesChange(1)}
@@ -381,9 +374,6 @@ const UpdateDestinationForm = ({ destination, id }: UpdateFormProps) => {
                 </Col>
                 <Col md={4}>
                   <Form.Group controlId="formFile" className="destination-file">
-                    <p style={{ fontSize: "10px" }}>
-                      {destination.thingsToDo[2].imgLink}
-                    </p>
                     <Form.Control
                       type="file"
                       onChange={handleThingsImagesChange(2)}
@@ -469,9 +459,6 @@ const UpdateDestinationForm = ({ destination, id }: UpdateFormProps) => {
               <Row className="mb-1">
                 <Col md={3}>
                   <Form.Group controlId="formFile" className="destination-file">
-                    <p style={{ fontSize: "10px" }}>
-                      {destination.extraImages[0].imgLink}
-                    </p>
                     <Form.Control
                       type="file"
                       onChange={handleExtraImagesChange(0)}
@@ -480,9 +467,6 @@ const UpdateDestinationForm = ({ destination, id }: UpdateFormProps) => {
                 </Col>
                 <Col md={3}>
                   <Form.Group controlId="formFile" className="destination-file">
-                    <p style={{ fontSize: "10px" }}>
-                      {destination.extraImages[1].imgLink}
-                    </p>
                     <Form.Control
                       type="file"
                       onChange={handleExtraImagesChange(1)}
@@ -491,9 +475,6 @@ const UpdateDestinationForm = ({ destination, id }: UpdateFormProps) => {
                 </Col>
                 <Col md={3}>
                   <Form.Group controlId="formFile" className="destination-file">
-                    <p style={{ fontSize: "10px" }}>
-                      {destination.extraImages[2].imgLink}
-                    </p>
                     <Form.Control
                       type="file"
                       onChange={handleExtraImagesChange(2)}
@@ -502,9 +483,6 @@ const UpdateDestinationForm = ({ destination, id }: UpdateFormProps) => {
                 </Col>
                 <Col md={3}>
                   <Form.Group controlId="formFile" className="destination-file">
-                    <p style={{ fontSize: "10px" }}>
-                      {destination.extraImages[3].imgLink}
-                    </p>
                     <Form.Control
                       type="file"
                       onChange={handleExtraImagesChange(3)}
