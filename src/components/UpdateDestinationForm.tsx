@@ -5,7 +5,6 @@ import { Button, Col, Form, InputGroup, Modal, Row } from "react-bootstrap";
 import { addDoc, collection, doc, getDoc, updateDoc } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { check } from "prettier";
-import { useStyleSheetContext } from "styled-components/dist/models/StyleSheetManager";
 import { auth, db, storage } from "../firebase_setup/firebase";
 import { Destination } from "../pages/DestinationPage";
 import { userIsAdmin } from "./RegisterPanel";
