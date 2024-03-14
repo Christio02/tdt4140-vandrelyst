@@ -44,7 +44,7 @@ type queryForReviews = {
     destination: string
 };
 
-const getReviews = async (props: queryForReviews) => {
+export const getReviews = async (props: queryForReviews) => {
     const reviews: Review[] = [];
 
     const reviewsForDestination = collection(db, "reviews");
@@ -54,7 +54,7 @@ const getReviews = async (props: queryForReviews) => {
 
     reviewsSnapshot.forEach((doc) => {
         const reviewData = doc.data();
-        console.log(reviewData);
+        // console.log(reviewData);
         let review: Review = {
             userName: reviewData.user,
             date: reviewData.date.toDate().toString(),
@@ -114,8 +114,9 @@ const ReviewSummary = (props: reviewSummaryProp) => {
                     </div>
                 ))}
             </div>
-            <div className="add-review-button">
+            <div className="reviewButtonDiv">
                 <AddReviewForm sendDestination2={"" + props.sendDestination1} />
+                
             </div>
         </div>
     );
@@ -156,7 +157,7 @@ const ReviewList = (props: reviewListProps) => {
                 <ReviewItem key={index} review={review} index={index} reviewsLength={props.reviews.length}
                 />
             ))}
-            <button>See more reviews</button>
+            <button className="moreReviews">See more reviews</button>
         </div>
     );
 };

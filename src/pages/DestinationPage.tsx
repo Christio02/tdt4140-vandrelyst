@@ -8,15 +8,22 @@ import React from "react";
 import Navbar from "../components/Navbar";
 import "../style/DestinationPage.css";
 
-import { collection, doc, getDoc, getDocs, getFirestore, query, where } from "firebase/firestore";
-import { db } from "../firebase_setup/firebase";
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  getFirestore,
+  query,
+  where,
+} from "firebase/firestore";
 import { getDownloadURL, getStorage, ref } from "firebase/storage";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import DeleteDestinationForm from "../components/DeleteDestinationForm";
+import { db } from "../firebase_setup/firebase";
 
-import AddDestinationForm from "../components/AddDestinationForm";
-import AddReviewForm from "../components/AddReviewForm";
+import Footer from "../components/Footer";
 import ReviewsSection from "../components/ReviewsSection";
 import UpdateDestinationForm from "../components/UpdateDestinationForm";
 import "../style/CardContainer.css";
@@ -47,12 +54,10 @@ const DestinationPage = () => {
   const { id } = useParams(); // route parameter has the same name as the parameter in the route path in App.tsx
   const [mainPhotoUrl, setMainPhotoUrl] = useState("");
   const [destination, setDestination] = useState<Destination | null>(null);
-  console.log(id); // This will log the id of the destination to the console.
 
   useEffect(() => {
     const fetchDestinationData = async () => {
       if (!id) {
-        console.log(id);
         return;
       }
       const db = getFirestore();
@@ -60,7 +65,6 @@ const DestinationPage = () => {
       const docSnap = await getDoc(docRef);
 
       if (docSnap.exists()) {
-        console.log("Document data:", docSnap.data());
         const destinationData = docSnap.data() as Destination;
         setDestination(destinationData);
 
@@ -130,6 +134,7 @@ const DestinationPage = () => {
           <ReviewsSection sendDestination={destination.city} />
         </div>
       </div>
+      <Footer />
     </div>
   );
 };
@@ -215,7 +220,7 @@ const TempRating = ({ temp }: { temp: any }) => {
 };
 
 const MainPhoto = ({ url }: { url: any }) => {
-  console.log(url);
+  // console.log(url);
   return (
     <div className="PhotoOfCity">
       <img src={url} alt="Photo of city" />;

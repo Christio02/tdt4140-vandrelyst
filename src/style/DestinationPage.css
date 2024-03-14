@@ -357,22 +357,20 @@ h4 {
   color: #666;
 }
 
-  .add-review-button {
-    background-color: rgb(200, 216, 228); 
-    color: #030303; 
-    border: none;
-    padding: 10px 20px;
-    font-size: 16px;
-    border-radius: 100px;
-    cursor: pointer;
-    margin-top: 20px;
-    outline: none; 
-    transition: background-color 0.3s ease; 
+  .reviewButtonDiv {
+    display:flex;
+    align-content: center;
+    justify-content: center;    
   }
 
-  .add-review-button:hover {
-    background-color: rgb(180, 196, 208); 
+  .moreReviews {
+    visibility: hidden;
+    
   }
+
+  /* .add-review-button:hover {
+    background-color: rgb(180, 196, 208); 
+  } */
 
   
   
