@@ -27,7 +27,7 @@ export const fetchRecommendations = async (userEmail: string): Promise<Destinati
         let typeToRatingMap: { [key: string]: number } = {};
 
         for (const review of highRatedReviews) {
-            const destination = allDestinations.find(dest => dest.id === review.destination);
+            const destination = allDestinations.find(dest => dest.id === review.id);
             if (destination?.type) {
                 typeToRatingMap[destination.type] = Math.max(typeToRatingMap[destination.type] || 0, review.rating);
             }

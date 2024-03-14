@@ -115,7 +115,7 @@ const ReviewSummary = (props: reviewSummaryProp) => {
                 ))}
             </div>
             <div className="add-review-button">
-                <AddReviewForm sendDestination2={"" + props.sendDestination1} />
+                <AddReviewForm city={"" + props.sendDestination1} />
             </div>
         </div>
     );
