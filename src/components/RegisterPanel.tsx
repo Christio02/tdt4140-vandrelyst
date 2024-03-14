@@ -69,7 +69,6 @@ export const userIsAdmin = async () => {
   
   //! Henter data fra document
   try {
-    console.log("INNE I TRY")
     const snapshotOfData = await getDoc(userDocument);
     
     //! Sjekke om snapshotQuery faktisk finnes
