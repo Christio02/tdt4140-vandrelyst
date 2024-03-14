@@ -8,7 +8,6 @@ import DestinationPage from "./pages/DestinationPage";
 import OmOss from "./pages/OmOss";
 import LogInPage from "./pages/LogInPage";
 import RegisterUserPage from "./pages/RegisterUserPage";
-import MyPage from "./pages/MyPage";
 import UserPage from "./pages/UserPage";
 import reportWebVitals from "./reportWebVitals";
 
