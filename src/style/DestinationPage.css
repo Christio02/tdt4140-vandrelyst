@@ -134,6 +134,10 @@ h4 {
     object-fit: cover;
     object-position: center;
 }
+
+.ReviewsSection{
+  display:flex;
+}
   
   .review-summary,
   .review-list {
@@ -357,7 +361,7 @@ h4 {
   }
 
   .add-review-button {
-    background-color: #C8D8E4; 
+    background-color: rgb(200, 216, 228); 
     color: #030303; 
     border: none;
     padding: 10px 20px;
@@ -370,7 +374,7 @@ h4 {
   }
 
   .add-review-button:hover {
-    background-color: #b75d5d; 
+    background-color: rgb(180, 196, 208); 
   }
 
   
