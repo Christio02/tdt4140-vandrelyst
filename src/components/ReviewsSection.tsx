@@ -31,6 +31,13 @@ const ReviewsSection = (props: revProps) => {
     );
 }
 
+// Legge til funksjonalitet for å endre omtale
+
+
+// Hva gjør vi med stjernerating av destinasjoner?
+//          1: Fjerne stjernerating fra opprettingsskjema og kun basere på reviews
+//          2: tydeliggjøre med "Andres omtaler"
+
 
 
 interface Review {
@@ -44,7 +51,7 @@ type queryForReviews = {
     destination: string
 };
 
-const getReviews = async (props: queryForReviews) => {
+export const getReviews = async (props: queryForReviews) => {
     const reviews: Review[] = [];
 
     const reviewsForDestination = collection(db, "reviews");
@@ -54,7 +61,7 @@ const getReviews = async (props: queryForReviews) => {
 
     reviewsSnapshot.forEach((doc) => {
         const reviewData = doc.data();
-        console.log(reviewData);
+        // console.log(reviewData);
         let review: Review = {
             userName: reviewData.user,
             date: reviewData.date.toDate().toString(),
@@ -114,8 +121,9 @@ const ReviewSummary = (props: reviewSummaryProp) => {
                     </div>
                 ))}
             </div>
-            <div className="add-review-button">
+            <div className="reviewButtonDiv">
                 <AddReviewForm sendDestination2={"" + props.sendDestination1} />
+                
             </div>
         </div>
     );
@@ -156,7 +164,7 @@ const ReviewList = (props: reviewListProps) => {
                 <ReviewItem key={index} review={review} index={index} reviewsLength={props.reviews.length}
                 />
             ))}
-            <button>See more reviews</button>
+            <button className="moreReviews">See more reviews</button>
         </div>
     );
 };

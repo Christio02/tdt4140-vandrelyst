@@ -13,6 +13,7 @@ import { auth, db, storage } from "../firebase_setup/firebase";
 import { doc, setDoc } from "firebase/firestore";
 import firebase from 'firebase/app';
 import 'firebase/firestore';
+import { getReviews } from "./ReviewsSection";
 
 import "../style/addDestinationPopUp.css";
 
@@ -26,6 +27,17 @@ import "../style/addDestinationPopUp.css";
 type reviewFormProp = {
     sendDestination2: string
 }
+
+interface Review {
+    userName: string;
+    date: string;
+    rating: number;
+    description: string;
+}
+
+type queryForReviews = {
+    destination: string
+};
 
 const AddReviewForm = (props: reviewFormProp) => {
     const [showAddReview, setShowAddReview] = useState(false);
@@ -81,7 +93,7 @@ const AddReviewForm = (props: reviewFormProp) => {
 
             const userID = auth?.currentUser?.email;
 
-            console.log(formattedDate);
+            // console.log(formattedDate);
 
             const data = {
                 rating: rating ? parseInt(rating) : 0,
@@ -109,17 +121,51 @@ const AddReviewForm = (props: reviewFormProp) => {
         return Array(end - start + 1).fill(0).map((_, idx) => start + idx);
     }
 
+    // Hente ut reviews
+    const [reviews, setReviews] = useState<Review[]>([]);
+    const [loggetInnOgHarSkrevetReview, setLoggetInnOgHarSkrevetReview] = useState(false);
 
+    useEffect(() => {
+        const destination: queryForReviews = {
+            destination: props.sendDestination2
+        };
+        // console.log(destination.destination);
+        // console.log("Før henting: " +endret)
+        getReviews(destination)
+        .then((reviews : Review[]) => {
+            setReviews(reviews);
+    
+            if (auth?.currentUser?.email === undefined || auth?.currentUser?.email === null){
+                // console.log("Ikke logget inn")    
+                setLoggetInnOgHarSkrevetReview(false);
+            }
+            else {
+                for (let i=0; i<reviews.length ; i++) {
+                    if (reviews[i].userName === auth?.currentUser?.email){
+                        // console.log("Logget inn og har skrevet review")
+                        setLoggetInnOgHarSkrevetReview(true);
+                    }
+                }
+            }
+        });
+        // console.log("-----------", reviews)
+
+    }, [props.sendDestination2])
+    
+    
     return (
         <>
-            {/* <AddDestinationButton className="createButton"></AddDestinationButton> */}
             <Button
                 className="createButton"
                 variant="primary"
                 onClick={handleAddShow}
-            >
-                Legg til omtale
-            </Button>
+            >   
+            { loggetInnOgHarSkrevetReview ?
+                "Rediger omtale"
+                :
+                "Legg til omtale"
+            }
+            </Button> 
 
             {showAddReview && (
                 <div className="modal-container">

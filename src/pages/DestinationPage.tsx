@@ -34,12 +34,12 @@ const DestinationPage = () => {
   const { id } = useParams(); // route parameter has the same name as the parameter in the route path in App.tsx
   const [mainPhotoUrl, setMainPhotoUrl] = useState("");
   const [destination, setDestination] = useState<Destination | null>(null);
-  console.log(id); // This will log the id of the destination to the console.
+  // // console.log(id); // This will log the id of the destination to the console.
 
   useEffect(() => {
     const fetchDestinationData = async () => {
       if (!id) {
-        console.log(id);
+        // console.log(id);
         return;
       }
       const db = getFirestore();
@@ -47,7 +47,7 @@ const DestinationPage = () => {
       const docSnap = await getDoc(docRef);
 
       if (docSnap.exists()) {
-        console.log("Document data:", docSnap.data());
+        // console.log("Document data:", docSnap.data());
         const destinationData = docSnap.data() as Destination;
         setDestination(destinationData);
 
@@ -196,7 +196,7 @@ const TempRating = ({ temp }: { temp: any }) => {
 };
 
 const MainPhoto = ({ url }: { url: any }) => {
-  console.log(url);
+  // console.log(url);
   return (
     <div className="PhotoOfCity">
       <img src={url} alt="Photo of city" />;
