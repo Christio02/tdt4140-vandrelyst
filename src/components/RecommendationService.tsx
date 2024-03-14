@@ -1,7 +1,7 @@
 import { db } from "../firebase_setup/firebase";
-import { query, collection, getDocs, orderBy, limit, doc, getDoc } from 'firebase/firestore';
+import { collection, getDocs } from 'firebase/firestore';
 import { fetchUserReviews } from './ReviewService';
-import { Destination, Review } from './Interfaces';
+import { Destination } from './Interfaces';
 
 export const fetchRecommendations = async (userEmail: string): Promise<Destination[]> => {
     console.log("Henter anbefalinger for e-post:", userEmail);
@@ -27,7 +27,7 @@ export const fetchRecommendations = async (userEmail: string): Promise<Destinati
         let typeToRatingMap: { [key: string]: number } = {};
 
         for (const review of highRatedReviews) {
-            const destination = allDestinations.find(dest => dest.id === review.destination);
+            const destination = allDestinations.find(dest => dest.id === review.id);
             if (destination?.type) {
                 typeToRatingMap[destination.type] = Math.max(typeToRatingMap[destination.type] || 0, review.rating);
             }

@@ -1,6 +1,3 @@
-import firebase from "firebase/app";
-import "firebase/firestore";
-import { addDoc, collection, doc, setDoc } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import React, { useEffect, useState } from "react";
 import { Col, Dropdown, Row } from "react-bootstrap";
@@ -10,6 +7,7 @@ import InputGroup from "react-bootstrap/InputGroup";
 import Modal from "react-bootstrap/Modal";
 import { auth, db, storage } from "../firebase_setup/firebase";
 import { getReviews } from "./ReviewsSection";
+import { collection, getDocs, getFirestore, where, query } from 'firebase/firestore';
 
 import "../style/addDestinationPopUp.css";
 
@@ -21,7 +19,7 @@ import "../style/addDestinationPopUp.css";
  */
 
 type reviewFormProp = {
-  sendDestination2: string;
+  city: string;
 };
 
 interface Review {
@@ -76,10 +74,24 @@ const AddReviewForm = (props: reviewFormProp) => {
       //! Hente ut for bruker:
       //! Peke på bruker i reviewen
 
-      //! Hente ut for destinasjon:
-      //! Hente ut på samme format er greit
-
-      const currentDate = new Date();
+            //! Hente ut for destinasjon:
+            //! Hente ut på samme format er greit
+            
+            const getDestinationID = async () => {
+                try {
+                  const db = getFirestore();
+                  const destinationsRef = collection(db, "destinations");
+                  const q = query(destinationsRef, where("city", "==", props.city));
+                  const querySnapshot = await getDocs(q);
+                  const destinationID = querySnapshot.docs[0].id;
+                  return destinationID;
+                } catch (error) {
+                  console.error("Error fetching destinations:", error);
+                }
+              };
+            
+            const destinationID = await getDestinationID();
+            const currentDate = new Date();
 
       const formattedDate = currentDate.toLocaleDateString("no", {
         year: "numeric",
@@ -94,13 +106,14 @@ const AddReviewForm = (props: reviewFormProp) => {
       const data = {
         rating: rating ? parseInt(rating) : 0,
         description: description,
-        destination: props.sendDestination2,
+        destination: props.city,
         date: currentDate,
         user: userID,
+                id: destinationID,
       };
 
-      const DESTINATION = props.sendDestination2 + "_" + userID;
-      const userDocument = doc(db, "reviews", DESTINATION);
+            const DESTINATION = props.city + "_" + userID;
+            const userDocument = doc(db, "reviews", DESTINATION);
 
       await setDoc(userDocument, data);
 
