@@ -121,7 +121,7 @@ const DeleteDestinationForm = ({ id, city, email }: Destination) => {
       {isDeleteForm && (
         <div className="delete-modal">
           <Modal show={isDeleteForm} onHide={handleCloseDelete}>
-            <Modal.Header closeButton>
+            <Modal.Header>
               <Modal.Title className="ms-auto">
                 Skjema for sletting av destinasjon
               </Modal.Title>

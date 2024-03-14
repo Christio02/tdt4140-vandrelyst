@@ -5,6 +5,7 @@ import { Button, Col, Form, InputGroup, Modal, Row } from "react-bootstrap";
 import { addDoc, collection, doc, getDoc, updateDoc } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { check } from "prettier";
+
 import { auth, db, storage } from "../firebase_setup/firebase";
 import { Destination } from "../pages/DestinationPage";
 import { userIsAdmin } from "./RegisterPanel";
@@ -257,9 +258,10 @@ const UpdateDestinationForm = ({ destination, id }: UpdateFormProps) => {
         <div className="modal-container">
           <Modal show={showUpdateForm} onHide={handleClose} size="xl" centered>
             {/* from https://react-bootstrap.netlify.app/docs/components/modal */}
-            <Modal.Header closeButton>
+            <Modal.Header>
               {/* Top bar, where the X is.*/}
-              <Modal.Title className="ms-auto">
+
+              <Modal.Title className="w-100 text-center">
                 Skjema for oppdatering av destinasjon
               </Modal.Title>
             </Modal.Header>

@@ -219,9 +219,9 @@ const DestinationPopUp = () => {
         <div className="modal-container">
           <Modal show={showAddDestination} onHide={handleAddClose} size="xl">
             {/* from https://react-bootstrap.netlify.app/docs/components/modal */}
-            <Modal.Header closeButton>
+            <Modal.Header>
               {/* Top bar, where the X is.*/}
-              <Modal.Title className="ms-auto">
+              <Modal.Title className="w-100 text-center">
                 Skjema for oppretting av destinasjon
               </Modal.Title>
             </Modal.Header>
