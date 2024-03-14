@@ -8,13 +8,15 @@ import React from "react";
 import Navbar from "../components/Navbar";
 import "../style/DestinationPage.css";
 
-import { doc, getDoc, getFirestore } from "firebase/firestore";
+import { arrayUnion, doc, getDoc, getFirestore, updateDoc } from "firebase/firestore";
 import { getDownloadURL, getStorage, ref } from "firebase/storage";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import DeleteDestinationForm from "../components/DeleteDestinationForm";
 import "../style/CardContainer.css";
 import AddReviewForm from "../components/AddReviewFrom";
+import { getAuth } from "firebase/auth";
+import { db } from "../firebase_setup/firebase";
 
 interface Destination {
   mainImage: string;
@@ -90,6 +92,8 @@ const DestinationPage = () => {
       <MainPhoto url={mainPhotoUrl} />
       <TitleDiv destination={destination} />
       <AllRatings destination={destination} />
+      <button onClick={() => id && markAsVisited(id)}>Merk som besøkt</button>
+
       <div className="AllContentDivs">
         <DescriptionDiv destination={destination} />
         <ActivitesDiv
@@ -104,6 +108,7 @@ const DestinationPage = () => {
         <div className="review-section">
           <ReviewSummary />
           <ReviewList />
+          
         </div>
       </div>
     </div>
@@ -217,6 +222,7 @@ const TitleDiv = ({ destination }: { destination: Destination }) => {
     <div className="TitleDiv">
       <h1> {destination.city} </h1>
       <h2> {destination.country} </h2>
+      
     </div>
   );
 };
@@ -371,5 +377,38 @@ const ReviewList = () => {
     </div>
   );
 };
+
+const markAsVisited = async (destinationId: string) => {
+  const auth = getAuth();
+  const user = auth.currentUser;
+
+  // Sjekk at bruker og brukerens e-post ikke er null
+  if (user && user.email) {
+    try {
+      const userDocRef = doc(db, "users", user.email); // Nå garantert at user.email ikke er null
+      const userDocSnap = await getDoc(userDocRef);
+
+      if (userDocSnap.exists()) {
+        const userData = userDocSnap.data();
+        const visitedArray = userData.visited || [];
+
+        if (!visitedArray.includes(destinationId)) {
+          await updateDoc(userDocRef, {
+            visited: arrayUnion(destinationId),
+          });
+          console.log("Destination marked as visited");
+        } else {
+          console.log("Destination already marked as visited");
+        }
+      }
+    } catch (error) {
+      console.error("Error updating visited destinations:", error);
+    }
+  } else {
+    console.log("User not logged in or email not available");
+  }
+};
+
+
 
 export default DestinationPage;

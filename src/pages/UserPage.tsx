@@ -27,6 +27,8 @@ import { auth, db } from "../firebase_setup/firebase";
 import { getDownloadURL, getStorage, ref } from "firebase/storage";
 import { collection, getDocs, getFirestore, where, query } from 'firebase/firestore';
 import CardContainer from "../components/CardContainer";
+import VisitedDestinations from "../components/VisitedDestinations";
+
 
 
 
@@ -324,7 +326,7 @@ const MyReviews = ({ rating, reviewTitle, comment, date }: MyReviewsProps) => {
   );
 };
 
-export const VisitedDestinations = () => {
+/*export const VisitedDestinations1 = () => {
   const [visitedDestination, setVisitedDestinations] = useState<any[]>([]);
   return (
     <>
@@ -350,3 +352,4 @@ export const VisitedDestinations = () => {
     </>
   );
 };
+*/
