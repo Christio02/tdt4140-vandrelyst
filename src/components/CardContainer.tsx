@@ -15,7 +15,7 @@ import Card from "react-bootstrap/Card";
 import { Link } from "react-router-dom";
 import "../style/CardContainer.css";
 
-interface Destination {
+export interface Destination {
   id: string;
   imageURL: string;
   country: string;

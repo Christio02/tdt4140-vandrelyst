@@ -1,5 +1,5 @@
 import "bootstrap/dist/css/bootstrap.min.css";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import "./App.css";
 import Annonse from "./assets/annonse.png";
@@ -10,6 +10,10 @@ import Footer from "./components/Footer";
 import Navbar from "./components/Navbar";
 import Searchbar from "./components/Searchbar";
 import OmOss from "./pages/OmOss";
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import RecommendedDestinations from "./components/RecommendedDestinations";
+
+
 
 
 function App() {
@@ -18,6 +22,24 @@ function App() {
 
   const [sortCriterion, setSortCriterion] = useState<string | null>(null);
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
+
+
+  const [userEmail, setUserEmail] = useState<string | null>(null);// Initialiser med tom streng eller gyldig e-post
+ // Legg til en tilstand for å holde styr på brukerens e-post
+
+
+ useEffect(() => {
+  const auth = getAuth();
+  onAuthStateChanged(auth, (user) => {
+    console.log("Bruker: ", user);
+    if (user) {
+      setUserEmail(user.email);
+    } else {
+      setUserEmail(null);
+    }
+  });
+}, []);
+
 
 
   const handleFilterChange = (newFilter: string) => {
@@ -46,20 +68,16 @@ function App() {
     setSortDirection(prevDirection => prevDirection === 'asc' ? 'desc' : 'asc'); 
   };
 
+ 
+
 
   return (
     <div className="main-container">
       <Navbar />
-      <Searchbar
-        setSearchResults={setSearchResults}
-        placeholder="Søk på reisemål"
-        title="Finn ditt reisemål"
-      />
+      <Searchbar setSearchResults={setSearchResults} placeholder="Søk på reisemål" title="Finn ditt reisemål" />
       <Filtercomponent onFilterChange={handleFilterChange} onSortChange={handleSortChange} activeSort={sortCriterion} sortDirection={sortDirection} />
-      <CardContainer
-        destinationsFromSearch={searchResults}
-        currentFilter={currentFilter} sortCriterion={sortCriterion} sortDirection={sortDirection}
-      />
+      {userEmail && <RecommendedDestinations userEmail={userEmail} />}
+      <CardContainer destinationsFromSearch={searchResults} currentFilter={currentFilter} sortCriterion={sortCriterion} sortDirection={sortDirection} />
       <div className="annonse">
         <img src={Annonse}></img>
       </div>
