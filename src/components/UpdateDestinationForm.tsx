@@ -142,6 +142,10 @@ const UpdateDestinationForm = ({ destination, id }: UpdateFormProps) => {
       setExtraImageTitles(newTitles);
     };
 
+  // check if user actually has created destination, maybe pass down user props from destination page
+  // or if user is admin, show button for every destination
+  // if not, then do not show button to update destination
+
   const sendDataToFirestore = async () => {
     let mainImageUrl = destination.mainImage;
     if (image != null) {
