@@ -21,6 +21,7 @@ import "../style/CardContainer.css";
 
 export interface Destination {
   mainImage: string;
+  email: string;
   city: string;
   country: string;
   rating: number;
@@ -81,6 +82,7 @@ const DestinationPage = () => {
 
     if (id) {
       fetchDestinationData();
+      console.log(destination?.email);
     }
   }, [id]);
 
@@ -88,7 +90,7 @@ const DestinationPage = () => {
     // If destination data hasn't been fetched yet, you return a loading state
     return <div>Loading...</div>;
   }
-console.log(id)
+  console.log(id);
   return (
     <div
       style={{
@@ -103,7 +105,11 @@ console.log(id)
       <TitleDiv destination={destination} />
       <AllRatings destination={destination} />
       <div className="deleteButtonContainer">
-        <DeleteDestinationForm id={destination.city} city={destination.city} />
+        <DeleteDestinationForm
+          id={destination.city}
+          city={destination.city}
+          email={destination.email}
+        />
         <UpdateDestinationForm destination={destination} id={id} />
       </div>
 

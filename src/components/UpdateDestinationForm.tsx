@@ -4,9 +4,11 @@ import { Button, Col, Form, InputGroup, Modal, Row } from "react-bootstrap";
 
 import { addDoc, collection, doc, getDoc, updateDoc } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { check } from "prettier";
 import { useStyleSheetContext } from "styled-components/dist/models/StyleSheetManager";
-import { db, storage } from "../firebase_setup/firebase";
+import { auth, db, storage } from "../firebase_setup/firebase";
 import { Destination } from "../pages/DestinationPage";
+import { userIsAdmin } from "./RegisterPanel";
 
 interface UpdateFormProps {
   destination: Destination;
@@ -14,14 +16,6 @@ interface UpdateFormProps {
 }
 
 const UpdateDestinationForm = ({ destination, id }: UpdateFormProps) => {
-  useEffect(() => {
-    console.log(`Rating: ${destination.rating}, Price: ${destination.price}`);
-    console.log("maingImage: " + destination.mainImage);
-    destination.thingsToDo.map((entr) => {
-      console.log(entr);
-      return null; // Add a return statement
-    });
-  }, []);
   const [showUpdateForm, setShowUpdateForm] = useState(false);
 
   const handleShow = () => setShowUpdateForm(true);
@@ -32,9 +26,12 @@ const UpdateDestinationForm = ({ destination, id }: UpdateFormProps) => {
   const [city, setCity] = useState(destination.city);
   const [country, setCountry] = useState(destination.country);
   const [type, setType] = useState(destination.type);
-  const [rating, setRating] = useState(destination.rating);
   const [price, setPrice] = useState(destination.price);
   const [description, setDescription] = useState(destination.description);
+  const [canShowUpdateButton, setCanShowUpdateButton] = useState(false);
+
+  const currentLoggedInUserEmail: string | undefined | null =
+    auth?.currentUser?.email;
 
   const [thingsImages, setThingsImages] = useState<(File | null)[]>([
     null,
@@ -81,9 +78,7 @@ const UpdateDestinationForm = ({ destination, id }: UpdateFormProps) => {
   const handleTypeChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setType(event.target.value);
   };
-  const handleRatingChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setRating(Number(event.target.value));
-  };
+
   const handlePriceChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setPrice(Number(event.target.value));
   };
@@ -146,6 +141,34 @@ const UpdateDestinationForm = ({ destination, id }: UpdateFormProps) => {
   // or if user is admin, show button for every destination
   // if not, then do not show button to update destination
 
+  // check admin
+
+  useEffect(() => {
+    const checkUser = async () => {
+      console.log(currentLoggedInUserEmail);
+      console.log(destination.email);
+      const admin = await userIsAdmin();
+      console.log("User is admin: " + admin);
+      if (
+        currentLoggedInUserEmail === undefined ||
+        currentLoggedInUserEmail === null ||
+        currentLoggedInUserEmail !== destination.email
+      ) {
+        if (!admin) {
+          setCanShowUpdateButton(false);
+        } else {
+          setCanShowUpdateButton(true);
+        }
+      } else {
+        setCanShowUpdateButton(true);
+      }
+      console.log(
+        `User has created destination or is admin : ${canShowUpdateButton} `
+      );
+    };
+    checkUser();
+  }, [currentLoggedInUserEmail, destination.email, canShowUpdateButton]);
+
   const sendDataToFirestore = async () => {
     let mainImageUrl = destination.mainImage;
     if (image != null) {
@@ -200,7 +223,6 @@ const UpdateDestinationForm = ({ destination, id }: UpdateFormProps) => {
         city,
         country,
         type,
-        rating: rating ? parseInt(rating.toString()) : 0,
         price: price ? parseInt(price.toString()) : 0,
         temperature: temperature ? parseInt(temperature.toString()) : 0,
         description,
@@ -208,8 +230,9 @@ const UpdateDestinationForm = ({ destination, id }: UpdateFormProps) => {
         extraImages: extraImagesData,
       });
 
-      console.log("Document written with id: ", id);
-      alert("Destination added successfully!");
+      alert("Destination updated successfully!");
+      handleClose();
+      window.location.reload();
     } catch (error) {
       console.error("Error: ", error);
       alert("An error occurred while adding the destination.");
@@ -225,9 +248,11 @@ const UpdateDestinationForm = ({ destination, id }: UpdateFormProps) => {
 
   return (
     <>
-      <Button className="updateButton" variant="primary" onClick={handleShow}>
-        Oppdater destinasjon
-      </Button>
+      {canShowUpdateButton && (
+        <Button className="updateButton" variant="primary" onClick={handleShow}>
+          Oppdater destinasjon
+        </Button>
+      )}
 
       {showUpdateForm && (
         <div className="modal-container">
@@ -259,7 +284,7 @@ const UpdateDestinationForm = ({ destination, id }: UpdateFormProps) => {
                   />
                 </Form.Group>
               </Row>
-              <Row className="mb-1">
+              <Row className="mb-1 justify-content-center">
                 <Col md={2}>
                   <InputGroup>
                     <Form.Control
@@ -295,21 +320,7 @@ const UpdateDestinationForm = ({ destination, id }: UpdateFormProps) => {
                     </Form.Select>
                   </InputGroup>
                 </Col>
-                <Col md={2}>
-                  <InputGroup>
-                    <Form.Select
-                      onChange={handleRatingChange}
-                      defaultValue={destination.rating}
-                    >
-                      <option value="">Rating</option>
-                      {range(0, 5).map((rating) => (
-                        <option key={rating} value={rating}>
-                          {rating}
-                        </option>
-                      ))}
-                    </Form.Select>
-                  </InputGroup>
-                </Col>
+
                 <Col md={2}>
                   <InputGroup>
                     <Form.Select
