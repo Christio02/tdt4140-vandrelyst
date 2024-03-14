@@ -118,7 +118,7 @@ const UserPage = () => {
         <Link to="myReviews" className="link">
           Mine anmelderlser
         </Link>
-        <Link to="visitedDestinations" className="link">
+        <Link to="visiteddestinations" className="link">
           Besøkte destinasjoner
         </Link>
       </div>
@@ -126,7 +126,7 @@ const UserPage = () => {
       <Routes>
         <Route path="myDestinations" element={<MyDestinations />} />
         <Route path="myReviews" element={<MyReviews />} />
-        <Route path="visitedDestinations" element={<VisitedDestinations />} />
+        <Route path="visiteddestinations" element={<VisitedDestinations />} />
         <Route path="/" element={<App/>} />
       </Routes>
       <Footer />

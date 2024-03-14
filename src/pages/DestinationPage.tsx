@@ -8,7 +8,7 @@ import React from "react";
 import Navbar from "../components/Navbar";
 import "../style/DestinationPage.css";
 
-import { arrayUnion, doc, getDoc, getFirestore, updateDoc } from "firebase/firestore";
+import { arrayUnion, doc, getDoc, getFirestore, updateDoc, arrayRemove } from "firebase/firestore";
 import { getDownloadURL, getStorage, ref } from "firebase/storage";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
@@ -17,6 +17,8 @@ import "../style/CardContainer.css";
 import AddReviewForm from "../components/AddReviewFrom";
 import { getAuth } from "firebase/auth";
 import { db } from "../firebase_setup/firebase";
+import VisitedButton from "../components/visitedbutton";
+
 
 interface Destination {
   mainImage: string;
@@ -92,7 +94,7 @@ const DestinationPage = () => {
       <MainPhoto url={mainPhotoUrl} />
       <TitleDiv destination={destination} />
       <AllRatings destination={destination} />
-      <button onClick={() => id && markAsVisited(id)}>Merk som besøkt</button>
+      {id && <VisitedButton destinationId={id} />}
 
       <div className="AllContentDivs">
         <DescriptionDiv destination={destination} />
@@ -378,14 +380,13 @@ const ReviewList = () => {
   );
 };
 
-const markAsVisited = async (destinationId: string) => {
+export const markAsVisited = async (destinationId: string) => {
   const auth = getAuth();
   const user = auth.currentUser;
 
-  // Sjekk at bruker og brukerens e-post ikke er null
   if (user && user.email) {
     try {
-      const userDocRef = doc(db, "users", user.email); // Nå garantert at user.email ikke er null
+      const userDocRef = doc(db, "users", user.email);
       const userDocSnap = await getDoc(userDocRef);
 
       if (userDocSnap.exists()) {
@@ -398,7 +399,11 @@ const markAsVisited = async (destinationId: string) => {
           });
           console.log("Destination marked as visited");
         } else {
-          console.log("Destination already marked as visited");
+          // If destination is already in the visited array, remove it
+          await updateDoc(userDocRef, {
+            visited: arrayRemove(destinationId),
+          });
+          console.log("Destination unmarked as visited");
         }
       }
     } catch (error) {
