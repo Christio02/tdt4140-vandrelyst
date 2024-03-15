@@ -61,10 +61,10 @@ interface VisitedButtonProps {
         <button
           className={`mark-as-visited ${isVisited ? 'visited' : ''}`}
           onClick={toggleVisited}
-          aria-label={isVisited ? 'Unmark as visited' : 'Mark as visited'}
+          aria-label={isVisited ? 'Besøkt' : 'Ikke besøkt'}
         >
           <FontAwesomeIcon icon={isVisited ? faCheckCircle : faCircle} size="lg" />
-          {isVisited ? ' Unmark as Visited' : ' Mark as Visited'}
+          {isVisited ? ' Besøkt' : ' Ikke besøkt'}
         </button>
       );
   };
