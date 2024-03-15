@@ -14,6 +14,7 @@ import {
   getDoc,
   getDocs,
   getFirestore,
+  onSnapshot,
   query,
   where,
 } from "firebase/firestore";
@@ -56,47 +57,57 @@ const DestinationPage = () => {
   const [destination, setDestination] = useState<Destination | null>(null);
 
   useEffect(() => {
-    const fetchDestinationData = async () => {
+    const fetchDestinationData = () => {
       if (!id) {
         return;
       }
       const db = getFirestore();
       const docRef = doc(db, "destinations", id);
-      const docSnap = await getDoc(docRef);
-
-      if (docSnap.exists()) {
-        const destinationData = docSnap.data() as Destination;
-        setDestination(destinationData);
-
-        if (!destinationData.mainImage) {
-          console.error("No mainImage in the document:", id);
-          return;
+      //I used copilot for unsubscribe function, prompt:  In here, can you check when new rating is applied? Because as of right now if a user submits a new rating, then you have to reload the page 2 times before changes are apllied to starrating
+      const unsubscribe = onSnapshot(docRef, (docSnap) => {
+        if (docSnap.exists()) {
+          const destinationData = docSnap.data() as Destination;
+          setDestination(destinationData);
+          console.log(destinationData.rating);
+        } else {
+          console.log("No such document!");
         }
+      });
 
+      return () => unsubscribe();
+    };
+
+    if (id) {
+      fetchDestinationData();
+    }
+  }, [id]);
+
+  useEffect(() => {
+    const fetchMainImage = async () => {
+      if (destination?.mainImage) {
         try {
           const url = await getDownloadURL(
-            ref(getStorage(), destinationData.mainImage)
+            ref(getStorage(), destination.mainImage)
           );
           setMainPhotoUrl(url);
         } catch (error) {
           console.error("Error fetching image from Firebase: ", error);
         }
-      } else {
-        console.log("No such document!");
       }
     };
 
-    if (id) {
-      fetchDestinationData();
-      console.log(destination?.email);
-    }
-  }, [id]);
+    fetchMainImage();
+  }, [destination]);
+
+  if (!destination) {
+    return <div>Loading...</div>;
+  }
 
   if (!destination) {
     // If destination data hasn't been fetched yet, you return a loading state
     return <div>Loading...</div>;
   }
-  console.log(id);
+
   return (
     <div
       style={{
@@ -156,6 +167,7 @@ interface StarRatingProps {
 }
 
 export const StarRating: React.FC<StarRatingProps> = ({ rating }) => {
+  console.log(rating);
   const totalStars = 5;
   const fullStars = Math.round(rating);
   const emptyStars = totalStars - fullStars;
