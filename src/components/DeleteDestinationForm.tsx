@@ -87,7 +87,17 @@ const DeleteDestinationForm = ({ id, city, email }: Destination) => {
         collection(db, "destinations"),
         where("city", "==", data?.city)
       );
+
+      const qReviews = query(
+        collection(db, "reviews"),
+        where("destination", "==", data?.city)
+      );
+
       const querySnapshot = await getDocs(q);
+      const querySnapshotReviews = await getDocs(qReviews); 
+      querySnapshotReviews.docs.forEach(async (doc) => { // Delete all reviews for the destination
+        await deleteDoc(doc.ref);
+      });
 
       if (!querySnapshot.empty) {
         const docToDelete = querySnapshot.docs[0];
