@@ -145,10 +145,7 @@ const UpdateDestinationForm = ({ destination, id }: UpdateFormProps) => {
 
   useEffect(() => {
     const checkUser = async () => {
-      console.log(currentLoggedInUserEmail);
-      console.log(destination.email);
       const admin = await userIsAdmin();
-      console.log("User is admin: " + admin);
       if (
         currentLoggedInUserEmail === undefined ||
         currentLoggedInUserEmail === null ||

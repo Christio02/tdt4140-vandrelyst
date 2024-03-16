@@ -55,7 +55,6 @@ function CardContainer({ destinationsFromSearch, currentFilter, sortCriterion, s
           } catch (error) {
             console.error("Error fetching image from Firebase: ", destinationData.city);
           }
-          // console.log(url);
           if (url === null) {
             console.log("No main image for this destination: ", destinationData.city)
             return null;
@@ -124,13 +123,9 @@ function CardContainer({ destinationsFromSearch, currentFilter, sortCriterion, s
       
         let valueA = a[sortCriterion as keyof Destination];
         let valueB = b[sortCriterion as keyof Destination];
-
-        console.log(`Comparing ${valueA} and ${valueB} for criterion ${sortCriterion}`);
-      
         
         valueA = valueA ?? 0;
         valueB = valueB ?? 0;
-        console.log(`Comparing ${valueA} and ${valueB} for criterion ${sortCriterion}`);
       
         if (typeof valueA === 'number' && typeof valueB === 'number') {
           return sortDirection === 'asc' ? valueA - valueB : valueB - valueA;

@@ -96,7 +96,6 @@ const ReviewSummary = (props: reviewSummaryProp) => {
     }
   };
 
-  console.log(averageRating());
   // Antall reviews for hver stjernerating
   const starsCount = new Array(5).fill(0);
   props.reviews.forEach((review) => {

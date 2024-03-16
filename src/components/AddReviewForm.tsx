@@ -101,7 +101,6 @@ const AddReviewForm = (props: reviewFormProp) => {
 
       const userID = auth?.currentUser?.email;
 
-      // console.log(formattedDate);
 
       const data = {
         rating: rating ? parseInt(rating) : 0,
@@ -117,7 +116,6 @@ const AddReviewForm = (props: reviewFormProp) => {
 
       await setDoc(userDocument, data);
 
-      //   console.log("Document written with id: ", docRef.id);
       alert("Review added successfully!");
       handleReviewClose();
       window.location.reload();
@@ -143,8 +141,6 @@ const AddReviewForm = (props: reviewFormProp) => {
     const destination: queryForReviews = {
       destination: props.city,
     };
-    // console.log(destination.destination);
-    // console.log("Før henting: " +endret)
     getReviews(destination).then((reviews: Review[]) => {
       setReviews(reviews);
 
@@ -152,18 +148,15 @@ const AddReviewForm = (props: reviewFormProp) => {
         auth?.currentUser?.email === undefined ||
         auth?.currentUser?.email === null
       ) {
-        // console.log("Ikke logget inn")
         setLoggetInnOgHarSkrevetReview(false);
       } else {
         for (let i = 0; i < reviews.length; i++) {
           if (reviews[i].userName === auth?.currentUser?.email) {
-            // console.log("Logget inn og har skrevet review")
             setLoggetInnOgHarSkrevetReview(true);
           }
         }
       }
     });
-    // console.log("-----------", reviews)
   }, [props.city]);
 
   return (

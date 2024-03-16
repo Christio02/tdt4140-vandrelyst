@@ -11,6 +11,7 @@ import { where, query} from 'firebase/firestore';
 
 import { doc, setDoc, getDoc } from "firebase/firestore"; 
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
+import { error } from 'console';
 
 
 
@@ -44,8 +45,6 @@ const makeEntryForUser = async (email:string, password:string,
     mainImage: mainImageUrl,
     isAdmin: adminPrivileges
   }
-  // console.log(data);
-  // console.log(userDocument);
 
   // Save user data to Firestore
   await setDoc(userDocument, data);
@@ -55,9 +54,7 @@ const makeEntryForUser = async (email:string, password:string,
 
 export const userIsAdmin = async () => {
   //! Sjekk om logget inn
-  // console.log("INNE NÅ")
   if (auth?.currentUser?.email === undefined) {
-    console.log("Ikke logget inn");
     return false; 
   } 
   //! Vet at logget inn, men typescript klagde
@@ -74,9 +71,6 @@ export const userIsAdmin = async () => {
     //! Sjekke om snapshotQuery faktisk finnes
     if (snapshotOfData.exists()) {
         const userInfo = snapshotOfData.data();  
-        // console.log("SJEKKSJEKKSJEKK")
-        // console.log("Document data:", userInfo);
-        // console.log(userInfo.isAdmin);
         return userInfo.isAdmin;
       }
       
@@ -93,10 +87,10 @@ export const userIsAdmin = async () => {
 export const logOut = () => {
   signOut(auth).then(() => {
     // Sign-out successful.
-  }).catch((error) => {
-        // An error happened.
+  }).catch((error_msg) => {
+      // An error happened.
+      console.log('Error: ' + error_msg);
       });
-    console.log("Logget ut");
 }
 
 const RegisterPanel = (props : UserLogInProps) => {
@@ -142,7 +136,6 @@ const RegisterPanel = (props : UserLogInProps) => {
     .then((userCredential) => {
       // Signed in 
       const user = userCredential.user;
-      // console.log(user);
       //! Sende tilbake til forsiden
       navigate("/");
       console.log("Logget inn");
@@ -200,11 +193,6 @@ const handleImageChange = (event: React.FormEvent) => {
 
 
 let functions = [logIn, registerUser, sendDataToFirestore];
-
-// console.log(auth?.currentUser?.email);
-// userIsAdmin().then(isAdmin => {
-  // console.log("BOOL ER: " + isAdmin);
-// });
 
     return (
         <div className='wholeDiv'>
