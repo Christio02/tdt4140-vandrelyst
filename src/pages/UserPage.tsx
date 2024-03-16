@@ -8,6 +8,7 @@ import {
   BrowserRouter as Router,
   Routes,
   useNavigate,
+  useLocation
 } from "react-router-dom";
 import paris from "../assets/Paris.jpeg";
 import paris3 from "../assets/fly.png";
@@ -34,6 +35,7 @@ import VisitedDestinations from "../components/VisitedDestinations";
 
 
 
+
 interface UserProps {
   userName: string;
   email: string;
@@ -48,6 +50,14 @@ const UserPage = () => {
 
   const [profilePicture, setProfilePicture] = useState<string | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
+
+  const [activeLink, setActiveLink] = useState("");
+
+  //Set the active link
+  const handleSetActiveLink = (link: string) => {
+    setActiveLink(link);
+  };
+
 
 
 
@@ -109,13 +119,16 @@ const UserPage = () => {
           </div>
           {/* Navigations */}
           <div className="my-page-link">
-            <Link to="myDestinations" className="link">
+            <Link to="myDestinations" className={`link ${activeLink === "myDestinations" ? "active-link" : ""}`}
+            onClick={() => handleSetActiveLink("myDestinations")}>
               Mine destinasjoner
             </Link>
-            <Link to="myReviews" className="link">
+            <Link to="myReviews" className={`link ${activeLink === "myReviews" ? "active-link" : ""}`}
+            onClick={() => handleSetActiveLink("myReviews")}>
               Mine anmelderlser
             </Link>
-            <Link to="visiteddestinations" className="link" style={{textAlign: 'center'}}>
+            <Link to="visiteddestinations" className={`link ${activeLink === "visiteddestinations" ? "active-link" : ""}`}
+            onClick={() => handleSetActiveLink("visiteddestinations")}>
               Besøkte destinasjoner
             </Link>
           </div>
