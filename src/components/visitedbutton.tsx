@@ -4,9 +4,7 @@ import { faCheckCircle, faCircle } from '@fortawesome/free-solid-svg-icons';
 import { getAuth } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../firebase_setup/firebase'; // Adjust the import path to your Firebase config
-import { markAsVisited } from '../pages/DestinationPage'; // Adjust the import path and function import if needed
 import { arrayRemove,updateDoc,arrayUnion } from 'firebase/firestore';
-import DestinationPage from '../pages/DestinationPage';
 import "../style/DestinationPage.css";
 
 interface VisitedButtonProps {
