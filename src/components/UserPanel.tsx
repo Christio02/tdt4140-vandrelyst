@@ -129,7 +129,6 @@ console.log(auth?.currentUser?.email);
             <a href="/">
               <button id="backToFrontPage" className='btn btn-primary'>Tilbake</button>
             </a>
-            <button onClick={logOut} id="backToFrontPage" className='btn btn-primary'>Logg ut</button>
 
         <div className="UserPanel">
         <h1>{props.page} her</h1>
