@@ -137,7 +137,7 @@ const DestinationPage = () => {
       <div className="review-container">
         <h2 className="reviews-title">Omtaler</h2>
         <div className="review-section">
-          <ReviewsSection sendDestination={destination.city} />
+          <ReviewsSection city={destination.city} />
         </div>
       </div>
       <Footer />
