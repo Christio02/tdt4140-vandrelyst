@@ -47,7 +47,7 @@ const Navbar = () => {
                     <a href='/mypage' className="LogInMyPage"><CircleUserRound size={25} id="icon"/> Min side (B)</a>
                 )
             ) : (
-                <a href='/logginn' className="LogInMyPage"  ><CircleUserRound size={25} id="icon"/>Log inn</a> 
+                <a href='/logginn' className="LogInMyPage"  ><CircleUserRound size={25} id="icon"/>Logg inn</a> 
             )}
 
         {currentUser &&

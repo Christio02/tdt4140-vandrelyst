@@ -211,7 +211,6 @@ let functions = [logIn, registerUser, sendDataToFirestore];
             <a href="/">
               <button id="backToFrontPage" className='btn btn-primary'>Tilbake</button>
             </a>
-            <button onClick={logOut} id="backToFrontPage" className='btn btn-primary'>Logg ut</button>
 
         <div className="RegisterPanel">
         <h1>{props.page} her</h1>
