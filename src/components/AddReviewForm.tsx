@@ -7,7 +7,7 @@ import InputGroup from "react-bootstrap/InputGroup";
 import Modal from "react-bootstrap/Modal";
 import { auth, db, storage } from "../firebase_setup/firebase";
 import { getReviews } from "./ReviewsSection";
-import { collection, getDocs, getFirestore, where, query } from 'firebase/firestore';
+import { collection, getDocs, getFirestore, where, query, doc, setDoc } from 'firebase/firestore';
 
 import "../style/addDestinationPopUp.css";
 
@@ -141,7 +141,7 @@ const AddReviewForm = (props: reviewFormProp) => {
 
   useEffect(() => {
     const destination: queryForReviews = {
-      destination: props.sendDestination2,
+      destination: props.city,
     };
     // console.log(destination.destination);
     // console.log("Før henting: " +endret)
@@ -164,7 +164,7 @@ const AddReviewForm = (props: reviewFormProp) => {
       }
     });
     // console.log("-----------", reviews)
-  }, [props.sendDestination2]);
+  }, [props.city]);
 
   return (
     <>
