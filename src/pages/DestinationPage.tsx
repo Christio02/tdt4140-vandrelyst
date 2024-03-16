@@ -8,16 +8,7 @@ import React from "react";
 import Navbar from "../components/Navbar";
 import "../style/DestinationPage.css";
 
-import {
-  collection,
-  doc,
-  getDoc,
-  getDocs,
-  getFirestore,
-  onSnapshot,
-  query,
-  where,
-} from "firebase/firestore";
+import { arrayUnion, doc, getDoc, getFirestore, updateDoc, arrayRemove, onSnapshot } from "firebase/firestore";
 import { getDownloadURL, getStorage, ref } from "firebase/storage";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
@@ -28,6 +19,9 @@ import Footer from "../components/Footer";
 import ReviewsSection from "../components/ReviewsSection";
 import UpdateDestinationForm from "../components/UpdateDestinationForm";
 import "../style/CardContainer.css";
+import { getAuth } from "firebase/auth";
+import VisitedButton from "../components/visitedbutton";
+
 
 export interface Destination {
   mainImage: string;
@@ -121,6 +115,8 @@ const DestinationPage = () => {
       <MainPhoto url={mainPhotoUrl} />
       <TitleDiv destination={destination} />
       <AllRatings destination={destination} />
+      {id && <VisitedButton destinationId={id} />}
+
       <div className="deleteButtonContainer">
         <DeleteDestinationForm
           id={destination.city}
@@ -254,6 +250,7 @@ const TitleDiv = ({ destination }: { destination: Destination }) => {
     <div className="TitleDiv">
       <h1> {destination.city} </h1>
       <h2> {destination.country} </h2>
+      
     </div>
   );
 };
@@ -296,5 +293,41 @@ const ActivitesDiv = (props: ActivitiesDivProps) => {
     </div>
   );
 };
+
+export const markAsVisited = async (destinationId: string) => {
+  const auth = getAuth();
+  const user = auth.currentUser;
+
+  if (user && user.email) {
+    try {
+      const userDocRef = doc(db, "users", user.email);
+      const userDocSnap = await getDoc(userDocRef);
+
+      if (userDocSnap.exists()) {
+        const userData = userDocSnap.data();
+        const visitedArray = userData.visited || [];
+
+        if (!visitedArray.includes(destinationId)) {
+          await updateDoc(userDocRef, {
+            visited: arrayUnion(destinationId),
+          });
+          console.log("Destination marked as visited");
+        } else {
+          // If destination is already in the visited array, remove it
+          await updateDoc(userDocRef, {
+            visited: arrayRemove(destinationId),
+          });
+          console.log("Destination unmarked as visited");
+        }
+      }
+    } catch (error) {
+      console.error("Error updating visited destinations:", error);
+    }
+  } else {
+    console.log("User not logged in or email not available");
+  }
+};
+
+
 
 export default DestinationPage;

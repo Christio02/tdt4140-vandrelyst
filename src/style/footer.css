@@ -4,6 +4,7 @@
   display: flex;
   align-items: center;
   width: 100%;
+  margin-top: auto;
 }
 .logo-footer {
   width: 30%;

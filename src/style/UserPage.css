@@ -1,3 +1,9 @@
+.user-page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
 .my-page-link {
   display: flex;
   gap: 2rem;
