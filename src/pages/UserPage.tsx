@@ -88,6 +88,7 @@ const UserPage = () => {
 
   return (
     <>
+    <div className="user-page">
       <Navbar />
 
       
@@ -96,33 +97,29 @@ const UserPage = () => {
           <img src={paris} alt="destination"></img>
         </div>
         <div id="topContainer">
-        <button id="logUtButton"><Link to="/" id="homeLink" onClick={logOut}>Logg ut</Link></button>
+          <button id="logUtButton"><Link to="/" id="homeLink" onClick={logOut}>Logg ut</Link></button>
           <div id="nameAndAdmin">
-        <h4 className="name">{userName}</h4>
-        {isAdmin && (
-        <span className="admin"><FontAwesomeIcon icon={faCrown} className="crown" /> Admin</span>
-        )}
+            <h4 className="name">{userName}</h4>
+            {isAdmin && (
+            <span className="admin"><FontAwesomeIcon icon={faCrown} className="crown" /> Admin</span>
+            )}
+            </div>
+          <div className="profilepicture">
+            <img src={profilePicture?.toString()} alt="profile"></img>
+          </div>
+          {/* Navigations */}
+          <div className="my-page-link">
+            <Link to="myDestinations" className="link">
+              Mine destinasjoner
+            </Link>
+            <Link to="myReviews" className="link">
+              Mine anmelderlser
+            </Link>
+            <Link to="visiteddestinations" className="link" style={{textAlign: 'center'}}>
+              Besøkte destinasjoner
+            </Link>
+          </div>
         </div>
-        <div className="profilepicture">
-          <img src={profilePicture?.toString()} alt="profile"></img>
-        </div>
-    
-  
-        
-
-      {/* Navigations */}
-      <div className="my-page-link">
-        <Link to="myDestinations" className="link">
-          Mine destinasjoner
-        </Link>
-        <Link to="myReviews" className="link">
-          Mine anmelderlser
-        </Link>
-        <Link to="visiteddestinations" className="link" style={{textAlign: 'center'}}>
-          Besøkte destinasjoner
-        </Link>
-      </div>
-      </div>
       <Routes>
         <Route path="myDestinations" element={<MyDestinations />} />
         <Route path="myReviews" element={<MyReviews />} />
@@ -130,6 +127,7 @@ const UserPage = () => {
         <Route path="/" element={<App/>} />
       </Routes>
       <Footer />
+    </div>
     </>
   );
 };
@@ -325,31 +323,3 @@ const MyReviews = ({ rating, reviewTitle, comment, date }: MyReviewsProps) => {
     </>
   );
 };
-
-/*export const VisitedDestinations1 = () => {
-  const [visitedDestination, setVisitedDestinations] = useState<any[]>([]);
-  return (
-    <>
-      <div className="visited-container">
-        <Searchbar
-          setSearchResults={setVisitedDestinations}
-          placeholder="Søk på dine besøkte destinasjoner"
-        />
-
-        <div className="visited-carousel">
-          <Card>
-            <Card.Img variant="top" src={CardImage}></Card.Img>
-            <div style={{ padding: "2rem" }}>
-              <Card.Title>Tromsø</Card.Title>
-              <Card.Text>Norge</Card.Text>
-            </div>
-          </Card>
-          <span style={{ position: "relative", top: "2rem" }}>
-            <h4>20.03.23 - 05.04.23</h4>
-          </span>
-        </div>
-      </div>
-    </>
-  );
-};
-*/
