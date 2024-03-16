@@ -107,6 +107,7 @@ const AddReviewForm = (props: reviewFormProp) => {
       //   console.log("Document written with id: ", docRef.id);
       alert("Review added successfully!");
       handleReviewClose();
+      window.location.reload();
     } catch (error) {
       console.error("Error: ", error);
       alert("An error occurred while adding the review.");
