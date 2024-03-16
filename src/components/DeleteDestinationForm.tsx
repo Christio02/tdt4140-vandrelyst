@@ -83,7 +83,6 @@ const DeleteDestinationForm = ({ id, city, email }: Destination) => {
 
   const handleDelete = async () => {
     try {
-      console.log(data?.city);
       const q = query(
         collection(db, "destinations"),
         where("city", "==", data?.city)

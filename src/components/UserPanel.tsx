@@ -119,8 +119,6 @@ const logOut = () => {
 
 let functions = [logIn, registerUser];
 
-console.log(auth?.currentUser?.email);
-
     return (
         <div className='wholeDiv'>
             <a href="/">

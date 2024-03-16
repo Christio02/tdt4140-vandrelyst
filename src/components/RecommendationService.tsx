@@ -22,7 +22,6 @@ export const fetchRecommendations = async (userEmail: string): Promise<Destinati
     const highRatedReviews = userReviews.filter(review => review.rating >= 3);
 
     if (highRatedReviews.length > 0) {
-        console.log("Funnet mer enn 0 brukerreviews for bruker");
 
         let typeToRatingMap: { [key: string]: number } = {};
 

@@ -15,7 +15,6 @@ interface RecommendedDestinationsProps {
   useEffect(() => {
     if (userEmail) {
       fetchRecommendations(userEmail).then(destinations => {
-        console.log("Anbefalte destinasjoner:", destinations);
         setDestinations(destinations);
       });
     }

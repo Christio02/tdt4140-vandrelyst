@@ -138,7 +138,6 @@ const RegisterPanel = (props : UserLogInProps) => {
       const user = userCredential.user;
       //! Sende tilbake til forsiden
       navigate("/");
-      console.log("Logget inn");
     })
     .catch((error) => {
       const errorCode = error.code;

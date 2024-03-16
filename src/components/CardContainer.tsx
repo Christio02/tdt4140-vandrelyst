@@ -139,8 +139,6 @@ function CardContainer({ destinationsFromSearch, currentFilter, sortCriterion, s
     fetchData();
   }, [currentFilter, sortCriterion, sortDirection]); 
   
-  console.log(destinations);
-
   const destinationsToDisplay = destinationsFromSearch.length > 0 ? destinationsFromSearch : destinations;
   
 

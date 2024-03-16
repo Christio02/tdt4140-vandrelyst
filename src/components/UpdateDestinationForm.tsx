@@ -159,9 +159,6 @@ const UpdateDestinationForm = ({ destination, id }: UpdateFormProps) => {
       } else {
         setCanShowUpdateButton(true);
       }
-      console.log(
-        `User has created destination or is admin : ${canShowUpdateButton} `
-      );
     };
     checkUser();
   }, [currentLoggedInUserEmail, destination.email, canShowUpdateButton]);
