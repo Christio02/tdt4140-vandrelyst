@@ -44,8 +44,8 @@ const makeEntryForUser = async (email:string, password:string,
     mainImage: mainImageUrl,
     isAdmin: adminPrivileges
   }
-  console.log(data);
-  console.log(userDocument);
+  // console.log(data);
+  // console.log(userDocument);
 
   // Save user data to Firestore
   await setDoc(userDocument, data);
@@ -75,8 +75,8 @@ export const userIsAdmin = async () => {
     if (snapshotOfData.exists()) {
         const userInfo = snapshotOfData.data();  
         // console.log("SJEKKSJEKKSJEKK")
-        console.log("Document data:", userInfo);
-        console.log(userInfo.isAdmin);
+        // console.log("Document data:", userInfo);
+        // console.log(userInfo.isAdmin);
         return userInfo.isAdmin;
       }
       
@@ -201,7 +201,7 @@ const handleImageChange = (event: React.FormEvent) => {
 
 let functions = [logIn, registerUser, sendDataToFirestore];
 
-console.log(auth?.currentUser?.email);
+// console.log(auth?.currentUser?.email);
 // userIsAdmin().then(isAdmin => {
   // console.log("BOOL ER: " + isAdmin);
 // });

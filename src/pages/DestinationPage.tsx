@@ -8,73 +8,94 @@ import React from "react";
 import Navbar from "../components/Navbar";
 import "../style/DestinationPage.css";
 
-import { arrayUnion, doc, getDoc, getFirestore, updateDoc, arrayRemove } from "firebase/firestore";
+import { arrayUnion, doc, getDoc, getFirestore, updateDoc, arrayRemove, onSnapshot } from "firebase/firestore";
 import { getDownloadURL, getStorage, ref } from "firebase/storage";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import DeleteDestinationForm from "../components/DeleteDestinationForm";
-import "../style/CardContainer.css";
-import AddReviewForm from "../components/AddReviewFrom";
-import { getAuth } from "firebase/auth";
 import { db } from "../firebase_setup/firebase";
+
+import Footer from "../components/Footer";
+import ReviewsSection from "../components/ReviewsSection";
+import UpdateDestinationForm from "../components/UpdateDestinationForm";
+import "../style/CardContainer.css";
+import { getAuth } from "firebase/auth";
 import VisitedButton from "../components/visitedbutton";
 
 
-interface Destination {
+export interface Destination {
   mainImage: string;
+  email: string;
   city: string;
   country: string;
   rating: number;
   price: number;
   temperature: number;
   description: string;
-  thingsToDo: Array<object>;
-  extraImages: Array<object>;
+  thingsToDo: Array<{
+    caption: string;
+    description: string;
+    imgLink: string;
+  }>;
+  extraImages: Array<{
+    caption: string;
+    description: string;
+    imgLink: string;
+  }>;
+  type?: string;
 }
 
 const DestinationPage = () => {
   const { id } = useParams(); // route parameter has the same name as the parameter in the route path in App.tsx
   const [mainPhotoUrl, setMainPhotoUrl] = useState("");
   const [destination, setDestination] = useState<Destination | null>(null);
-  console.log(id); // This will log the id of the destination to the console.
 
   useEffect(() => {
-    const fetchDestinationData = async () => {
+    const fetchDestinationData = () => {
       if (!id) {
-        console.log(id);
         return;
       }
       const db = getFirestore();
       const docRef = doc(db, "destinations", id);
-      const docSnap = await getDoc(docRef);
-
-      if (docSnap.exists()) {
-        console.log("Document data:", docSnap.data());
-        const destinationData = docSnap.data() as Destination;
-        setDestination(destinationData);
-
-        if (!destinationData.mainImage) {
-          console.error("No mainImage in the document:", id);
-          return;
+      //I used copilot for unsubscribe function, prompt:  In here, can you check when new rating is applied? Because as of right now if a user submits a new rating, then you have to reload the page 2 times before changes are apllied to starrating
+      const unsubscribe = onSnapshot(docRef, (docSnap) => {
+        if (docSnap.exists()) {
+          const destinationData = docSnap.data() as Destination;
+          setDestination(destinationData);
+          console.log(destinationData.rating);
+        } else {
+          console.log("No such document!");
         }
+      });
 
-        try {
-          const url = await getDownloadURL(
-            ref(getStorage(), destinationData.mainImage)
-          );
-          setMainPhotoUrl(url);
-        } catch (error) {
-          console.error("Error fetching image from Firebase: ", error);
-        }
-      } else {
-        console.log("No such document!");
-      }
+      return () => unsubscribe();
     };
 
     if (id) {
       fetchDestinationData();
     }
   }, [id]);
+
+  useEffect(() => {
+    const fetchMainImage = async () => {
+      if (destination?.mainImage) {
+        try {
+          const url = await getDownloadURL(
+            ref(getStorage(), destination.mainImage)
+          );
+          setMainPhotoUrl(url);
+        } catch (error) {
+          console.error("Error fetching image from Firebase: ", error);
+        }
+      }
+    };
+
+    fetchMainImage();
+  }, [destination]);
+
+  if (!destination) {
+    return <div>Loading...</div>;
+  }
 
   if (!destination) {
     // If destination data hasn't been fetched yet, you return a loading state
@@ -96,6 +117,15 @@ const DestinationPage = () => {
       <AllRatings destination={destination} />
       {id && <VisitedButton destinationId={id} />}
 
+      <div className="deleteButtonContainer">
+        <DeleteDestinationForm
+          id={destination.city}
+          city={destination.city}
+          email={destination.email}
+        />
+        <UpdateDestinationForm destination={destination} id={id} />
+      </div>
+
       <div className="AllContentDivs">
         <DescriptionDiv destination={destination} />
         <ActivitesDiv
@@ -104,15 +134,14 @@ const DestinationPage = () => {
         />
         <ActivitesDiv title="Bilder" activities={destination.extraImages} />
       </div>
-      
+
       <div className="review-container">
-        <h2 className="reviews-title">REVIEWS</h2>
+        <h2 className="reviews-title">Omtaler</h2>
         <div className="review-section">
-          <ReviewSummary />
-          <ReviewList />
-          
+          <ReviewsSection sendDestination={destination.city} />
         </div>
       </div>
+      <Footer />
     </div>
   );
 };
@@ -120,14 +149,10 @@ const DestinationPage = () => {
 const AllRatings = ({ destination }: { destination: Destination }) => {
   return (
     <div className="AllRatings">
-      
       <div className="centerContent">
         <StarRating rating={destination.rating} />
         <PriceRating price={destination.price} />
         <TempRating temp={destination.temperature} />
-      </div>
-      <div className="deleteButtonContainer">
-        <DeleteDestinationForm id={destination.city} city={destination.city}/>
       </div>
     </div>
   );
@@ -138,6 +163,7 @@ interface StarRatingProps {
 }
 
 export const StarRating: React.FC<StarRatingProps> = ({ rating }) => {
+  console.log(rating);
   const totalStars = 5;
   const fullStars = Math.round(rating);
   const emptyStars = totalStars - fullStars;
@@ -202,7 +228,7 @@ const TempRating = ({ temp }: { temp: any }) => {
 };
 
 const MainPhoto = ({ url }: { url: any }) => {
-  console.log(url);
+  // console.log(url);
   return (
     <div className="PhotoOfCity">
       <img src={url} alt="Photo of city" />;
@@ -264,118 +290,6 @@ const ActivitesDiv = (props: ActivitiesDivProps) => {
           />
         ))}
       </div>
-    </div>
-  );
-};
-
-interface Review {
-  username: string;
-  date: string;
-  rating: number;
-  comment: string;
-}
-
-const reviews: Review[] = [
-  {
-    username: "@Olebole",
-    date: "15.02.24",
-    rating: 5,
-    comment:
-      "Lorem ipsum dolor sit amet. Sed fugit exercitationem non optio duimus quia corporis diucimus sed perferendis omnis vel laudantium molestiae. At quibusdam accusantium id reprehenderit rerum aut corporis suscipit.",
-  },
-  {
-    username: "@tore tang",
-    date: "02.02.24",
-    rating: 3,
-    comment: "beste nettside noensinne",
-  },
-  {
-    username: "@testtest",
-    date: "30.01.24",
-    rating: 5,
-    comment: "test",
-  },
-  {
-    username: "@bruker",
-    date: "27.01.24",
-    rating: 4,
-    comment: "!!",
-  },
-];
-
-const averageRating =
-  reviews.reduce((acc, review) => acc + review.rating, 0) / reviews.length;
-
-const ReviewSummary = () => {
-  // regne ut average rating her
-
-  // Antall reviews for hver stjernerating
-  const starsCount = new Array(5).fill(0);
-  reviews.forEach((review) => {
-    starsCount[review.rating - 1]++;
-  });
-
-  return (
-    <div className="review-summary">
-      <h2>SUMMARY</h2>
-      <div className="average-rating">
-        {averageRating.toFixed(1)}
-        <span className="total-reviews">({reviews.length} reviews)</span>
-      </div>
-      <div className="star-rating-summary">
-        {[5, 4, 3, 2, 1].map((star) => (
-          <div key={star} className="star-row">
-            <div className="star-label">
-              {star} star{star > 1 ? "s" : ""}
-            </div>
-            <div className="star-bar">
-              <div
-                className="star-fill"
-                style={{
-                  width: `${(starsCount[star - 1] / reviews.length) * 100}%`,
-                }}
-              ></div>
-            </div>
-            <div className="star-count">{starsCount[star - 1]}</div>
-          </div>
-        ))}
-      </div>
-      <div className="add-review-button">
-        <AddReviewForm />
-      </div>
-    </div>
-  );
-};
-
-const ReviewItem: React.FC<{ review: Review; index: number }> = ({
-  review,
-  index,
-}) => {
-  return (
-    <div
-      className={`review-item ${
-        reviews.length - 1 === index ? "no-border" : ""
-      }`}
-    >
-      <div className="review-user">
-        {review.username} <span className="review-date">{review.date}</span>
-      </div>
-      <div className="star-rating">
-        {"★".repeat(review.rating)}
-        <span className="star-count">({review.rating})</span>
-      </div>
-      <p>{review.comment}</p>
-    </div>
-  );
-};
-
-const ReviewList = () => {
-  return (
-    <div className="review-list">
-      {reviews.map((review, index) => (
-        <ReviewItem key={index} review={review} index={index} />
-      ))}
-      <button>See more reviews</button>
     </div>
   );
 };

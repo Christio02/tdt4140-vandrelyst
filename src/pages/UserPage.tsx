@@ -118,7 +118,7 @@ const UserPage = () => {
         <Link to="myReviews" className="link">
           Mine anmelderlser
         </Link>
-        <Link to="visiteddestinations" className="link">
+        <Link to="visiteddestinations" className="link" style={{textAlign: 'center'}}>
           Besøkte destinasjoner
         </Link>
       </div>
