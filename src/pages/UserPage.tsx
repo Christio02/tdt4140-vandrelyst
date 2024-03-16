@@ -1,25 +1,20 @@
 import { faCrown } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useState } from "react";
-import { Card, Carousel } from "react-bootstrap";
+import { Card } from "react-bootstrap";
 import {
   Link,
   Route,
-  BrowserRouter as Router,
   Routes,
   useNavigate,
   useLocation
 } from "react-router-dom";
 import paris from "../assets/Paris.jpeg";
-import paris3 from "../assets/fly.png";
-import CardImage from "../assets/oslo.jpeg";
-import { default as Ola } from "../assets/profilbilde.jpeg";
 import AddDestinationForm from "../components/AddDestinationForm";
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
 import Searchbar from "../components/Searchbar";
 import "../style/UserPage.css";
-import { StarRating } from "./DestinationPage";
 import App from "../App";
 import { logOut, userIsAdmin } from '../components/RegisterPanel';
 import { getAuth, onAuthStateChanged } from "firebase/auth";
@@ -27,27 +22,14 @@ import { doc, getDoc } from "firebase/firestore";
 import { auth, db } from "../firebase_setup/firebase";
 import { getDownloadURL, getStorage, ref } from "firebase/storage";
 import { collection, getDocs, getFirestore, where, query } from 'firebase/firestore';
-import CardContainer from "../components/CardContainer";
 import VisitedDestinations from "../components/VisitedDestinations";
+import MyReviews from "../components/MyReviews";
 
-
-
-
-
-
-
-interface UserProps {
-  userName: string;
-  email: string;
-  imageUrl: string;
-}
 
 const UserPage = () => {
   const navigate = useNavigate(); // used to navigate to default page
   
   const [userName, setUserName] = useState("");
-  const [userEmail, setUserEmail] = useState("");
-
   const [profilePicture, setProfilePicture] = useState<string | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
 
@@ -73,7 +55,6 @@ const UserPage = () => {
             //Getting the name
             const userData = userSnapshot.data();
             setUserName(userData.userFullName);
-            setUserEmail(userData.userEmail);
             
             const storage = getStorage(); //Getting the profile pic
             const imageRef = ref(storage, `profilePic/${user.email}`);
@@ -151,6 +132,7 @@ const MyDestinations = () => {
   const [myDestinations, setMyDestinations] = useState<any[]>([]);
 
   const getMyDestinations = async () => {
+    const auth = getAuth();
     const userEmail = auth.currentUser?.email;
     if (!userEmail) {
       console.log('User email not found, possibly because auth state is not initialized yet.');
@@ -173,18 +155,6 @@ const MyDestinations = () => {
   };
 
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged(user => {
-      if (user) {
-        getMyDestinations();
-      } else {
-        console.log('User is not logged in.');
-      }
-    });
-
-    return () => unsubscribe();
-  }, []);
-
-  useEffect(() => {
     const fetchImages = async () => {
       const updatedDestinations = await Promise.all(
         myDestinations.map(async (dest) => {
@@ -204,6 +174,18 @@ const MyDestinations = () => {
       fetchImages();
     }
   }, [myDestinations]);
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged(user => {
+      if (user) {
+        getMyDestinations();
+      } else {
+        console.log('User is not logged in.');
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   return (
     <>
@@ -236,102 +218,6 @@ const MyDestinations = () => {
         ))}
       </div>
         <AddDestinationForm />
-      </div>
-    </>
-  );
-};
-
-interface MyReviewsProps {
-  rating?: number;
-  reviewTitle?: string;
-  comment?: string;
-  date?: string;
-}
-
-const MyReviews = ({ rating, reviewTitle, comment, date }: MyReviewsProps) => {
-  const images = [
-    { name: "Ola", src: Ola },
-    { name: "Paris", src: paris },
-    { name: "Paris3", src: paris3 },
-  ];
-
-  const myReviewsData: MyReviewsProps[] = [
-    {
-      rating: 4,
-      reviewTitle: "Amazing Experience",
-      comment:
-        "Paris was amazing. The Eiffel Tower was a sight to behold. Would definitely recommend!",
-      date: "2022-01-01",
-    },
-    {
-      rating: 5,
-      reviewTitle: "Unforgettable Journey",
-      comment:
-        "The Louvre Museum was breathtaking. The Mona Lisa is truly a masterpiece!",
-      date: "2022-02-15",
-    },
-    {
-      rating: 3,
-      reviewTitle: "Good, but could be better",
-      comment:
-        "The food was great, but the service was a bit slow. Overall, a good experience.",
-      date: "2022-03-10",
-    },
-  ];
-
-  // the reviews that user has made
-  const [myReviews, setMyReviews] = useState<any[]>([]);
-  // pass rating down from user entry in database, and calculate average rating based on total number of reviews
-
-  // render all reviews (map over)
-  return (
-    <>
-      <div className="user-container">
-        {/* Add content for MyReviews subpage */}
-
-        <Searchbar
-          setSearchResults={setMyReviews}
-          placeholder="Søk i mine anmeldelser"
-        />
-        <div className="my-reviews-container">
-          <h3>Dine anmeldelser</h3>
-          <StarRating rating={rating || 0} />
-          <div className="carousel-data">
-            {myReviewsData.map((review, index) => (
-              <div key={index} className="my-review">
-                <div className="my-review-header">
-                  <h3>{review.reviewTitle}</h3>
-                  <StarRating rating={review.rating || 0} />
-                </div>
-                <div className="image-carousel">
-                  <Carousel
-                    controls
-                    indicators
-                    interval={4000}
-                    style={{ display: "flex", flexDirection: "column" }}
-                  >
-                    <Carousel.Item>
-                      <img src={CardImage} alt="paris" />
-                    </Carousel.Item>
-                    <Carousel.Item>
-                      <img src={CardImage} alt="paris" />
-                    </Carousel.Item>
-                    <Carousel.Item>
-                      <img src={CardImage} alt="paris" />
-                    </Carousel.Item>
-                  </Carousel>
-                </div>
-                <div className="my-review-body">
-                  <h6>Kommentar</h6>
-                  <p>{review.comment}</p>
-                  <div className="my-review-footer">
-                    <span style={{ fontWeight: "500" }}>{review.date}</span>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
       </div>
     </>
   );
