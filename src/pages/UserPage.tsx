@@ -157,9 +157,10 @@ const MyDestinations = () => {
         }
         return { ...dest, id: doc.id, imageUrl };
       });
-
       const destinationsWithImages = await Promise.all(destinationsPromises);
-      setMyDestinations(destinationsWithImages);
+      const sortedDestinations = destinationsWithImages.sort((a, b) => a.city.localeCompare(b.city));
+      setMyDestinations(sortedDestinations);
+
     } catch (error) {
       console.error("Error fetching destinations:", error);
     }
@@ -174,7 +175,7 @@ const MyDestinations = () => {
         console.log('User is not logged in.');
       }
     });
-    
+
     return unsubscribe;
   }, []);
 
