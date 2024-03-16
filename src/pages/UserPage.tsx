@@ -128,63 +128,54 @@ const UserPage = () => {
 
 export default UserPage;
 
-const MyDestinations = () => {
-  const [myDestinations, setMyDestinations] = useState<any[]>([]);
+type Destination = {
+  id: string;
+  mainImage: string;
+  city: string;
+  country: string;
+  date: any;
+  imageUrl: any;
+};
 
-  const getMyDestinations = async () => {
-    const auth = getAuth();
-    const userEmail = auth.currentUser?.email;
-    if (!userEmail) {
-      console.log('User email not found, possibly because auth state is not initialized yet.');
-      return;
-    }
+const MyDestinations = () => {
+  const [myDestinations, setMyDestinations] = useState<Destination[]>([]);
+
+  const getMyDestinations = async (userEmail: string) => {
+    const db = getFirestore();
+    const destinationsRef = collection(db, "destinations");
+    const q = query(destinationsRef, where("email", "==", userEmail));
+
     try {
-      const db = getFirestore();
-      const destinationsRef = collection(db, "destinations");
-      const q = query(destinationsRef, where("email", "==", userEmail));
       const querySnapshot = await getDocs(q);
-      const destinations = querySnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data(),
-        imageUrl: '',
-      }));
-      setMyDestinations(destinations);
+      const destinationsPromises = querySnapshot.docs.map(async doc => {
+        const dest = doc.data() as Destination;
+        let imageUrl = '';
+        try {
+          imageUrl = await getDownloadURL(ref(getStorage(), dest.mainImage));
+        } catch (error) {
+          console.error("Error fetching image URL for destination:", dest.mainImage, error);
+        }
+        return { ...dest, id: doc.id, imageUrl };
+      });
+
+      const destinationsWithImages = await Promise.all(destinationsPromises);
+      setMyDestinations(destinationsWithImages);
     } catch (error) {
       console.error("Error fetching destinations:", error);
     }
   };
 
   useEffect(() => {
-    const fetchImages = async () => {
-      const updatedDestinations = await Promise.all(
-        myDestinations.map(async (dest) => {
-          try {
-            const imageUrl = await getDownloadURL(ref(getStorage(), dest.mainImage));
-            return { ...dest, imageUrl };
-          } catch (error) {
-            console.error("Error fetching image URL:", error);
-            return { ...dest, imageUrl: '' }; 
-          }
-        })
-      );
-      setMyDestinations(updatedDestinations);
-    };
-
-    if (myDestinations.length > 0) {
-      fetchImages();
-    }
-  }, [myDestinations]);
-
-  useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged(user => {
+    const auth = getAuth();
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
-        getMyDestinations();
+        getMyDestinations(user.email!);
       } else {
         console.log('User is not logged in.');
       }
     });
-
-    return () => unsubscribe();
+    
+    return unsubscribe;
   }, []);
 
   return (
