@@ -12,10 +12,12 @@ import { Button, Dropdown, Modal } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { auth, db } from "../firebase_setup/firebase";
 import { userIsAdmin } from "./RegisterPanel";
+import { deleteObject, getStorage, listAll, ref } from "firebase/storage";
 
 interface Destination {
   id: string | undefined;
   city: string;
+  country: string;
   email: string;
 }
 
@@ -74,6 +76,7 @@ const DeleteDestinationForm = ({ id, city, email }: Destination) => {
         setData({
           id: destinationFromData.id,
           city: destinationFromData.city,
+          country: destinationFromData.country,
           email: destinationFromData.email,
         });
       };
@@ -83,22 +86,34 @@ const DeleteDestinationForm = ({ id, city, email }: Destination) => {
 
   const handleDelete = async () => {
     try {
-      const q = query(
-        collection(db, "destinations"),
-        where("city", "==", data?.city)
-      );
+      
+      // Handle deletion of images
+      const storage = getStorage();
+      const imageFolderRef = ref(storage, `images/${data?.city}_${data?.country}/`);
+      const imageFolderResult = await listAll(imageFolderRef);
+      imageFolderResult.items.forEach(async (imageRef) => {
+        await deleteObject(imageRef);
+      });
 
+
+      // Handle deletion of reviews
       const qReviews = query(
         collection(db, "reviews"),
         where("destination", "==", data?.city)
       );
 
-      const querySnapshot = await getDocs(q);
       const querySnapshotReviews = await getDocs(qReviews); 
       querySnapshotReviews.docs.forEach(async (doc) => { // Delete all reviews for the destination
         await deleteDoc(doc.ref);
       });
-
+      
+      // Handle deletion of destination
+      const q = query(
+        collection(db, "destinations"),
+        where("city", "==", data?.city)
+      );
+      const querySnapshot = await getDocs(q);
+      
       if (!querySnapshot.empty) {
         const docToDelete = querySnapshot.docs[0];
         await deleteDoc(doc(db, "destinations", docToDelete.id));

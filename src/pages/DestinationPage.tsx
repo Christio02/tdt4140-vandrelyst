@@ -120,6 +120,7 @@ const DestinationPage = () => {
         <DeleteDestinationForm
           id={destination.city}
           city={destination.city}
+          country={destination.country}
           email={destination.email}
         />
         <UpdateDestinationForm destination={destination} id={id} />
