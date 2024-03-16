@@ -149,7 +149,7 @@ const AllRatings = ({ destination }: { destination: Destination }) => {
   return (
     <div className="AllRatings">
       <div className="centerContent">
-        <StarRating rating={0} /> {/* Dummy value, destination doesn't have a rating field anymore, handled by reviewsSection*/}
+        <StarRating rating={destination.rating ? destination.rating : 0} /> {/* We need to check if the destination has a rating attribute. Just after the destination has been created, it doesn't have a rating column. Default is 0. */}
         <PriceRating price={destination.price} />
         <TempRating temp={destination.temperature} />
       </div>
