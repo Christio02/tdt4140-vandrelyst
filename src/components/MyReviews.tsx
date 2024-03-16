@@ -5,17 +5,22 @@ import { Destination } from "./CardContainer";
 import { auth, db } from "../firebase_setup/firebase";
 import DestinationCard from "./DestinationCard";
 import { Link } from "react-router-dom";
+import { Card } from "react-bootstrap";
+import { StarRating } from "../pages/DestinationPage";
 
+type FirestoreTimestamp = { // Declare that a firestoreTimestamp must have a toDate method which returns a javascript Date object
+  toDate: () => Date;
+}
 
 interface Review {
-    date: Date;
-    description: string;
-    destination: string;
-    rating: number;
-    user: string;
-    destinationId?: string;
-    country?: string;
-    mainImage?: string;
+  date: FirestoreTimestamp;
+  description: string;
+  destination: string;
+  rating: number;
+  user: string;
+  destinationId?: string;
+  country?: string;
+  mainImage?: string;
 }
 
 const MyReviews = () => {
@@ -46,7 +51,10 @@ const MyReviews = () => {
           }
         }));
 
-        setMyReviews(enhancedReviews.filter(Boolean) as Review[]); // Done with getting the additional information
+        const enhancedReviewsNotNull = enhancedReviews.filter(Boolean) as Review[];
+        // Get the reviews sorted by date
+        const sortedReviews = enhancedReviewsNotNull.sort((a: Review, b: Review) => b.date.toDate().getTime() - a.date.toDate().getTime());
+        setMyReviews(sortedReviews); // Done with getting the additional information
       };
 
       const unsubscribe = auth.onAuthStateChanged(user => { // Ensures that fetchMyReviews starts after the user information has been fetched
@@ -62,18 +70,31 @@ const MyReviews = () => {
     <div className="user-container" style={{ marginTop: "5vh" }}>
       <h3 style={{ textAlign: 'center' }}>Mine anmeldelser</h3>
       <div className="cards">
-        {myReviews.map((review, index) => (
-          <Link to={`/destinations/${review.destinationId}`} key={index}>
-            <DestinationCard
-              destination={{
-                id: review.destination,
-                city: review.destination,
-                country: review.country || "",
-                imageURL: review.mainImage || "",
-              }}
-            />
-          </Link>
-        ))}
+        {myReviews.map((review) => (
+            <div key={review.destinationId}>
+              <Link to={`/destination/${review.destinationId}`} style={{ textDecoration: "none" }}>
+                <Card className="card">
+                  <Card.Img variant="top" src={review.mainImage} className="card-img" />
+                  <Card.Body>
+                    <Card.Title style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>
+                      {review.destination}
+                      <StarRating rating={review.rating} />
+                    </Card.Title>
+                    <Card.Text>{review.date ? review.date.toDate().toLocaleDateString('nb-NO', {
+                        day: 'numeric',
+                        month: 'long',
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                      }) : ''}</Card.Text>
+                    <Card.Footer>
+                      {review.description}
+                    </Card.Footer>
+                  </Card.Body>
+                </Card>
+              </Link>
+            </div>
+          ))}
         
       </div>
     </div>
