@@ -91,8 +91,9 @@ const ReviewSummary = (props: reviewSummaryProp) => {
       return 0;
     } else {
       return (
+        Math.round( // Round down to 2 decimal places.
         props.reviews.reduce((acc, review) => acc + review.rating, 0) /
-        props.reviews.length
+        props.reviews.length * 100) / 100
       );
     }
   };
