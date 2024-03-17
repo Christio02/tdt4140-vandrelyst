@@ -145,10 +145,7 @@ const UpdateDestinationForm = ({ destination, id }: UpdateFormProps) => {
 
   useEffect(() => {
     const checkUser = async () => {
-      console.log(currentLoggedInUserEmail);
-      console.log(destination.email);
       const admin = await userIsAdmin();
-      console.log("User is admin: " + admin);
       if (
         currentLoggedInUserEmail === undefined ||
         currentLoggedInUserEmail === null ||
@@ -162,9 +159,6 @@ const UpdateDestinationForm = ({ destination, id }: UpdateFormProps) => {
       } else {
         setCanShowUpdateButton(true);
       }
-      console.log(
-        `User has created destination or is admin : ${canShowUpdateButton} `
-      );
     };
     checkUser();
   }, [currentLoggedInUserEmail, destination.email, canShowUpdateButton]);

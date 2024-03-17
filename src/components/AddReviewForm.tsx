@@ -1,15 +1,12 @@
-import firebase from "firebase/app";
-import "firebase/firestore";
-import { addDoc, collection, doc, setDoc } from "firebase/firestore";
-import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import React, { useEffect, useState } from "react";
-import { Col, Dropdown, Row } from "react-bootstrap";
+import { Col, Row } from "react-bootstrap";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import InputGroup from "react-bootstrap/InputGroup";
 import Modal from "react-bootstrap/Modal";
-import { auth, db, storage } from "../firebase_setup/firebase";
+import { auth, db } from "../firebase_setup/firebase";
 import { getReviews } from "./ReviewsSection";
+import { collection, getDocs, getFirestore, where, query, doc, setDoc } from 'firebase/firestore';
 
 import "../style/addDestinationPopUp.css";
 
@@ -21,7 +18,7 @@ import "../style/addDestinationPopUp.css";
  */
 
 type reviewFormProp = {
-  sendDestination2: string;
+  city: string;
 };
 
 interface Review {
@@ -49,9 +46,6 @@ const AddReviewForm = (props: reviewFormProp) => {
 
   const [rating, setRating] = useState("");
   const [description, setDescription] = useState("");
-  const [destination, setDestination] = useState("");
-  const [user, setUser] = useState("");
-  const [date, setDate] = useState("");
 
   const handleRatingChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setRating(event.target.value);
@@ -76,35 +70,42 @@ const AddReviewForm = (props: reviewFormProp) => {
       //! Hente ut for bruker:
       //! Peke på bruker i reviewen
 
-      //! Hente ut for destinasjon:
-      //! Hente ut på samme format er greit
-
-      const currentDate = new Date();
-
-      const formattedDate = currentDate.toLocaleDateString("no", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      });
+            //! Hente ut for destinasjon:
+            //! Hente ut på samme format er greit
+            
+            const getDestinationID = async () => {
+                try {
+                  const db = getFirestore();
+                  const destinationsRef = collection(db, "destinations");
+                  const q = query(destinationsRef, where("city", "==", props.city));
+                  const querySnapshot = await getDocs(q);
+                  const destinationID = querySnapshot.docs[0].id;
+                  return destinationID;
+                } catch (error) {
+                  console.error("Error fetching destinations:", error);
+                }
+              };
+            
+            const destinationID = await getDestinationID();
+            const currentDate = new Date();
 
       const userID = auth?.currentUser?.email;
 
-      // console.log(formattedDate);
 
       const data = {
         rating: rating ? parseInt(rating) : 0,
         description: description,
-        destination: props.sendDestination2,
+        destination: props.city,
         date: currentDate,
         user: userID,
+                id: destinationID,
       };
 
-      const DESTINATION = props.sendDestination2 + "_" + userID;
-      const userDocument = doc(db, "reviews", DESTINATION);
+            const DESTINATION = props.city + "_" + userID;
+            const userDocument = doc(db, "reviews", DESTINATION);
 
       await setDoc(userDocument, data);
 
-      //   console.log("Document written with id: ", docRef.id);
       alert("Review added successfully!");
       handleReviewClose();
       window.location.reload();
@@ -128,10 +129,8 @@ const AddReviewForm = (props: reviewFormProp) => {
 
   useEffect(() => {
     const destination: queryForReviews = {
-      destination: props.sendDestination2,
+      destination: props.city,
     };
-    // console.log(destination.destination);
-    // console.log("Før henting: " +endret)
     getReviews(destination).then((reviews: Review[]) => {
       setReviews(reviews);
 
@@ -139,19 +138,16 @@ const AddReviewForm = (props: reviewFormProp) => {
         auth?.currentUser?.email === undefined ||
         auth?.currentUser?.email === null
       ) {
-        // console.log("Ikke logget inn")
         setLoggetInnOgHarSkrevetReview(false);
       } else {
         for (let i = 0; i < reviews.length; i++) {
           if (reviews[i].userName === auth?.currentUser?.email) {
-            // console.log("Logget inn og har skrevet review")
             setLoggetInnOgHarSkrevetReview(true);
           }
         }
       }
     });
-    // console.log("-----------", reviews)
-  }, [props.sendDestination2]);
+  }, [props.city]);
 
   return (
     <>

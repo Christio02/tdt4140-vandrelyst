@@ -25,7 +25,6 @@ const Searchbar = ({
   const trackSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     // function that tracks every letter user types in
     setSearchText(event.target.value);
-    // console.log(searchText)
   };
   const sendSearch = async (searchtext: string) => {
     if (!searchtext) {
@@ -57,9 +56,6 @@ const Searchbar = ({
 
         try {
           const imageURL = await getDownloadURL(imageRef); // Attempt to get the download URL of the image
-          console.log(
-            `Document id: ${doc.id}, Image URL from storage: ${imageURL}`
-          );
           return { ...data, id: doc.id, imageURL }; // Include the image URL in the destination data
         } catch (error) {
           console.error(

@@ -10,7 +10,6 @@ interface DestinationCardProps {
 }
 
 const DestinationCard: React.FC<DestinationCardProps> = ({ destination }) => {
-    console.log(destination.imageURL); // Legg denne inn i DestinationCard før Card.Img-komponenten
 
   return (
     <Link to={`/destination/${destination.id}`} className="link" style={{ textDecoration: "none" }}>

@@ -86,7 +86,6 @@ const logIn = (event: React.FormEvent<HTMLFormElement>) => {
       // Signed in 
       const user = userCredential.user;
       navigate("/");
-      console.log("Logget inn");
     })
     .catch((error) => {
       const errorCode = error.code;
@@ -101,7 +100,6 @@ const registerUser = (event: React.FormEvent<HTMLFormElement>) => {
     .then((userCredential) => {
     // Signed up 
     const user = userCredential.user;
-    console.log("Registrert bruker");
     logIn(event);
     })
     .catch((error) => {
@@ -117,12 +115,9 @@ const logOut = () => {
       }).catch((error) => {
         // An error happened.
       });
-    console.log("Logget ut");
 };
 
 let functions = [logIn, registerUser];
-
-console.log(auth?.currentUser?.email);
 
     return (
         <div className='wholeDiv'>

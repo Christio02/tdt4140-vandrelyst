@@ -3,9 +3,7 @@ import "../style/DestinationPage.css";
 import {
   collection,
   doc,
-  getDoc,
   getDocs,
-  getFirestore,
   query,
   updateDoc,
   where,
@@ -14,27 +12,27 @@ import { useEffect, useState } from "react";
 import AddReviewForm from "../components/AddReviewForm";
 import { db } from "../firebase_setup/firebase";
 
-type revProps = { sendDestination: string };
+type revProps = { city: string };
 
 const ReviewsSection = (props: revProps) => {
   const [reviews, setReviews] = useState<Review[]>([]);
 
   useEffect(() => {
     const destination: queryForReviews = {
-      destination: props.sendDestination,
+      destination: props.city,
     };
     getReviews(destination).then((reviews) => {
       setReviews(reviews);
     });
-  }, [props.sendDestination]);
+  }, [props.city]);
 
   return (
     <div className="ReviewsSection">
       <ReviewSummary
-        sendDestination1={props.sendDestination}
+        city={props.city}
         reviews={reviews}
       />
-      <ReviewList sendDestination={props.sendDestination} reviews={reviews} />
+      <ReviewList city={props.city} reviews={reviews} />
     </div>
   );
 };
@@ -77,7 +75,7 @@ export const getReviews = async (props: queryForReviews) => {
 };
 
 type reviewSummaryProp = {
-  sendDestination1: string;
+  city: string;
   reviews: Review[];
 };
 
@@ -98,7 +96,6 @@ const ReviewSummary = (props: reviewSummaryProp) => {
     }
   };
 
-  console.log(averageRating());
   // Antall reviews for hver stjernerating
   const starsCount = new Array(5).fill(0);
   props.reviews.forEach((review) => {
@@ -106,7 +103,7 @@ const ReviewSummary = (props: reviewSummaryProp) => {
   });
 
   useEffect(() => {
-    updateRatingForDestination(props.sendDestination1);
+    updateRatingForDestination(props.city);
   });
 
   const updateRatingForDestination = async (destination: string) => {
@@ -151,7 +148,7 @@ const ReviewSummary = (props: reviewSummaryProp) => {
         ))}
       </div>
       <div className="reviewButtonDiv">
-        <AddReviewForm sendDestination2={"" + props.sendDestination1} />
+        <AddReviewForm city={"" + props.city} />
       </div>
     </div>
   );
@@ -181,7 +178,7 @@ const ReviewItem: React.FC<{
 };
 
 type reviewListProps = {
-  sendDestination: string;
+  city: string;
   reviews: Review[];
 };
 

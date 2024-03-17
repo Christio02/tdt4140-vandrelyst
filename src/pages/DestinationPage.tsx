@@ -62,7 +62,6 @@ const DestinationPage = () => {
         if (docSnap.exists()) {
           const destinationData = docSnap.data() as Destination;
           setDestination(destinationData);
-          console.log(destinationData.rating);
         } else {
           console.log("No such document!");
         }
@@ -121,6 +120,7 @@ const DestinationPage = () => {
         <DeleteDestinationForm
           id={destination.city}
           city={destination.city}
+          country={destination.country}
           email={destination.email}
         />
         <UpdateDestinationForm destination={destination} id={id} />
@@ -138,7 +138,7 @@ const DestinationPage = () => {
       <div className="review-container">
         <h2 className="reviews-title">Omtaler</h2>
         <div className="review-section">
-          <ReviewsSection sendDestination={destination.city} />
+          <ReviewsSection city={destination.city} />
         </div>
       </div>
       <Footer />
@@ -150,7 +150,7 @@ const AllRatings = ({ destination }: { destination: Destination }) => {
   return (
     <div className="AllRatings">
       <div className="centerContent">
-        <StarRating rating={destination.rating} />
+        <StarRating rating={destination.rating ? destination.rating : 0} /> {/* We need to check if the destination has a rating attribute. Just after the destination has been created, it doesn't have a rating column. Default is 0. */}
         <PriceRating price={destination.price} />
         <TempRating temp={destination.temperature} />
       </div>
@@ -163,7 +163,6 @@ interface StarRatingProps {
 }
 
 export const StarRating: React.FC<StarRatingProps> = ({ rating }) => {
-  console.log(rating);
   const totalStars = 5;
   const fullStars = Math.round(rating);
   const emptyStars = totalStars - fullStars;
@@ -228,7 +227,6 @@ const TempRating = ({ temp }: { temp: any }) => {
 };
 
 const MainPhoto = ({ url }: { url: any }) => {
-  // console.log(url);
   return (
     <div className="PhotoOfCity">
       <img src={url} alt="Photo of city" />;
@@ -311,13 +309,11 @@ export const markAsVisited = async (destinationId: string) => {
           await updateDoc(userDocRef, {
             visited: arrayUnion(destinationId),
           });
-          console.log("Destination marked as visited");
         } else {
           // If destination is already in the visited array, remove it
           await updateDoc(userDocRef, {
             visited: arrayRemove(destinationId),
           });
-          console.log("Destination unmarked as visited");
         }
       }
     } catch (error) {
