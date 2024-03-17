@@ -1,11 +1,10 @@
-import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import React, { useEffect, useState } from "react";
-import { Col, Dropdown, Row } from "react-bootstrap";
+import { Col, Row } from "react-bootstrap";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import InputGroup from "react-bootstrap/InputGroup";
 import Modal from "react-bootstrap/Modal";
-import { auth, db, storage } from "../firebase_setup/firebase";
+import { auth, db } from "../firebase_setup/firebase";
 import { getReviews } from "./ReviewsSection";
 import { collection, getDocs, getFirestore, where, query, doc, setDoc } from 'firebase/firestore';
 
@@ -47,9 +46,6 @@ const AddReviewForm = (props: reviewFormProp) => {
 
   const [rating, setRating] = useState("");
   const [description, setDescription] = useState("");
-  const [destination, setDestination] = useState("");
-  const [user, setUser] = useState("");
-  const [date, setDate] = useState("");
 
   const handleRatingChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setRating(event.target.value);
@@ -92,12 +88,6 @@ const AddReviewForm = (props: reviewFormProp) => {
             
             const destinationID = await getDestinationID();
             const currentDate = new Date();
-
-      const formattedDate = currentDate.toLocaleDateString("no", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      });
 
       const userID = auth?.currentUser?.email;
 

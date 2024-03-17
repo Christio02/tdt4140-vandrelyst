@@ -2,13 +2,12 @@ import {
   collection,
   deleteDoc,
   doc,
-  getDoc,
   getDocs,
   query,
   where,
 } from "firebase/firestore";
 import { useCallback, useEffect, useState } from "react";
-import { Button, Dropdown, Modal } from "react-bootstrap";
+import { Button, Modal } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { auth, db } from "../firebase_setup/firebase";
 import { userIsAdmin } from "./RegisterPanel";

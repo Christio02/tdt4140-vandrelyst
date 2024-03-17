@@ -7,7 +7,6 @@ import {
   Route,
   Routes,
   useNavigate,
-  useLocation
 } from "react-router-dom";
 import paris from "../assets/Paris.jpeg";
 import AddDestinationForm from "../components/AddDestinationForm";
@@ -19,7 +18,7 @@ import App from "../App";
 import { logOut, userIsAdmin } from '../components/RegisterPanel';
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
-import { auth, db } from "../firebase_setup/firebase";
+import { db } from "../firebase_setup/firebase";
 import { getDownloadURL, getStorage, ref } from "firebase/storage";
 import { collection, getDocs, getFirestore, where, query } from 'firebase/firestore';
 import VisitedDestinations from "../components/VisitedDestinations";

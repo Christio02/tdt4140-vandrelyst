@@ -1,11 +1,9 @@
 import {
-  DocumentData,
   collection,
   getDocs,
   getFirestore,
 } from "firebase/firestore";
 import {
-  FirebaseStorage,
   getDownloadURL,
   getStorage,
   ref,
