@@ -142,7 +142,7 @@ const RegisterPanel = (props : UserLogInProps) => {
     .catch((error) => {
       const errorCode = error.code;
       const errorMessage = error.message;
-      alert("Er allerede innlogget med en annen bruker");
+      alert("Bruker eksisterer allerede!");
     });
   };
 

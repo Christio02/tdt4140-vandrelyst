@@ -90,7 +90,7 @@ const logIn = (event: React.FormEvent<HTMLFormElement>) => {
     .catch((error) => {
       const errorCode = error.code;
       const errorMessage = error.message;
-      alert("Er allerede innlogget med en annen bruker");
+      alert("Feil passord, eller bruker eksisterer ikke. Prøv igjen.");
     });
 };
 
