@@ -99,7 +99,7 @@ function CardContainer({ destinationsFromSearch, currentFilter, sortCriterion, s
 
   return (
     <div className="container">
-      <h3 className="title" >Alle Reisemål </h3>
+      <h3 className="title" >Alle destinasjoner </h3>
       <div className="cards">
         {destinationsToDisplay.map((destination) => (
           <Link

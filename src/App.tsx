@@ -72,7 +72,7 @@ function App() {
   return (
     <div className="main-container">
       <Navbar />
-      <Searchbar setSearchResults={setSearchResults} placeholder="Søk på reisemål" title="Finn ditt reisemål" />
+      <Searchbar setSearchResults={setSearchResults} placeholder="Søk på destinasjon" title="Finn din destinasjon" />
       <Filtercomponent onFilterChange={handleFilterChange} onSortChange={handleSortChange} activeSort={sortCriterion} sortDirection={sortDirection} />
       {userEmail && <RecommendedDestinations userEmail={userEmail} />}
       <CardContainer destinationsFromSearch={searchResults} currentFilter={currentFilter} sortCriterion={sortCriterion} sortDirection={sortDirection} />

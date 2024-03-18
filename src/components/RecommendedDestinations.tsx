@@ -22,7 +22,7 @@ interface RecommendedDestinationsProps {
 
   return (
     <div className="container">
-      <h3 className="title" >Anbefalte Reisemål </h3>
+      <h3 className="title" >Anbefalte destinasjoner </h3>
       <div className="cards">
         {destinations.map(destination => (
           <DestinationCard key={destination.id} destination={destination} />
