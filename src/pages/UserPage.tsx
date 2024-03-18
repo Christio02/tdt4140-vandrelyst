@@ -31,7 +31,7 @@ const UserPage = () => {
   const [profilePicture, setProfilePicture] = useState<string | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
 
-  const [activeLink, setActiveLink] = useState("");
+  const [activeLink, setActiveLink] = useState("myDestinations");
 
   //Set the active link
   const handleSetActiveLink = (link: string) => {
