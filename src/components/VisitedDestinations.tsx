@@ -58,7 +58,6 @@ const VisitedDestinations = () => {
 
   return (
     <div className="visited-destinations-list" style={{ marginTop: "5vh" }}>
-      <h3 style={{ textAlign: 'center' }}>Besøkte Destinasjoner</h3>
       <div className="cards">
         {visitedDestinations.map((destination, index) => (
           <Link to={`/destination/${destination.id}`} key={index} style={{ textDecoration: "none" }}>

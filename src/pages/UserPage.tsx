@@ -12,7 +12,6 @@ import paris from "../assets/Paris.jpeg";
 import AddDestinationForm from "../components/AddDestinationForm";
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
-import Searchbar from "../components/Searchbar";
 import "../style/UserPage.css";
 import App from "../App";
 import { logOut, userIsAdmin } from '../components/RegisterPanel';
@@ -182,10 +181,6 @@ const MyDestinations = () => {
     <>
       <div className="user-container">
         <div style={{ marginBottom: "2rem" }}></div>
-        <Searchbar
-          setSearchResults={setMyDestinations}
-          placeholder="Søk i mine destinasjoner"
-        />
         <div className="cards">
         {myDestinations.map((dest) => (
           <div key={dest.id}>

@@ -68,7 +68,6 @@ const MyReviews = () => {
 
   return (
     <div className="user-container" style={{ marginTop: "5vh" }}>
-      <h3 style={{ textAlign: 'center' }}>Mine anmeldelser</h3>
       <div className="cards">
         {myReviews.map((review) => (
             <div key={review.destinationId}>
