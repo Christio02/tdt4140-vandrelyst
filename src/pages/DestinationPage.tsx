@@ -1,186 +1,232 @@
+import { faStar as faRegularStar } from "@fortawesome/free-regular-svg-icons";
+import {
+  faDollarSign,
+  faStar as faSolidStar,
+} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
 import Navbar from "../components/Navbar";
 import "../style/DestinationPage.css";
-import attraction2 from "./arcDeTriumph.jpg";
-import photo1 from "./champsElysees.jpg";
-import attraction1 from "./eiffelAttraction.jpg";
-import attraction3 from "./louvre.jpg";
-import photo3 from "./montmartre.jpg";
-import photo2 from "./notreDame.jpg";
-import photo4 from "./seineRiver.jpg";
 
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faStar } from "@fortawesome/free-solid-svg-icons";
-
-import { doc, getDoc, getFirestore } from "firebase/firestore";
-import { FirebaseStorage, getDownloadURL, getStorage, ref } from "firebase/storage";
+import { arrayUnion, doc, getDoc, getFirestore, updateDoc, arrayRemove, onSnapshot } from "firebase/firestore";
+import { getDownloadURL, getStorage, ref } from "firebase/storage";
 import { useEffect, useState } from "react";
-import { useParams} from "react-router-dom";
+import { useParams } from "react-router-dom";
+import DeleteDestinationForm from "../components/DeleteDestinationForm";
+import { db } from "../firebase_setup/firebase";
+
+import Footer from "../components/Footer";
+import ReviewsSection from "../components/ReviewsSection";
+import UpdateDestinationForm from "../components/UpdateDestinationForm";
 import "../style/CardContainer.css";
+import { getAuth } from "firebase/auth";
+import VisitedButton from "../components/visitedbutton";
 
 
-interface Destination {
-  id: string;
-  country: string;
+export interface Destination {
+  mainImage: string;
+  email: string;
   city: string;
-  description: string;
-  price: number;
+  country: string;
   rating: number;
+  price: number;
   temperature: number;
-  things: Array<string>;
-}
-
-async function getMainImageUrl(storage: FirebaseStorage, id: string) {
-  const imagePath = `images/${id}.jpg`; // The card image for the destination has the same name as the document ID.
-  const imageRef = ref(storage, imagePath); // Get a reference to the image
-  
-  try {
-    const url = await getDownloadURL(imageRef);
-    return url;
-  } catch (error) {
-    console.error("Error getting download URL:", error);
-    return null;
-  }
+  description: string;
+  thingsToDo: Array<{
+    caption: string;
+    description: string;
+    imgLink: string;
+  }>;
+  extraImages: Array<{
+    caption: string;
+    description: string;
+    imgLink: string;
+  }>;
+  type?: string;
 }
 
 const DestinationPage = () => {
-  
-  const {id} = useParams(); // route parameter has the same name as the parameter in the route path in App.tsx
-  const [mainPhotoUrl, setMainPhotoUrl] = useState('');
+  const { id } = useParams(); // route parameter has the same name as the parameter in the route path in App.tsx
+  const [mainPhotoUrl, setMainPhotoUrl] = useState("");
   const [destination, setDestination] = useState<Destination | null>(null);
-  console.log(id); // This will log the id of the destination to the console.
-
 
   useEffect(() => {
-    const fetchDestinationData = async () => {
-      if (!id) { // If the id is null, then return early. Tsx complains if you don't have this check.
-        console.log(id);
+    const fetchDestinationData = () => {
+      if (!id) {
         return;
       }
       const db = getFirestore();
-      const docRef = doc(db, "destinations", id); // Assuming 'id' is the correct document ID
-      const docSnap = await getDoc(docRef);
+      const docRef = doc(db, "destinations", id);
+      //I used copilot for unsubscribe function, prompt:  In here, can you check when new rating is applied? Because as of right now if a user submits a new rating, then you have to reload the page 2 times before changes are apllied to starrating
+      const unsubscribe = onSnapshot(docRef, (docSnap) => {
+        if (docSnap.exists()) {
+          const destinationData = docSnap.data() as Destination;
+          setDestination(destinationData);
+        } else {
+          console.log("No such document!");
+        }
+      });
 
-      if (docSnap.exists()) {
-        console.log("Document data:", docSnap.data());
-        setDestination(docSnap.data() as Destination);
-      } else {
-        console.log("No such document!");
-      }
-    };
-    
-    const fetchMainPhotoUrl = async () => {
-      if (!id) return;
-      
-      const url = await getMainImageUrl(getStorage(), id);
-      setMainPhotoUrl(url!);
+      return () => unsubscribe();
     };
 
     if (id) {
       fetchDestinationData();
-      fetchMainPhotoUrl();
     }
-  }, [id]); // Re-run when `id` changes
+  }, [id]);
 
-  
-  if (!destination) { // If destination data hasn't been fetched yet, you return a loading state
+  useEffect(() => {
+    const fetchMainImage = async () => {
+      if (destination?.mainImage) {
+        try {
+          const url = await getDownloadURL(
+            ref(getStorage(), destination.mainImage)
+          );
+          setMainPhotoUrl(url);
+        } catch (error) {
+          console.error("Error fetching image from Firebase: ", error);
+        }
+      }
+    };
+
+    fetchMainImage();
+  }, [destination]);
+
+  if (!destination) {
+    return <div>Loading...</div>;
+  }
+
+  if (!destination) {
+    // If destination data hasn't been fetched yet, you return a loading state
     return <div>Loading...</div>;
   }
 
   return (
-    // <div><Navbar></Navbar></div>
-    <div>
-      <Navbar/>
-      <MainPhoto url={mainPhotoUrl}/>
-      <TitleDiv destination={destination}/>
-      <AllRatings destination={destination}/>
-      <div className="AllContentDivs">
-        <DescriptionDiv destination={destination}/>
-        <ActivitesDiv title="Ting å gjøre" activities={actualActivities} />
-        <ActivitesDiv title="Bilder" activities={otherPhotosOfCity} />
-      </div>
-        
-        <div className="review-container">
-        <h2 className="reviews-title">REVIEWS</h2>
-        <div className="review-section">
-        <ReviewSummary />
-        <ReviewList />
-        </div>    
-        </div>
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+    >
+      <Navbar />
+      <MainPhoto url={mainPhotoUrl} />
+      <TitleDiv destination={destination} />
+      <AllRatings destination={destination} />
+      {id && <VisitedButton destinationId={id} />}
 
+      <div className="deleteButtonContainer">
+        <DeleteDestinationForm
+          id={destination.city}
+          city={destination.city}
+          country={destination.country}
+          email={destination.email}
+        />
+        <UpdateDestinationForm destination={destination} id={id} />
+      </div>
+
+      <div className="AllContentDivs">
+        <DescriptionDiv destination={destination} />
+        <ActivitesDiv
+          title="Ting å gjøre"
+          activities={destination.thingsToDo}
+        />
+        <ActivitesDiv title="Bilder" activities={destination.extraImages} />
+      </div>
+
+      <div className="review-container">
+        <h2 className="reviews-title">Omtaler</h2>
+        <div className="review-section">
+          <ReviewsSection city={destination.city} />
+        </div>
+      </div>
+      <Footer />
     </div>
   );
 };
 
-const AllRatings = ({destination}: {destination: any}) => {
+const AllRatings = ({ destination }: { destination: Destination }) => {
   return (
     <div className="AllRatings">
-      <StarRating/>
-      <PriceRating />
-      <TempRating temp={destination.temperature}/>
+      <div className="centerContent">
+        <StarRating rating={destination.rating ? destination.rating : 0} /> {/* We need to check if the destination has a rating attribute. Just after the destination has been created, it doesn't have a rating column. Default is 0. */}
+        <PriceRating price={destination.price} />
+        <TempRating temp={destination.temperature} />
+      </div>
     </div>
   );
 };
 
-const StarRating = () => {
-  let numberOfStars = 5;
-  // Henter antall stjerner fra DB
-  let numOfFullStars = numberOfStars - Math.round(averageRating);
-  let emptyStar = <span>☆</span>;
-  let fullStar = <span>★</span>;
-  // let rating = [];
-  // for (let i=1; i<6; i++) {
-  //   if (i <= numOfFullStars) {
-  //     rating.push(fullStar);
-  //   }
-  //   else {
-  //     rating.push(emptyStar);
-  //   }
-  // }
+interface StarRatingProps {
+  rating: number;
+}
+
+export const StarRating: React.FC<StarRatingProps> = ({ rating }) => {
+  const totalStars = 5;
+  const fullStars = Math.round(rating);
+  const emptyStars = totalStars - fullStars;
 
   return (
     <div className="StarRating" id="Rating">
-  {/* //     {rating.map((star, index) => { */}
-  {/* //       <span key={index}>{star}</span>; */}
-  {/* //     })} */}
-      <span>★</span>
-      <span>☆</span>
-      <span>☆</span>
-      <span>☆</span>
-      <span>☆</span>
+      {Array(fullStars)
+        .fill(0)
+        .map((_, index) => (
+          <FontAwesomeIcon icon={faSolidStar} key={`Solid-${index}`} />
+        ))}
+      {Array(emptyStars)
+        .fill(0)
+        .map((_, index) => (
+          <FontAwesomeIcon icon={faRegularStar} key={`Regular-${index}`} />
+        ))}
     </div>
   );
 };
+interface PriceRatingProps {
+  price: number;
+}
 
-
-const PriceRating = () => {
-  let numberOfDollarSigns = 3;
-  // Henter antall stjerner fra DB
-  let actualRating = 3;
-  let numberOfEmptyStars = numberOfDollarSigns - actualRating;
-  let dollarSign = <span>$</span>;
-
+const PriceRating: React.FC<PriceRatingProps> = ({ price }) => {
+  const totalDollars = 5;
+  const fullDollars = Math.round(price);
+  const emptyDollars = totalDollars - price;
   return (
-    // Database hente data
     <div className="PriceRating" id="Rating">
-      <span>$</span>
-      <span>$</span>
-      <span>$</span>
-      <span>$</span>
+      {Array(fullDollars)
+        .fill(0)
+        .map((_, index) => (
+          <FontAwesomeIcon
+            icon={faDollarSign}
+            className="faDollarSign"
+            key={`Dollar-${index}`}
+          />
+        ))}
+      {Array(emptyDollars)
+        .fill(0)
+        .map((_, index) => (
+          <FontAwesomeIcon
+            icon={faDollarSign}
+            className="faDollarSign"
+            key={`Dollar-${index}`}
+            color="grey"
+          />
+        ))}
+      {/*It might seem overly complex to write all of this code to do something as simple as creating an array, but this seems to be standard.
+      You start out by filling the array with zeros, and then you map each element from a 0 to an icon of type 'faDollarSign'
+      We then give a className attribute to each of these icons, enabling us to style them with CSS.*/}
     </div>
   );
 };
 
-const TempRating = ({temp}: {temp: any}) => {
+const TempRating = ({ temp }: { temp: any }) => {
   return (
-    <div className="SeasonRating" id="Rating">
-      <span>{temp}°C</span>
+    <div className="TempRating" id="Rating">
+      <span>{temp}°C </span>
     </div>
   );
 };
 
-const MainPhoto = ({url}: {url: any}) => {
-  console.log(url);
+const MainPhoto = ({ url }: { url: any }) => {
   return (
     <div className="PhotoOfCity">
       <img src={url} alt="Photo of city" />;
@@ -188,30 +234,20 @@ const MainPhoto = ({url}: {url: any}) => {
   );
 };
 
-const TitleDiv = ({destination}: {destination: Destination}) => {
+const DescriptionDiv = ({ destination }: { destination: Destination }) => {
   return (
-    <div className="TitleDiv">
-      <h1> {destination.city} </h1>
-      <h2> {destination.country} </h2>
+    <div className="DescriptionDiv">
+      <h3>Beskrivelse</h3>
+      <p className="DescriptionText">{destination.description}</p>
     </div>
   );
 };
 
-const DescriptionDiv = ({destination}: {destination: Destination}) => {
+const TitleDiv = ({ destination }: { destination: Destination }) => {
   return (
-    <div className="DescriptionDiv">
-      <h3>Beskrivelse</h3>
-      <p className="DescriptionText">
-        {destination.description}
-        </p>
-        <br />
-        <h3>Ting å gjøre</h3>
-        <ul>
-          {destination.things.map((thing: string, index: number) => (
-            <li key={index}>{thing}</li>
-          ))}
-        </ul>
-        
+    <div className="TitleDiv">
+      <h1> {destination.city} </h1>
+      <h2> {destination.country} </h2>
       
     </div>
   );
@@ -222,51 +258,26 @@ type ActivitiesDivProps = {
   activities: Array<object>;
 };
 
-// Things to do
+type BoxProps = {
+  caption: string;
+  description: string;
+  imgLink: string;
+};
 
-let actualActivities: Array<object> = [
-  {
-    caption: "Bilde av Eiffeltårnet",
-    description:
-      "Du kan kjøpe en billett, og gå trappene eller ta heisen opp til toppen.",
-    imgLink: attraction1,
-  },
-
-  {
-    caption: "Bilde av Triumfbuen",
-    description:
-      "Du kan gå under den eller kjøpe en billett for å komme deg opp til toppen.",
-    imgLink: attraction2,
-  },
-
-  {
-    caption: "Bilde av Louvre",
-    description:
-      "Du må kjøpe billett for å komme inn. Blant de mange kunstverkene som er å finne her er Mona Lisa av Leonardo Da Vinci.",
-    imgLink: attraction3,
-  },
-];
-
-// Other city photos
-
-let otherPhotosOfCity: Array<object> = [
-  { caption: "Bilde av Champs-Élysées", description: "", imgLink: photo1 },
-
-  {
-    caption: "Bilde av Notre Dame-katedralen",
-    description: "",
-    imgLink: photo2,
-  },
-
-  { caption: "Bilde av Montmartre", description: "", imgLink: photo3 },
-
-  { caption: "Bilde av Seinen", description: "", imgLink: photo4 },
-];
+const ActivityBox = (props: BoxProps) => {
+  return (
+    <div className="ActivityBox">
+      <img src={props.imgLink} alt={props.caption} id="imgAttraction" />
+      <h4>{props.caption}</h4>
+      <p id="ImageDescription">{props.description}</p>
+    </div>
+  );
+};
 
 const ActivitesDiv = (props: ActivitiesDivProps) => {
   return (
     <div className="ActivitiesDiv">
-      <h3>{props.title}</h3>
+      <h3 style={{ textAlign: "center" }}>{props.title}</h3>
       <div className="AllActivities">
         {props.activities.map((activity: any, index: number) => (
           <ActivityBox
@@ -276,132 +287,43 @@ const ActivitesDiv = (props: ActivitiesDivProps) => {
             imgLink={activity.imgLink}
           />
         ))}
-        {/* <ActivityBox caption={props.activities[0].caption} description={props.activities[0].description} imgLink={props.activities[0].imgLink}/>
-         */}
       </div>
     </div>
   );
 };
 
-type BoxProps = {
-  caption: string;
-  description: string;
-  imgLink: string;
+export const markAsVisited = async (destinationId: string) => {
+  const auth = getAuth();
+  const user = auth.currentUser;
+
+  if (user && user.email) {
+    try {
+      const userDocRef = doc(db, "users", user.email);
+      const userDocSnap = await getDoc(userDocRef);
+
+      if (userDocSnap.exists()) {
+        const userData = userDocSnap.data();
+        const visitedArray = userData.visited || [];
+
+        if (!visitedArray.includes(destinationId)) {
+          await updateDoc(userDocRef, {
+            visited: arrayUnion(destinationId),
+          });
+        } else {
+          // If destination is already in the visited array, remove it
+          await updateDoc(userDocRef, {
+            visited: arrayRemove(destinationId),
+          });
+        }
+      }
+    } catch (error) {
+      console.error("Error updating visited destinations:", error);
+    }
+  } else {
+    console.log("User not logged in or email not available");
+  }
 };
 
-const ActivityBox = (props:BoxProps) => {
-    return (
-        <div className="ActivityBox">
-              <img src={props.imgLink} alt={props.caption} id="imgAttraction" />
-      <h4>{props.caption}</h4>
-      <p id="ImageDescription">{props.description}</p>
-        </div>
-    );
-}
-
-
-
-interface Review {
-    username: string;
-    date: string;
-    rating: number;
-    comment: string;
-  }
-  
-
-  const reviews: Review[] = [
-    {
-      username: '@Olebole',
-      date: '15.02.24',
-      rating: 5,
-      comment: 'Lorem ipsum dolor sit amet. Sed fugit exercitationem non optio duimus quia corporis diucimus sed perferendis omnis vel laudantium molestiae. At quibusdam accusantium id reprehenderit rerum aut corporis suscipit.',
-    },
-    {
-        username: '@tore tang',
-        date: '02.02.24',
-        rating: 3,
-        comment: 'beste nettside noensinne',
-      },
-      {
-        username: '@testtest',
-        date: '30.01.24',
-        rating: 5,
-        comment: 'test',
-      },
-      {
-        username: '@bruker',
-        date: '27.01.24',
-        rating: 4,
-        comment: '!!',
-      },
-      
-  ];
-  
-  const averageRating = reviews.reduce((acc, review) => acc + review.rating, 0) / reviews.length;
-  
-  const ReviewSummary = () => {
-    // regne ut average rating her
-    
-    // Antall reviews for hver stjernerating
-    const starsCount = new Array(5).fill(0);
-    reviews.forEach(review => {
-      starsCount[review.rating - 1]++;
-    });
-
-    const handleAddReviewClick = () => {
-        console.log('klikkklikk');
-        // Implementere funksjonalitet når man trykker på knappen!!
-      };
-  
-    return (
-        <div className="review-summary">
-          <h2>SUMMARY</h2>
-          <div className="average-rating">
-            {averageRating.toFixed(1)}
-            <span className="total-reviews">({reviews.length} reviews)</span>
-          </div>
-          <div className="star-rating-summary">
-            {[5, 4, 3, 2, 1].map(star => (
-              <div key={star} className="star-row">
-                <div className="star-label">{star} star{star > 1 ? 's' : ''}</div>
-                <div className="star-bar">
-                  <div className="star-fill" style={{ width: `${(starsCount[star - 1] / reviews.length) * 100}%` }}></div>
-                </div>
-                <div className="star-count">{starsCount[star - 1]}</div>
-              </div>
-            ))}
-          </div>
-          <button className="add-review-button" onClick={handleAddReviewClick}>
-            Legg til omtale
-        </button>
-        </div>
-      );
-    };
-  
-  const ReviewItem: React.FC<{ review: Review, index: number }> = ({ review, index }) => {
-    return (
-        <div className={`review-item ${reviews.length - 1 === index ? 'no-border' : ''}`}> 
-          <div className="review-user">{review.username} <span className="review-date">{review.date}</span></div>
-          <div className="star-rating">
-            {'★'.repeat(review.rating)}
-            <span className="star-count">({review.rating})</span>
-          </div>
-          <p>{review.comment}</p>
-        </div>
-    );
-  };
-  
-  const ReviewList = () => {
-    return (
-        <div className="review-list">
-          {reviews.map((review, index) => (
-            <ReviewItem key={index} review={review} index={index} />
-          ))}
-          <button>See more reviews</button>
-        </div>
-    );
-  };
 
 
 export default DestinationPage;
-

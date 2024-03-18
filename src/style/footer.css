@@ -4,6 +4,7 @@
   display: flex;
   align-items: center;
   width: 100%;
+  margin-top: auto;
 }
 .logo-footer {
   width: 30%;
@@ -12,5 +13,5 @@
   margin-left: auto;
   margin-top: auto;
   margin-right: 2rem;
-  color: white; 
+  color: white;
 }

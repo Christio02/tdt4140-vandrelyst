@@ -5,9 +5,10 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import App from "./App";
 import "./index.css";
 import DestinationPage from "./pages/DestinationPage";
+import LogInPage from "./pages/LogInPage";
+import RegisterUserPage from "./pages/RegisterUserPage";
+import UserPage from "./pages/UserPage";
 import reportWebVitals from "./reportWebVitals";
-import OmOss from "./pages/OmOss";
-
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
@@ -18,7 +19,9 @@ root.render(
       <Routes>
         <Route path="/" element={<App />} />
         <Route path="/destination/:id" element={<DestinationPage />} />
-        <Route path="/omoss" element={<OmOss/>} />
+        <Route path="/logginn" element={<LogInPage />} />
+        <Route path="/registrering" element={<RegisterUserPage />} />
+        <Route path="/mypage/*" element={<UserPage />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>

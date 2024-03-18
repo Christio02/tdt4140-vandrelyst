@@ -1,35 +1,64 @@
-
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import "../style/Navbar.css"
-import { assert } from 'console';
 import logo_navn from "../assets/logo_navn.png";
 import { CircleUserRound } from 'lucide-react';
-import Dropdown from 'react-bootstrap/Dropdown';
-import DropdownButton from 'react-bootstrap/DropdownButton';
 import { Link } from 'react-router-dom';
+import { auth } from '../firebase_setup/firebase';
+import { userIsAdmin } from './RegisterPanel';
+import { onAuthStateChanged, User } from 'firebase/auth';
+import DestinationPopUp from "./AddDestinationForm";
   
-  
-//nav bar full screen
 const Navbar = () => {
+
+    //  Må sette STATE for om du er admin/logget inn og listene for om man er logget inn
+    // eller admin. 
+    // Usikker på om userIsAdmin ble helt riktig brukt, men freestyla og det funka
+    const [isLoading, setIsLoading] = useState(true);
+    const [currentUserIsAdmin, setCurrentUserIsAdmin] = useState(false);
+    const [currentUser, setCurrentUser] = useState<User | null>(null);
+    
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
+            if (user) {
+                setCurrentUser(user);
+                userIsAdmin().then(isAdmin => {
+                    setCurrentUserIsAdmin(isAdmin);
+                    setIsLoading(false);
+                });
+            } else {
+                setCurrentUser(null);
+                setIsLoading(false);
+            }
+        });
+
+        return () => unsubscribe();
+    }, []);
+
     return (
     <div id="topnav">
         <Link id = "logo" to="/"> <img src = {logo_navn} alt="Logo i navbar" ></img> </Link>
-        
-        <a> <DropdownButton
-                title={<CircleUserRound size={24} />}
-                id="dropdown-menu"
-                variant="string" >
+        {isLoading ? (
+                <p>Laster...</p>
+            ) : auth?.currentUser ? (
+                currentUserIsAdmin ? (
+                    <a href='/mypage' className="LogInMyPage"><CircleUserRound size={25} id="icon"/> Min side</a>
 
-                <Dropdown.Item href="#">Logg inn</Dropdown.Item>
-                <Dropdown.Item href="#">Logg ut</Dropdown.Item>
+                ) : (
+                    <a href='/mypage' className="LogInMyPage"><CircleUserRound size={25} id="icon"/> Min side</a>
+                )
+            ) : (
+                <a href='/logginn' className="LogInMyPage"  ><CircleUserRound size={25} id="icon"/>Logg inn</a> 
+            )}
 
-                
-            </DropdownButton> </a>
-    
-        <Link to="/omoss">Om oss</Link>
-        
+        {currentUser &&
+            <a>
+                <div className="destinationPopupContainer">
+                    <DestinationPopUp />
+                </div>
+            </a>
+        }
+
         </div>
-    
     );
 }
 export default Navbar;

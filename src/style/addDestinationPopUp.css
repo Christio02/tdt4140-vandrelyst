@@ -5,13 +5,53 @@
 }
 
 .createButton {
-    width: 9%;
+    background-color: rgb(200, 216, 228); 
+    color: #030303; 
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 100px;
+    cursor: pointer;
+    margin-top: 20px;
+    outline: none; 
+    transition: background-color 0.3s ease;
+/*     
+    color: white !important;
+    background-color: blue !important;
+    border: none !important;
+    cursor: pointer !important;
     margin: 0 auto;
-    border-radius: 25px !important;
-    font-size: 16px !important;
-    color: black !important;
-    background-color: #C8D8E4 !important;
     border: 1px solid transparent !important;
-    font-family: 'Poppins' !important;
     padding: 1px 1px !important;
+    font-family: "Poppins" !important; */
 }
+
+.createButton:hover {
+    color: black !important;
+    background-color: rgb(180, 196, 208);
+  }
+
+.createButton:active {
+    color: black !important;
+    background-color: rgb(180, 196, 208);
+}
+
+#icon {
+    margin-left: 5px;
+}
+
+.NewDest{
+    color: white;
+    text-decoration: none;
+    background-color: transparent !important;
+    border-color: transparent;
+    font-size: 17px;
+    font-family: "Poppins";
+    height: 70px;
+}
+
+.NewDest:hover {
+    border-color: transparent;
+    color: black;
+}
+  

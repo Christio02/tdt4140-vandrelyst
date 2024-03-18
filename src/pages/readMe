@@ -1,0 +1,18 @@
+Hvordan har Registrering blitt endret:
+- RegisterPage har nå en egen spesiell komponent kalt RegisterPanel
+RegisterPanel:
+- userIsAdmin er henter ut info om brukeren fra databasen 
+    - OBS! Denne er asynkron og må derfor håndteres med
+    .then overalt man bruker den.
+- makeEntryForUser lager databaseentry for brukeren på passende format når brukeren registreres
+- har lagt til fullName og phoneNumber i formen
+
+Navbar:
+- Har testet hvordan conditionally rendere
+    -> Har funnet ut at siden userIsAdmin-sjekken er asynkron så må man alltid ha lage en loading-state som gjør at hvis det ikke har blitt true/false ennå så vil det bli et midlertidig filler-element
+    - Sjekken
+        Sjekker alltid om man er logget inn og kan deretter sjekke admin/ikke admin
+        Lagrer tilstanden for brukeren i selve komponente med useState 
+
+MyPage:
+- Lagt til dummy-side for Min Side som skal være brukerens egne side

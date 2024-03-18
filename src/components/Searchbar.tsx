@@ -11,18 +11,23 @@ import "../style/searchbar.css";
 
 interface SearchbarProps {
   setSearchResults: (results: any[]) => void;
+  placeholder: string;
+  title?: string;
 }
 
-const Searchbar = ({ setSearchResults }: SearchbarProps) => {
+const Searchbar = ({
+  setSearchResults,
+  placeholder,
+  title,
+}: SearchbarProps) => {
   const [searchText, setSearchText] = useState(""); // save input text in hook
 
   const trackSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     // function that tracks every letter user types in
     setSearchText(event.target.value);
-    // console.log(searchText)
   };
   const sendSearch = async (searchtext: string) => {
-    if (searchtext == null) {
+    if (!searchtext) {
       return;
     }
 
@@ -39,40 +44,39 @@ const Searchbar = ({ setSearchResults }: SearchbarProps) => {
     const snapshotCountry = await getDocs(searchQueryCountry);
 
     if (snapshotCity.empty && snapshotCountry.empty) {
-      alert("Ingen destinasjoner funnet basert på søket ditt!");
+      alert("No destinations found based on your search!");
+      return;
     }
 
     const mergedDocs = [...snapshotCity.docs, ...snapshotCountry.docs];
     const destinationsWithImages = await Promise.all(
       mergedDocs.map(async (doc) => {
         const data = doc.data();
-        const imageRef = ref(storage, `images/${doc.id}.jpg`); // create a reference to the image in Firebase Storage
+        const imageRef = ref(storage, data.mainImage);
+
         try {
-          const imageURL = await getDownloadURL(imageRef); // get the download URL of the image
-          console.log(
-            `Here is document id : ${doc.id} and the correct imageurl from storage: ${imageURL}`
-          );
-          return { ...data, id: doc.id, imageURL }; // add the image URL to the destination data
+          const imageURL = await getDownloadURL(imageRef); // Attempt to get the download URL of the image
+          return { ...data, id: doc.id, imageURL }; // Include the image URL in the destination data
         } catch (error) {
           console.error(
-            `Error getting download URL for image ${doc.id}.jpg:`,
+            `Error getting download URL for image from 'mainImage' field:`,
             error
           );
-          return { ...data, id: doc.id }; // if there was an error getting the image URL, return the destination data without the image URL
+          // Handle the error appropriately (e.g., log, use a default image, etc.)
         }
       })
     );
 
-    setSearchResults(destinationsWithImages);    
+    setSearchResults(destinationsWithImages);
   };
 
   return (
     <div className="searchbar-container">
-      <h2>Finn ditt reisemål</h2>
+      <h2>{title}</h2>
       <Form className="search">
         <Form.Control
           type="text"
-          placeholder="Søk på et reisemål!"
+          placeholder={placeholder}
           className="search-bar"
           value={searchText}
           onChange={trackSearch}

@@ -1,0 +1,194 @@
+.user-page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.profilepicture img {
+  width: 100%;
+  height: 100%;
+  border-radius: 100px;
+  overflow: hidden;
+  object-fit: cover;
+}
+
+.profilepicture {
+  width: 175px;
+  height: 175px;
+  margin-top: -150px; 
+  z-index: 1;
+}
+
+.name {
+  font-size: 28px;
+  margin-left: 175px;
+  margin-top: 10px;
+
+}
+
+.admin {
+  margin-left: 175px;
+  margin-top: 10px;
+  font-size: smaller;
+}
+
+.crown {
+  color: goldenrod;
+}
+
+.image-container img {
+  display: flex;
+  width: 100%;
+  height: 250px;
+  object-fit: cover;
+}
+
+
+.my-reviews-container {
+  display: flex;
+  flex-direction: column;
+  padding: 2rem;
+}
+
+.my-review-header {
+  margin-top: 2rem;
+  margin-bottom: 3rem;
+}
+
+.my-review-body {
+  margin-top: 3rem;
+}
+
+.image-carousel {
+  width: 300px; 
+  height: 300px; 
+  background-color: #f2f2f2;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.image-carousel img {
+  width: auto;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.image-carousel .prev,
+.image-carousel .next {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 24px;
+  color: #fff;
+  background-color: rgba(0, 0, 0, 0.5);
+  padding: 8px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.image-carousel .prev {
+  left: 10px;
+}
+
+.image-carousel .next {
+  right: 10px;
+}
+
+.visited-carousel {
+  display: flex;
+}
+
+.visited-carousel img {
+  object-fit: fill;
+}
+
+#logUtButton {
+  background-color: #2b6777;
+  border: none;
+  padding: 5px 10px 5px 10px;
+  border-radius: 5px; 
+  color: white;
+  float: right;
+  margin-top: 20px;
+
+}
+
+#homeLink {
+  text-decoration: none;
+  color: white;
+}
+
+#homeLink:hover {
+  color: black;
+}
+
+#topContainer {
+  width: 70%;
+  margin: 0 auto;
+  
+  
+}
+
+#nameAndAdmin {
+  margin-left: 10px;
+  display: inline-block;
+  margin-top: 10px;
+}
+
+.cards {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content:flex-start;
+}
+
+.card {
+  width: 20rem;
+  border-radius: 15px; 
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.1); 
+  transition: transform 0.2s; 
+  cursor: pointer;
+}
+
+.card:hover {
+  transform: scale(1.01); 
+}
+
+.card-img {
+  height: 200px;
+  object-fit: cover;    
+  border-top-left-radius: 15px; 
+  border-top-right-radius: 15px; 
+}
+
+.user-container{
+  margin: 0 auto;
+  width: 80%;
+  margin-top: 1rem;
+}
+
+.my-page-link {
+  display: flex;
+  gap: 2rem;
+  margin-top: 3rem;
+  margin-left: 1rem;
+  align-items: center;
+}
+
+.link {
+  text-decoration: none;
+  color: inherit;
+  font-size: 18px;
+}
+
+.link:hover {
+  color: #2b6777;
+
+}
+
+.active-link {
+  font-weight: bold;
+  color: #2b6777;
+  font-size: 20px;
+}
