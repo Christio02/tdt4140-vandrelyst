@@ -57,7 +57,6 @@ const Navbar = () => {
                 </div>
             </a>
         }
-        <a href="/omoss">Om oss</a> 
 
         </div>
     );

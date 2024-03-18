@@ -6,7 +6,6 @@ import App from "./App";
 import "./index.css";
 import DestinationPage from "./pages/DestinationPage";
 import LogInPage from "./pages/LogInPage";
-import OmOss from "./pages/OmOss";
 import RegisterUserPage from "./pages/RegisterUserPage";
 import UserPage from "./pages/UserPage";
 import reportWebVitals from "./reportWebVitals";
@@ -20,7 +19,6 @@ root.render(
       <Routes>
         <Route path="/" element={<App />} />
         <Route path="/destination/:id" element={<DestinationPage />} />
-        <Route path="/omoss" element={<OmOss />} />
         <Route path="/logginn" element={<LogInPage />} />
         <Route path="/registrering" element={<RegisterUserPage />} />
         <Route path="/mypage/*" element={<UserPage />} />

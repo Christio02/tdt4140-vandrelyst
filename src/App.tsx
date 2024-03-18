@@ -9,7 +9,6 @@ import Filtercomponent from "./components/Filtercomponent";
 import Footer from "./components/Footer";
 import Navbar from "./components/Navbar";
 import Searchbar from "./components/Searchbar";
-import OmOss from "./pages/OmOss";
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import RecommendedDestinations from "./components/RecommendedDestinations";
 
