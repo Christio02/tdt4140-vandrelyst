@@ -48,29 +48,54 @@ type queryForReviews = {
   destination: string;
 };
 
+interface User {
+  userEmail: string;
+  userFullName: string;
+}
+
+export const getUserFullNameByEmail = async (userEmail: string): Promise<string> => {
+  
+  const usersCollectionRef = collection(db, "users");
+  const userQuery = query(usersCollectionRef, where("userEmail", "==", userEmail));
+  const querySnapshot = await getDocs(userQuery);
+
+  if (!querySnapshot.empty) {
+    const userData = querySnapshot.docs[0].data() as User;
+    return userData.userFullName;
+  } else {
+    console.log("No user found!");
+    return '';
+  }
+};
+
 export const getReviews = async (props: queryForReviews) => {
   const reviews: Review[] = [];
 
   const reviewsForDestination = collection(db, "reviews");
-
-  const allReviewsQuery = query(
-    reviewsForDestination,
-    where("destination", "==", `${props.destination}`)
-  );
+  const allReviewsQuery = query(reviewsForDestination, where("destination", "==", `${props.destination}`));
   const reviewsSnapshot = await getDocs(allReviewsQuery);
+
+  const userNamePromises: Promise<string>[] = [];
 
   reviewsSnapshot.forEach((doc) => {
     const reviewData = doc.data();
+    userNamePromises.push(getUserFullNameByEmail(reviewData.user));
+  });
+
+  const userNames = await Promise.all(userNamePromises);
+
+  reviewsSnapshot.docs.forEach((doc, index) => {
+    const reviewData = doc.data();
 
     let review: Review = {
-      userName: reviewData.user,
+      userName: userNames[index],
       date: reviewData.date.toDate().toString(),
       rating: reviewData.rating,
       description: reviewData.description,
     };
     reviews.push(review);
   });
-
+  
   return reviews;
 };
 
