@@ -41,7 +41,7 @@ const Navbar = () => {
                 <p>Laster...</p>
             ) : auth?.currentUser ? (
                 currentUserIsAdmin ? (
-                    <a href='/mypage' className="LogInMyPage"><CircleUserRound size={25} id="icon"/> Min side (A)</a>
+                    <a href='/mypage' className="LogInMyPage"><CircleUserRound size={25} id="icon"/> Min side</a>
 
                 ) : (
                     <a href='/mypage' className="LogInMyPage"><CircleUserRound size={25} id="icon"/> Min side</a>
