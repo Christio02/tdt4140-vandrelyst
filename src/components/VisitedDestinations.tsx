@@ -57,11 +57,13 @@ const VisitedDestinations = () => {
   }, []);
 
   return (
-    <div className="visited-destinations-list" style={{ marginTop: "5vh" }}>
-      <div className="cards">
+    <div className="visited-destinations-list" style={{ marginTop: "5vh"}}>
+      <div className="cards" style={{ margin: "0 auto", width:"80%", gap:"2rem"}}>
         {visitedDestinations.map((destination, index) => (
           <Link to={`/destination/${destination.id}`} key={index} style={{ textDecoration: "none" }}>
+            <div  style={{width:"20rem"}}>
             <DestinationCard destination={destination} />
+            </div>
           </Link>
         ))}
       </div>
