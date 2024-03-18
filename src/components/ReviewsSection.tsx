@@ -39,6 +39,7 @@ const ReviewsSection = (props: revProps) => {
 
 interface Review {
   userName: string;
+  userEmail: string;
   date: string;
   rating: number;
   description: string;
@@ -89,6 +90,7 @@ export const getReviews = async (props: queryForReviews) => {
 
     let review: Review = {
       userName: userNames[index],
+      userEmail: reviewData.user,
       date: reviewData.date.toDate().toString(),
       rating: reviewData.rating,
       description: reviewData.description,

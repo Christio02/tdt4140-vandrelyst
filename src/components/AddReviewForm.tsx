@@ -23,6 +23,7 @@ type reviewFormProp = {
 
 interface Review {
   userName: string;
+  userEmail: string;
   date: string;
   rating: number;
   description: string;
@@ -133,7 +134,6 @@ const AddReviewForm = (props: reviewFormProp) => {
     };
     getReviews(destination).then((reviews: Review[]) => {
       setReviews(reviews);
-
       if (
         auth?.currentUser?.email === undefined ||
         auth?.currentUser?.email === null
@@ -141,7 +141,7 @@ const AddReviewForm = (props: reviewFormProp) => {
         setLoggetInnOgHarSkrevetReview(false);
       } else {
         for (let i = 0; i < reviews.length; i++) {
-          if (reviews[i].userName === auth?.currentUser?.email) {
+          if (reviews[i].userEmail === auth?.currentUser?.email) {
             setLoggetInnOgHarSkrevetReview(true);
           }
         }
