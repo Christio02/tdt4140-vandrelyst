@@ -156,7 +156,7 @@ const AddReviewForm = (props: reviewFormProp) => {
         variant="primary"
         onClick={handleReviewShow}
       >
-        {loggetInnOgHarSkrevetReview ? "Rediger omtale" : "Legg til omtale"}
+        {loggetInnOgHarSkrevetReview ? "Rediger anmeldelse" : "Legg til anmeldelse"}
       </Button>
 
       {showAddReview && (
@@ -166,7 +166,7 @@ const AddReviewForm = (props: reviewFormProp) => {
             <Modal.Header>
               {/* Top bar, where the X is.*/}
               <Modal.Title className="w-100 text-center">
-                Skriv din omtale
+                Skriv din anmeldelse
               </Modal.Title>
             </Modal.Header>
 

@@ -147,7 +147,7 @@ const ReviewSummary = (props: reviewSummaryProp) => {
 
   return (
     <div className="review-summary">
-      <h2>Omtaler</h2>
+      <h2>Anmeldelser</h2>
       <div className="average-rating">
         {averageRating()}
         <span className="total-reviews">

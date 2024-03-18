@@ -136,7 +136,7 @@ const DestinationPage = () => {
       </div>
 
       <div className="review-container">
-        <h2 className="reviews-title">Omtaler</h2>
+        <h2 className="reviews-title">Anmeldelser</h2>
         <div className="review-section">
           <ReviewsSection city={destination.city} />
         </div>

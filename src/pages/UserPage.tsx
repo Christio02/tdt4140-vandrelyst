@@ -104,7 +104,7 @@ const UserPage = () => {
             </Link>
             <Link to="myReviews" className={`link ${activeLink === "myReviews" ? "active-link" : ""}`}
             onClick={() => handleSetActiveLink("myReviews")}>
-              Mine anmelderlser
+              Mine anmeldelser
             </Link>
             <Link to="visiteddestinations" className={`link ${activeLink === "visiteddestinations" ? "active-link" : ""}`}
             onClick={() => handleSetActiveLink("visiteddestinations")}>
