@@ -5,6 +5,10 @@
 - [Vandrelyst](#vandrelyst)
   - [Hvorfor Vandrelyst?](#hvorfor-vandrelyst)
   - [Om Oss](#om-oss)
+  - [How to run](#how-to-run)
+    - [Clone the repository](#clone-the-repository)
+    - [Install dependencies](#install-dependencies)
+    - [Run the app](#run-the-app)
 
 ## Hvorfor Vandrelyst?
 
@@ -19,3 +23,24 @@ Ved hjelp av Vandrelyst kan brukerne få tilgang til ærlige og detaljerte anmel
 Vi forstår viktigheten av å ha pålitelig og oppdatert informasjon når man planlegger reiser. Derfor arbeider vårt team utrettelig for å sikre at Vandrelyst er en ressurs som ikke bare inspirerer, men også informerer og støtter studenter gjennom hele reiseplanleggingsprosessen.
 
 I Vandrelyst er vi mer enn bare en app; vi er en bevegelse mot å gjøre verden mer tilgjengelig for unge studenter. Ved å dele erfaringer, tips og råd, hjelper vi hverandre med å ta informerte valg og skape meningsfulle reiseopplevelser. Bli med oss på denne reisen, og la oss utforske verden sammen.
+
+## How to run
+
+### Clone the repository
+
+```bash
+git clone https://github.com/Christio02/tdt4140-vandrelyst
+```
+
+### Install dependencies
+
+```bash
+cd tdt4140-vandrelyst
+npm install
+```
+
+### Run the app
+
+```bash
+npm run dev
+```
